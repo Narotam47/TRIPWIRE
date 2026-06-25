@@ -1,0 +1,21 @@
+# HTTP & GitHub API access
+requests>=2.32.0
+PyGithub>=2.3.0
+
+# Git history mining
+gitpython>=3.1.43
+
+# Data wrangling
+pandas>=2.2.0
+
+# Anthropic API — LLM-jury classification + agentic validation
+anthropic>=0.28.0
+
+# Config / secrets
+python-dotenv>=1.0.0
+
+# Progress bars
+tqdm>=4.66.0
+
+# Data validation and typed models
+pydantic>=2.7.0
