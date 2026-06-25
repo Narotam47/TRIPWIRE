@@ -66,7 +66,6 @@ https://github.com/SDGLBL/mcp-claude-code,mcp-first-glance,mined,Python,1,,ok,20
 https://github.com/ergut/mcp-logseq-server,mcp-first-glance,mined,Python,25,,ok,2026-06-19T11:13:34Z,294.0,False,False,1490.0,main,public,6.0,2024-12-20T17:11:44Z,Python,eligible,Python,200-999,10
 https://github.com/zilliztech/mcp-server-milvus,mcp-first-glance,official,Python,26,,ok,2026-05-08T08:07:30Z,233.0,False,False,7483.0,main,public,3.0,2025-03-06T02:10:40Z,Python,eligible,Python,200-999,11
 https://github.com/comet-ml/opik-mcp,mcp-first-glance,official,TypeScript,11,,ok,2026-06-25T10:48:04Z,211.0,False,False,1833.0,main,public,26.0,2025-03-11T16:31:03Z,Python,eligible,Python,200-999,12
-https://github.com/MladenSU/cli-mcp-server,mcp-first-glance,mined,Python,43,,ok,2025-07-04T21:02:36Z,171.0,False,False,61.0,main,public,9.0,2024-12-08T23:01:54Z,Python,eligible,Python,50-199,1
 https://github.com/szeider/mcp-solver,mcp-first-glance,mined,Python,23,,ok,2025-09-13T07:48:43Z,170.0,False,False,614.0,main,public,4.0,2024-12-14T23:10:20Z,Python,eligible,Python,50-199,2
 https://github.com/weidwonder/crawl4ai-mcp-server,mcp-first-glance,mined,Python,36,,ok,2026-01-23T06:16:26Z,145.0,False,False,12.0,main,public,3.0,2025-02-07T14:34:59Z,Python,eligible,Python,50-199,3
 https://github.com/LucasHild/mcp-server-bigquery,mcp-first-glance,community,Python,26,,ok,2026-03-26T13:57:09Z,127.0,False,False,139.0,main,public,11.0,2024-12-03T18:09:19Z,Python,eligible,Python,50-199,4
@@ -85,7 +84,6 @@ https://github.com/Percolation-Labs/percolate,mcp-first-glance,mined,Python,36,,
 https://github.com/stefanoamorelli/nasdaq-data-link-mcp,mcp-first-glance,community,Python,5,,ok,2025-10-04T16:20:28Z,59.0,False,False,210.0,main,public,2.0,2025-03-30T18:54:51Z,Python,eligible,Python,50-199,17
 https://github.com/renyumeng1/mcp_scholar,mcp-first-glance,mined,Python,0,,ok,2026-04-02T07:33:33Z,53.0,False,False,167.0,main,public,1.0,2025-03-17T18:09:03Z,Python,eligible,Python,50-199,18
 https://github.com/devflowinc/trieve,mcp-first-glance,mined,Rust,2001,,ok,2026-01-25T23:25:46Z,2682.0,False,False,185124.0,main,public,3.0,2023-03-26T19:45:53Z,Rust,eligible,Rust,1000+,1
-https://github.com/elastic/mcp-server-elasticsearch,mcp-first-glance,official,JavaScript,91,,ok,2026-06-24T23:46:49Z,676.0,False,False,550.0,main,public,15.0,2025-03-24T11:59:18Z,Rust,eligible,Rust,200-999,1
 https://github.com/stippi/code-assistant,mcp-first-glance,community,Rust,28,,ok,2026-06-25T02:13:31Z,171.0,False,False,6181.0,main,public,4.0,2024-11-03T17:21:41Z,Rust,eligible,Rust,50-199,1
 https://github.com/ravenwits/mcp-server-arangodb,mcp-first-glance,community,TypeScript,15,,ok,2026-06-01T18:37:15Z,48.0,False,False,5217.0,main,public,0.0,2024-12-28T19:08:48Z,TypeScript,eligible,TypeScript,10-49,1
 https://github.com/mantou132/gem,mcp-first-glance,mined,TypeScript,19,,ok,2026-06-11T13:06:47Z,48.0,False,False,7781.0,main,public,7.0,2019-06-30T10:34:46Z,TypeScript,eligible,TypeScript,10-49,2
@@ -119,7 +117,6 @@ https://github.com/ppl-ai/modelcontextprotocol,mcp-first-glance,official,JavaScr
 https://github.com/zereight/gitlab-mcp,mcp-first-glance,mined,JavaScript,10,,ok,2026-06-22T15:00:48Z,1712.0,False,False,4605.0,main,public,23.0,2025-02-11T01:34:31Z,TypeScript,eligible,TypeScript,1000+,13
 https://github.com/ai-hero-dev/ai-hero,mcp-first-glance,mined,TypeScript,644,,ok,2026-06-20T01:44:54Z,1537.0,False,False,7221.0,main,public,14.0,2024-12-17T09:27:45Z,TypeScript,eligible,TypeScript,1000+,14
 https://github.com/apify/actors-mcp-server,mcp-first-glance,official,TypeScript,87,,ok,2026-06-25T13:49:55Z,1379.0,False,False,5623.0,master,public,123.0,2025-01-02T15:43:09Z,TypeScript,eligible,TypeScript,1000+,15
-https://github.com/antfu/nuxt-mcp,mcp-first-glance,mined,TypeScript,277,,ok,2026-03-01T06:08:50Z,910.0,False,False,1128.0,main,public,10.0,2025-03-11T05:10:54Z,TypeScript,eligible,TypeScript,200-999,1
 https://github.com/zcaceres/fetch-mcp,mcp-first-glance,community,TypeScript,143,,ok,2026-03-12T17:17:24Z,788.0,False,False,1096.0,main,public,4.0,2024-12-18T01:05:17Z,TypeScript,eligible,TypeScript,200-999,2
 https://github.com/smithery-ai/cli,mcp-first-glance,mined,TypeScript,143,,ok,2026-05-31T07:11:36Z,774.0,False,False,2115.0,main,public,20.0,2024-12-22T04:43:16Z,TypeScript,eligible,TypeScript,200-999,3
 https://github.com/hyperbrowserai/mcp,mcp-first-glance,official,TypeScript,13,,ok,2025-11-20T01:32:08Z,770.0,False,False,272.0,main,public,9.0,2025-02-25T19:06:01Z,TypeScript,eligible,TypeScript,200-999,4

@@ -1,3 +1,6 @@
+# Cloned repos — large, reproducible on demand
+data/raw/clones/
+
 # Data — excluded to keep repo lightweight; store externally or use DVC
 data/
 # ...except the directory stubs so the layout is committed
