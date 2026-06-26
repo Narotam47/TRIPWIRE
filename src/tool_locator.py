@@ -270,10 +270,10 @@ def extract_python(src: str, rel_path: str) -> list[LocatedTool]:
     return tools
 
 
-# ── TypeScript / JavaScript extractor (regex) ────────────────────────────────
+# ── TypeScript / JavaScript extractor ────────────────────────────────────────
 
-# Matches any quoted string: "...", '...', or `...` (template literals)
-_STR = r'(?:"([^"]+)"|\'([^\']+)\'|`([^`]*?)`)'
+# Matches any quoted string: "...", '...', or `...` (template literals, DOTALL)
+_STR  = r'(?:"([^"]+)"|\'([^\']+)\'|`([^`]*?)`)'
 _STR_D = r'(?:"([^"]*?)"|\'([^\']*?)\'|`([^`]*?)`)'   # description (may be empty)
 
 
@@ -288,7 +288,6 @@ _TS_TOOL_CALL = re.compile(
 )
 
 # Factory wrappers: CreateXeroTool / CreateTool / makeTool / newTool / etc.
-# Matches any identifier that looks like a tool factory.
 _TS_FACTORY = re.compile(
     r'(?:create|Create|make|Make|new|New|define|Define|register|Register)'
     r'\w*[Tt]ool\s*\(\s*' + _STR + r'\s*,\s*' + _STR_D,
@@ -296,24 +295,191 @@ _TS_FACTORY = re.compile(
 )
 
 # { name: "...", description: "...", inputSchema: { ... } }
-# We capture up to 3 levels of brace nesting for the schema.
+# Supports all three quote styles for name and description.
+# inputSchema must be a literal object (function-call values handled by addTool pass).
+_TS_TOOL_OBJ_NAME = r'(?:"([^"]+)"|\'([^\']+)\'|`([^`]+)`)'
+_TS_TOOL_OBJ_DESC = r'(?:"([^"]*?)"|\'([^\']*?)\'|`([^`]*?)`)'
 _TS_TOOL_OBJ = re.compile(
-    r'name\s*:\s*["\']([^"\']+)["\']\s*,'           # name:
-    r'(?:[^{}]|\{[^{}]*\})*?'
-    r'description\s*:\s*["\']([^"\']*)["\']'        # description:
-    r'(?:[^{}]|\{[^{}]*\})*?'
-    r'inputSchema\s*:\s*'
-    r'(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',  # inputSchema: {...}
+    r'name\s*:\s*' + _TS_TOOL_OBJ_NAME + r'\s*,'
+    + r'(?:[^{}]|\{[^{}]*\})*?'
+    + r'description\s*:\s*' + _TS_TOOL_OBJ_DESC
+    + r'(?:[^{}]|\{[^{}]*\})*?'
+    + r'inputSchema\s*:\s*'
+    + r'(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',
+    re.DOTALL,
+)
+
+# Anchors for new patterns
+_TS_ADDTOOL_START    = re.compile(r'\.addTool\s*\(\s*\{')
+_TS_REGISTERTOOL_START = re.compile(
+    r'\.registerTool\s*\(\s*(?:"([^"]+)"|\'([^\']+)\'|`([^`]+)`)\s*,\s*\{'
+)
+_TS_LISTTOOLSHANDLER = re.compile(
+    r'setRequestHandler\s*\(\s*ListToolsRequestSchema\b'
+)
+
+# JS/TS const/var string literals for resolving tool-name constants
+_TS_CONST_DEF = re.compile(
+    r'(?:const|let|var)\s+(\w+)\s*=\s*(?:"([^"]+)"|\'([^\']+)\'|`([^`]+)`)'
+)
+
+
+def _balance_braces(src: str, open_pos: int) -> tuple[str, int]:
+    """
+    Starting just after the opening '{', walk forward while balancing
+    braces and skipping string literals.
+    Returns (content_inside_braces, position_after_closing_brace).
+    """
+    depth = 1
+    pos = open_pos
+    n = len(src)
+    while pos < n and depth > 0:
+        c = src[pos]
+        if c == '{':
+            depth += 1
+        elif c == '}':
+            depth -= 1
+        elif c in ('"', "'"):
+            quote = c
+            pos += 1
+            while pos < n:
+                if src[pos] == '\\':
+                    pos += 1
+                elif src[pos] == quote:
+                    break
+                pos += 1
+        elif c == '`':
+            pos += 1
+            while pos < n:
+                if src[pos] == '\\':
+                    pos += 1
+                elif src[pos] == '`':
+                    break
+                pos += 1
+        pos += 1
+    return src[open_pos: pos - 1], pos
+
+
+_OBJ_NAME_RE = re.compile(
+    r'\bname\s*:\s*(?:"([^"]+)"|\'([^\']+)\'|`([^`]+)`)'
+)
+_OBJ_DESC_RE = re.compile(
+    r'\bdescription\s*:\s*(?:"([^"]*?)"|\'([^\']*?)\'|`([^`]*?)`)',
     re.DOTALL,
 )
 
 
+def _build_const_map(src: str) -> dict[str, str]:
+    """Build identifier → string-value map from JS/TS const/let/var declarations."""
+    cm: dict[str, str] = {}
+    for m in _TS_CONST_DEF.finditer(src):
+        val = m.group(2) or m.group(3) or m.group(4) or ""
+        cm[m.group(1)] = val
+    return cm
+
+
+def _extract_addtool_objs(src: str, rel_path: str,
+                           seen: set[str]) -> list[LocatedTool]:
+    """
+    Extract tools from FastMCP-TS  server.addTool({name, description, ...})
+    calls. Uses brace-balancing so multiline backtick descriptions and nested
+    annotations/parameters blocks are handled correctly.
+    No inputSchema required — FastMCP infers schema from TypeScript types.
+    """
+    tools: list[LocatedTool] = []
+    for m in _TS_ADDTOOL_START.finditer(src):
+        brace_start = src.index('{', m.start())
+        obj_content, _ = _balance_braces(src, brace_start + 1)
+
+        name_m = _OBJ_NAME_RE.search(obj_content)
+        if not name_m:
+            continue
+        name = _first_group(name_m.group(1), name_m.group(2), name_m.group(3))
+        if not name or name in seen:
+            continue
+
+        desc_m = _OBJ_DESC_RE.search(obj_content)
+        desc = _first_group(*(desc_m.groups() if desc_m else ())) if desc_m else ""
+
+        seen.add(name)
+        tools.append(LocatedTool(
+            tool_name=name, description=desc.strip(),
+            input_schema={}, source_file=rel_path,
+            extractor="ts-addtool",
+        ))
+    return tools
+
+
+def _extract_registertool_objs(src: str, rel_path: str,
+                                seen: set[str]) -> list[LocatedTool]:
+    """
+    Extract tools from McpServer.registerTool("name", {description, inputSchema}, handler).
+    Uses brace-balancing on the second argument object.
+    """
+    tools: list[LocatedTool] = []
+    for m in _TS_REGISTERTOOL_START.finditer(src):
+        name = _first_group(m.group(1), m.group(2), m.group(3))
+        if not name or name in seen:
+            continue
+        # Balance the { that was already consumed in the pattern
+        brace_pos = src.index('{', m.start())
+        meta_content, _ = _balance_braces(src, brace_pos + 1)
+        desc_m = _OBJ_DESC_RE.search(meta_content)
+        desc = _first_group(*(desc_m.groups() if desc_m else ())) if desc_m else ""
+        seen.add(name)
+        tools.append(LocatedTool(
+            tool_name=name, description=desc.strip(),
+            input_schema={}, source_file=rel_path,
+            extractor="ts-registertool",
+        ))
+    return tools
+
+
+def _extract_listtoolshandler(src: str, rel_path: str,
+                               seen: set[str]) -> list[LocatedTool]:
+    """
+    Extract tools from the old raw-SDK pattern:
+        server.setRequestHandler(ListToolsRequestSchema, async () => {
+          const tools = [{name: "...", description: `...`, inputSchema: ...}]
+        })
+    Resolves JS constant names for tool name fields.
+    """
+    tools: list[LocatedTool] = []
+    const_map = _build_const_map(src)
+
+    # Match name as either a string literal or a bare identifier (constant)
+    _INNER_OBJ = re.compile(
+        r'\{\s*name\s*:\s*(?:"([^"]+)"|\'([^\']+)\'|`([^`]+)`|([A-Z_][A-Z0-9_]*))'
+        r'(?:[^{}]|\{[^{}]*\})*?'
+        r'description\s*:\s*(?:"([^"]*?)"|\'([^\']*?)\'|`([^`]*?)`)',
+        re.DOTALL,
+    )
+    for handler_m in _TS_LISTTOOLSHANDLER.finditer(src):
+        cb_brace = src.find('{', handler_m.end())
+        if cb_brace == -1:
+            continue
+        handler_body, _ = _balance_braces(src, cb_brace + 1)
+        for obj_m in _INNER_OBJ.finditer(handler_body):
+            # groups 1-3: literal name; group 4: identifier constant
+            name_literal = _first_group(obj_m.group(1), obj_m.group(2), obj_m.group(3))
+            name_const   = obj_m.group(4) or ""
+            name = name_literal or const_map.get(name_const, "")
+            desc = _first_group(obj_m.group(5), obj_m.group(6), obj_m.group(7))
+            if not name or name in seen:
+                continue
+            seen.add(name)
+            tools.append(LocatedTool(
+                tool_name=name, description=desc.strip(),
+                input_schema={}, source_file=rel_path,
+                extractor="ts-listtoolshandler",
+            ))
+    return tools
+
+
 def _try_parse_json5(s: str) -> dict:
     """Best-effort parse of a JS object literal fragment as JSON."""
-    # Strip trailing commas and convert single-quotes
     cleaned = re.sub(r",\s*([}\]])", r"\1", s)
     cleaned = re.sub(r"'([^']*)'", r'"\1"', cleaned)
-    # Quote bare keys
     cleaned = re.sub(r'(?<=[{,])\s*([a-zA-Z_]\w*)\s*:', r' "\1":', cleaned)
     try:
         return json.loads(cleaned)
@@ -325,6 +491,7 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
     tools: list[LocatedTool] = []
     seen: set[str] = set()
 
+    # Pass 1: server.tool("name", "desc", ...) — positional args
     for m in _TS_TOOL_CALL.finditer(src):
         name = _first_group(m.group(1), m.group(2), m.group(3))
         desc = _first_group(m.group(4), m.group(5), m.group(6))
@@ -337,6 +504,7 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
             extractor="ts-regex-server-tool",
         ))
 
+    # Pass 2: CreateXeroTool("name", `desc`, ...) factory wrappers
     for m in _TS_FACTORY.finditer(src):
         name = _first_group(m.group(1), m.group(2), m.group(3))
         desc = _first_group(m.group(4), m.group(5), m.group(6))
@@ -349,9 +517,12 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
             extractor="ts-regex-factory",
         ))
 
+    # Pass 3: {name: "...", description: "...", inputSchema: {...}} objects
     for m in _TS_TOOL_OBJ.finditer(src):
-        name, desc, schema_str = m.group(1), m.group(2), m.group(3)
-        if name in seen:
+        name = _first_group(m.group(1), m.group(2), m.group(3))
+        desc = _first_group(m.group(4), m.group(5), m.group(6))
+        schema_str = m.group(7) or "{}"
+        if not name or name in seen:
             continue
         seen.add(name)
         schema = _try_parse_json5(schema_str)
@@ -360,6 +531,18 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
             input_schema=schema, source_file=rel_path,
             extractor="ts-regex-tool-object",
         ))
+
+    # Pass 4: server.addTool({name, description, ...}) — FastMCP-TS style,
+    #          no inputSchema field; uses brace-balancing for multiline descs.
+    tools += _extract_addtool_objs(src, rel_path, seen)
+
+    # Pass 5: server.registerTool("name", {description, inputSchema}, handler)
+    #          — high-level McpServer API (different from server.tool() calls).
+    tools += _extract_registertool_objs(src, rel_path, seen)
+
+    # Pass 6: setRequestHandler(ListToolsRequestSchema, ...) — old raw-SDK,
+    #          tool list returned from handler body; resolves JS constants.
+    tools += _extract_listtoolshandler(src, rel_path, seen)
 
     return tools
 
@@ -378,16 +561,39 @@ _GO_TOOL_STRUCT = re.compile(
     re.DOTALL,
 )
 
-# AddTool / RegisterTool with a description string nearby
-_GO_ADDTOOL = re.compile(
-    r'(?:AddTool|RegisterTool)\s*\([^,]+,\s*"([^"]*)"',
+# server.RegisterTool("name", "description", handler)
+_GO_REGISTERTOOL = re.compile(
+    r'\.RegisterTool\s*\(\s*"([^"]+)"\s*,\s*"([^"]*)"',
 )
+
+# mcp.NewTool(varName, mcp.WithDescription("desc"), ...) — name is a variable
+# We extract the WithDescription value; tool_name will be the variable's value
+# when it can be resolved, otherwise we skip (name is not a literal).
+_GO_NEWTOOL_WITHNAME = re.compile(
+    r'NewTool\s*\(\s*"([^"]+)"\s*'          # name as literal (handled by _GO_NEWTOOL)
+    r'|'
+    r'NewTool\s*\(\s*(\w+)\s*,'             # name as variable
+    r'(?:[^)]*?)WithDescription\s*\(\s*"([^"]*)"',
+    re.DOTALL,
+)
+
+# Resolve Go string constants — handles both single-line and block syntax:
+#   const Foo = "bar"        (standalone)
+#   const (                  (block — no 'const' before each identifier)
+#       FooName = "bar"
+#   )
+# By convention exported Go constants start with an uppercase letter.
+_GO_CONST_DEF = re.compile(r'\b([A-Z]\w+)\s*(?:string\s*)?=\s*"([^"]+)"')
 
 
 def extract_go(src: str, rel_path: str) -> list[LocatedTool]:
     tools: list[LocatedTool] = []
     seen: set[str] = set()
 
+    # Build a const/var → string-value map for resolving tool-name variables
+    const_map: dict[str, str] = {m.group(1): m.group(2) for m in _GO_CONST_DEF.finditer(src)}
+
+    # Pass 1: mcp.NewTool("name", ..., mcp.WithDescription("desc"), ...)
     for m in _GO_NEWTOOL.finditer(src):
         name = m.group(1)
         desc = m.group(2) or ""
@@ -400,6 +606,23 @@ def extract_go(src: str, rel_path: str) -> list[LocatedTool]:
             extractor="go-regex-newtool",
         ))
 
+    # Pass 2: mcp.NewTool(varName, ..., mcp.WithDescription("desc"), ...)
+    for m in _GO_NEWTOOL_WITHNAME.finditer(src):
+        if m.group(1):   # literal name — already handled in pass 1
+            continue
+        var_name = m.group(2)
+        desc     = m.group(3) or ""
+        name     = const_map.get(var_name, "")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        tools.append(LocatedTool(
+            tool_name=name, description=desc,
+            input_schema={}, source_file=rel_path,
+            extractor="go-regex-newtool-var",
+        ))
+
+    # Pass 3: Tool{Name: "...", Description: "..."}
     for m in _GO_TOOL_STRUCT.finditer(src):
         name, desc = m.group(1), m.group(2)
         if name in seen:
@@ -409,6 +632,18 @@ def extract_go(src: str, rel_path: str) -> list[LocatedTool]:
             tool_name=name, description=desc,
             input_schema={}, source_file=rel_path,
             extractor="go-regex-tool-struct",
+        ))
+
+    # Pass 4: .RegisterTool("name", "description", handler) — some MCP frameworks
+    for m in _GO_REGISTERTOOL.finditer(src):
+        name, desc = m.group(1), m.group(2)
+        if name in seen:
+            continue
+        seen.add(name)
+        tools.append(LocatedTool(
+            tool_name=name, description=desc,
+            input_schema={}, source_file=rel_path,
+            extractor="go-regex-registertool",
         ))
 
     return tools

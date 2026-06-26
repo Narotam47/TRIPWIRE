@@ -282,13 +282,57 @@ def process_repo(row: pd.Series, backup_df: pd.DataFrame,
     extra_records: list[dict] = []
 
     if rec["replacement_needed"] and do_replace:
-        rep_row, backup_df = pop_best_backup(backup_df, stratum_lang, stratum_bucket)
-        if rep_row is not None:
-            rec["replaced_by"] = rep_row["repo_url"]
-            # Process the replacement immediately
-            rep_record, _, backup_df = process_repo(rep_row, backup_df, do_replace=False)
-            rep_record["is_replacement_for"] = repo_url
+        # Keep pulling backups until one actually yields ≥1 tool.
+        # Each failed backup is logged and consumed from the pool.
+        attempts = 0
+        while attempts < 5:   # hard cap to avoid infinite loop on empty strata
+            rep_row, backup_df = pop_best_backup(backup_df, stratum_lang, stratum_bucket)
+            if rep_row is None:
+                break   # pool exhausted for this stratum
+
+            rep_lang = rep_row.get("gh_language")
+            if rep_lang is None or (not isinstance(rep_lang, str)):
+                rep_lang = None
+
+            rep_cr = clone(rep_row["repo_url"], CLONE_DIR, depth=1)
+            rep_tools = locate_tools(rep_cr.clone_path, rep_lang) if rep_cr.success else []
+
+            rep_record: dict = {
+                "repo_url":           rep_row["repo_url"],
+                "language":           str(rep_lang) if rep_lang else "(unknown)",
+                "star_bucket":        str(rep_row.get("star_bucket", "")),
+                "clone_ok":           rep_cr.success,
+                "clone_error":        rep_cr.error,
+                "tools_found":        len(rep_tools),
+                "example_tool_name":  rep_tools[0].tool_name if rep_tools else None,
+                "example_extractor":  rep_tools[0].extractor if rep_tools else None,
+                "replacement_needed": False,
+                "replacement_reason": None,
+                "replacement_notes":  None,
+                "replaced_by":        None,
+                "server_signals":     None,
+                "is_replacement_for": repo_url,
+                "processed_at":       datetime.now(timezone.utc).isoformat(),
+            }
             extra_records.append(rep_record)
+            attempts += 1
+
+            if rep_tools:
+                # Accepted — record which backup replaced the primary
+                rec["replaced_by"] = rep_row["repo_url"]
+                break
+            else:
+                # Backup itself is unusable — mark it and try next
+                if not rep_cr.success:
+                    rep_record["replacement_needed"] = True
+                    rep_record["replacement_reason"] = "clone_failed"
+                else:
+                    has_sig = detect_server_signals(rep_cr.clone_path, rep_lang)
+                    rep_record["replacement_needed"] = True
+                    rep_record["replacement_reason"] = (
+                        "zero_tools_found" if has_sig else "not_a_server"
+                    )
+                # loop: try next backup
 
     return rec, extra_records, backup_df
 
