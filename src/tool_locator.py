@@ -48,12 +48,53 @@ _SKIP_DIRS = {
     ".venv", "venv", "env", "vendor", "target",
 }
 
+# Path-segment names that identify test directories.
+# Matched against each directory component of the relative path (not the
+# filename and not as a substring), so "testing-tool.ts" at project root
+# is NOT excluded, but "src/test/helper.ts" IS excluded.
+_TEST_DIR_NAMES = {
+    # Test infrastructure
+    "test", "tests", "__tests__", "__mocks__",
+    # Demonstration / sample code — not production tool definitions.
+    # Deliberately excludes "demos"/"demo": cloudflare/ai ships real production
+    # MCP servers (deployed Cloudflare Workers) inside a top-level demos/ dir.
+    "examples", "example",
+    "samples", "sample",
+    "testapps",
+    # Template files (e.g. scaffold starters, not live server code)
+    "templates", "template",
+    # Test fixtures
+    "fixtures", "__fixtures__",
+}
+
+# Basename suffixes that identify test/spec files by naming convention.
+_TEST_BASENAME_SUFFIXES = (
+    ".test.ts",  ".spec.ts",  ".test.tsx",  ".spec.tsx",
+    ".test.js",  ".spec.js",  ".test.mjs",  ".spec.mjs",
+    ".test.py",  ".spec.py",
+    "_test.go",  # Go naming convention: *_test.go files are test files
+)
+
+
+def _is_test_file(rel_path: str) -> bool:
+    """True if the file is in a test directory or has a test-file basename convention."""
+    parts = Path(rel_path).parts
+    # parts[:-1] = directory segments only (excludes the filename itself)
+    if any(part in _TEST_DIR_NAMES for part in parts[:-1]):
+        return True
+    name = parts[-1].lower()
+    return any(name.endswith(s) for s in _TEST_BASENAME_SUFFIXES)
+
+
 def _iter_files(repo_path: Path, *suffixes: str) -> Generator[Path, None, None]:
-    """Yield files with any of the given suffixes, skipping common noise dirs."""
+    """Yield files with any of the given suffixes, skipping noise dirs and test files."""
     for p in repo_path.rglob("*"):
         if any(part in _SKIP_DIRS for part in p.parts):
             continue
-        if p.is_file() and p.suffix in suffixes:
+        if not (p.is_file() and p.suffix in suffixes):
+            continue
+        rel = str(p.relative_to(repo_path))
+        if not _is_test_file(rel):
             yield p
 
 
