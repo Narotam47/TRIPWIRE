@@ -1,0 +1,37 @@
+lang,bucket,planned,achieved,delta,pct_achieved,primary_ok,backup_same,backup_cross,unfilled,stratum_notes
+(undetected),10-49,1,0,-1,0.0,0,0,0,1,GitHub language undetected; 1 not_a_server (remote-hosted); no backup for undetected stratum
+(undetected),1000+,2,0,-2,0.0,0,0,0,2,GitHub language undetected; 2 not_a_server (curation lists awesome-mcp-servers ×2); no backup
+(undetected),200-999,1,0,-1,0.0,0,0,0,1,GitHub language undetected; 1 not_a_server (mcp-servers-hub curation list); no backup
+(undetected),50-199,1,0,-1,0.0,0,0,0,1,GitHub language undetected; 1 not_a_server (IBM/wxflows dynamic proxy); no backup
+Astro,50-199,1,0,-1,0.0,0,0,0,1,Single repo; not_a_server (tutorial blog misclassified as MCP server); no Astro backup
+C#,1000+,1,0,-1,0.0,0,0,0,1,Single repo; zero_tools_found; C# extractor not implemented; no C# backup exists
+C++,200-999,1,1,0,100.0,1,0,0,0,
+Dockerfile,10-49,1,0,-1,0.0,0,0,0,1,Single repo; not_a_server (remote-hosted service); no Dockerfile backup
+Go,10-49,1,1,0,100.0,1,0,0,0,
+Go,1000+,3,3,0,100.0,3,0,0,0,
+Go,200-999,2,2,0,100.0,2,0,0,0,
+Go,50-199,3,3,0,100.0,3,0,0,0,
+HTML,10-49,2,2,0,100.0,1,1,0,0,
+HTML,200-999,1,0,-1,0.0,0,0,0,1,Single repo (AI-QL/chat-mcp); not_a_server; no HTML/200-999 backup
+Haskell,50-199,1,0,-1,0.0,0,0,0,1,Single repo; not_a_server; no Haskell backup in pool
+JavaScript,10-49,20,20,0,100.0,20,0,0,0,
+JavaScript,1000+,4,4,0,100.0,3,0,1,0,1 slot(s) filled by cross-bucket backup within same language
+JavaScript,200-999,12,12,0,100.0,11,1,0,0,
+JavaScript,50-199,16,14,-2,87.5,13,1,0,2,"2 unfilled: 1 not_a_server (seekchat, backup also 0 tools), 1 zero_tools_found (ragie-mcp-server, backup also 0 tools); JS/50-199 backup pool consumed"
+Jupyter Notebook,10-49,2,2,0,100.0,1,1,0,0,
+Jupyter Notebook,1000+,1,1,0,100.0,1,0,0,0,
+Jupyter Notebook,200-999,1,1,0,100.0,1,0,0,0,
+Python,10-49,40,40,0,100.0,34,6,0,0,
+Python,1000+,19,19,0,100.0,14,5,0,0,
+Python,200-999,29,29,0,100.0,22,7,0,0,
+Python,50-199,42,42,0,100.0,36,6,0,0,
+Ruby,200-999,1,1,0,100.0,1,0,0,0,
+Rust,1000+,2,1,-1,50.0,1,0,0,1,Single repo (block/goose); clone_failed; only 1 Rust/1000+ backup existed and was consumed earlier
+Rust,200-999,2,2,0,100.0,2,0,0,0,
+Rust,50-199,1,1,0,100.0,1,0,0,0,
+Scala,10-49,1,1,0,100.0,1,0,0,0,
+TypeScript,10-49,42,42,0,100.0,29,7,6,0,10-49★ TS backup pool exhausted; 6 of 7 backup slots filled by cross-bucket TS repos (→50-199★ or higher)
+TypeScript,1000+,35,35,0,100.0,28,7,0,0,
+TypeScript,200-999,37,37,0,100.0,29,7,1,0,1 slot(s) filled by cross-bucket backup within same language
+TypeScript,50-199,50,47,-3,94.0,32,14,1,3,"3 unfilled (mcp-webcam zero_tools_found, neurosift not_a_server, tester-mcp-client not_a_server); TS/50-199 backup pool exhausted; 1 slot filled cross-bucket"
+VBScript,10-49,1,1,0,100.0,1,0,0,0,
