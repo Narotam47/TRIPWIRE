@@ -333,11 +333,28 @@ _TS_TOOL_CALL = re.compile(
     re.DOTALL,
 )
 
+# Bare registerTool(server, "name", "description", schema, handler)
+# Used by framework wrappers (e.g. cyanheads) that import registerTool as a
+# plain function rather than calling server.registerTool().
+_TS_BARE_REGISTERTOOL = re.compile(
+    r'\bregisterTool\s*\(\s*\w+\s*,\s*' + _STR + r'\s*,\s*' + _STR_D,
+    re.DOTALL,
+)
+
 # server.tool("name", {zodSchema | plainObj}, handler) — Pattern B
 # Fires when second arg starts with { or z. (Zod) instead of a string literal.
 # Captures only the tool name; description is left empty.
 _TS_TOOL_CALL_NAMEONLY = re.compile(
     r'server\.tool\s*\(\s*' + _STR + r'\s*,\s*(?=\{|z\.)',
+    re.DOTALL,
+)
+
+# Bare tool("name", { description, input }) — @cyanheads/mcp-ts-core and similar
+# framework core helpers exported as plain `tool` functions.
+# First tries to capture description; if description contains template literals
+# with interpolation the name-only fallback (group 1-3, desc groups empty) is used.
+_TS_CORE_TOOL = re.compile(
+    r'(?<!\w)tool\s*\(\s*' + _STR + r'\s*,\s*\{',
     re.DOTALL,
 )
 
@@ -586,6 +603,19 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
             extractor="ts-tool-call-nameonly",
         ))
 
+    # Pass 1c: bare tool("name", { description, input }) — @cyanheads/mcp-ts-core
+    #           and similar framework-exported `tool` factory functions.
+    for m in _TS_CORE_TOOL.finditer(src):
+        name = _first_group(m.group(1), m.group(2), m.group(3))
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        tools.append(LocatedTool(
+            tool_name=name, description="",
+            input_schema={}, source_file=rel_path,
+            extractor="ts-core-tool",
+        ))
+
     # Pass 3: {name: "...", description: "...", inputSchema: <any>}
     # inputSchema key existence is asserted but value is not captured — handles both
     # plain object literals and Zod calls (z.object({...})).
@@ -612,6 +642,21 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
     # Pass 6: setRequestHandler(ListToolsRequestSchema, ...) — old raw-SDK,
     #          tool list returned from handler body; resolves JS constants.
     tools += _extract_listtoolshandler(src, rel_path, seen)
+
+    # Pass 7: bare registerTool(server, "name", "description", ...) —
+    #          framework helpers that import registerTool as a plain function
+    #          (e.g. cyanheads-style wrapper modules).
+    for m in _TS_BARE_REGISTERTOOL.finditer(src):
+        name = _first_group(m.group(1), m.group(2), m.group(3))
+        desc = _first_group(m.group(4), m.group(5), m.group(6))
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        tools.append(LocatedTool(
+            tool_name=name, description=desc or "",
+            input_schema={}, source_file=rel_path,
+            extractor="ts-bare-registertool",
+        ))
 
     return tools
 
