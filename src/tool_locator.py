@@ -206,6 +206,52 @@ def _find_function_tool_registrations(tree: ast.Module) -> set[str]:
     return registered
 
 
+def _collect_programmatic_tool_calls(src: str) -> list[str]:
+    """
+    Find function names registered via mcp.tool()(func_name) patterns.
+    Matches any X.tool()(func) or tool()(func) call — programmatic decoration
+    used when tools are registered conditionally (e.g. read-only vs write mode).
+    """
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return []
+    names: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        # Outer call must have exactly one Name arg
+        if not (node.args and isinstance(node.args[0], ast.Name)):
+            continue
+        # Inner (func) must itself be a Call whose func is .tool or tool
+        if not isinstance(node.func, ast.Call):
+            continue
+        inner_func = node.func.func
+        is_tool = (
+            (isinstance(inner_func, ast.Attribute) and inner_func.attr == "tool") or
+            (isinstance(inner_func, ast.Name)      and inner_func.id  == "tool")
+        )
+        if is_tool:
+            names.append(node.args[0].id)
+    return names
+
+
+def _collect_function_docstrings(src: str) -> dict[str, str]:
+    """Map function_name -> first docstring found across all defs in source."""
+    try:
+        tree = ast.parse(src)
+    except SyntaxError:
+        return {}
+    result: dict[str, str] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            if node.name not in result:
+                doc = ast.get_docstring(node)
+                if doc:
+                    result[node.name] = doc
+    return result
+
+
 def extract_python(src: str, rel_path: str) -> list[LocatedTool]:
     tools: list[LocatedTool] = []
     try:
@@ -287,6 +333,14 @@ _TS_TOOL_CALL = re.compile(
     re.DOTALL,
 )
 
+# server.tool("name", {zodSchema | plainObj}, handler) — Pattern B
+# Fires when second arg starts with { or z. (Zod) instead of a string literal.
+# Captures only the tool name; description is left empty.
+_TS_TOOL_CALL_NAMEONLY = re.compile(
+    r'server\.tool\s*\(\s*' + _STR + r'\s*,\s*(?=\{|z\.)',
+    re.DOTALL,
+)
+
 # Factory wrappers: CreateXeroTool / CreateTool / makeTool / newTool / etc.
 _TS_FACTORY = re.compile(
     r'(?:create|Create|make|Make|new|New|define|Define|register|Register)'
@@ -294,9 +348,12 @@ _TS_FACTORY = re.compile(
     re.DOTALL,
 )
 
-# { name: "...", description: "...", inputSchema: { ... } }
+# { name: "...", description: "...", inputSchema: <anything> }
 # Supports all three quote styles for name and description.
-# inputSchema must be a literal object (function-call values handled by addTool pass).
+# inputSchema value may be a plain object literal, a Zod call (z.object({...})),
+# or any other expression — we only assert the key exists, not parse its value.
+# This covers: goalstory-style `inputSchema: z.object({...})` and branch-thinking-style
+# deeply-nested objects that exceed the old 3-level brace depth limit.
 _TS_TOOL_OBJ_NAME = r'(?:"([^"]+)"|\'([^\']+)\'|`([^`]+)`)'
 _TS_TOOL_OBJ_DESC = r'(?:"([^"]*?)"|\'([^\']*?)\'|`([^`]*?)`)'
 _TS_TOOL_OBJ = re.compile(
@@ -304,8 +361,7 @@ _TS_TOOL_OBJ = re.compile(
     + r'(?:[^{}]|\{[^{}]*\})*?'
     + r'description\s*:\s*' + _TS_TOOL_OBJ_DESC
     + r'(?:[^{}]|\{[^{}]*\})*?'
-    + r'inputSchema\s*:\s*'
-    + r'(\{(?:[^{}]|\{(?:[^{}]|\{[^{}]*\})*\})*\})',
+    + r'inputSchema\s*:',    # key existence only — value may be object, Zod call, etc.
     re.DOTALL,
 )
 
@@ -517,18 +573,31 @@ def extract_typescript(src: str, rel_path: str) -> list[LocatedTool]:
             extractor="ts-regex-factory",
         ))
 
-    # Pass 3: {name: "...", description: "...", inputSchema: {...}} objects
-    for m in _TS_TOOL_OBJ.finditer(src):
+    # Pass 1b: server.tool("name", {zodSchema | obj}, handler) — Pattern B
+    # No description available; records name only so the tool is not missed.
+    for m in _TS_TOOL_CALL_NAMEONLY.finditer(src):
         name = _first_group(m.group(1), m.group(2), m.group(3))
-        desc = _first_group(m.group(4), m.group(5), m.group(6))
-        schema_str = m.group(7) or "{}"
         if not name or name in seen:
             continue
         seen.add(name)
-        schema = _try_parse_json5(schema_str)
+        tools.append(LocatedTool(
+            tool_name=name, description="",
+            input_schema={}, source_file=rel_path,
+            extractor="ts-tool-call-nameonly",
+        ))
+
+    # Pass 3: {name: "...", description: "...", inputSchema: <any>}
+    # inputSchema key existence is asserted but value is not captured — handles both
+    # plain object literals and Zod calls (z.object({...})).
+    for m in _TS_TOOL_OBJ.finditer(src):
+        name = _first_group(m.group(1), m.group(2), m.group(3))
+        desc = _first_group(m.group(4), m.group(5), m.group(6))
+        if not name or name in seen:
+            continue
+        seen.add(name)
         tools.append(LocatedTool(
             tool_name=name, description=desc,
-            input_schema=schema, source_file=rel_path,
+            input_schema={}, source_file=rel_path,
             extractor="ts-regex-tool-object",
         ))
 
@@ -792,14 +861,38 @@ def locate_tools(repo_path: Path, language: str | None) -> list[LocatedTool]:
     tools: list[LocatedTool] = []
 
     if lang in ("python", "jupyter notebook", "jupyter"):
+        prog_funcs: list[str] = []          # mcp.tool()(func_name) registrations
+        func_docs:  dict[str, tuple[str, str]] = {}  # func_name -> (docstring, rel_path)
+
         for f in _iter_files(repo_path, ".py"):
             src = _safe_read(f)
-            if src:
-                tools += extract_python(src, _rel(f, repo_path))
+            if not src:
+                continue
+            tools += extract_python(src, _rel(f, repo_path))
+            # Collect programmatic registrations and all docstrings for cross-file lookup
+            prog_funcs += _collect_programmatic_tool_calls(src)
+            for fname, doc in _collect_function_docstrings(src).items():
+                if fname not in func_docs:
+                    func_docs[fname] = (doc, _rel(f, repo_path))
+
         for f in _iter_files(repo_path, ".ipynb"):
             src = _safe_read(f)
             if src:
                 tools += extract_jupyter(src, _rel(f, repo_path))
+
+        # Resolve mcp.tool()(func) registrations whose function may live in another file
+        if prog_funcs:
+            seen_prog = {t.tool_name for t in tools}
+            for func_name in prog_funcs:
+                if func_name in seen_prog or func_name not in func_docs:
+                    continue
+                doc, rel_path = func_docs[func_name]
+                seen_prog.add(func_name)
+                tools.append(LocatedTool(
+                    tool_name=func_name, description=doc,
+                    input_schema={}, source_file=rel_path,
+                    extractor="python-ast-mcp-tool-call",
+                ))
 
     elif lang in ("typescript", "javascript"):
         for f in _iter_files(repo_path, ".ts", ".tsx", ".js", ".mjs"):
