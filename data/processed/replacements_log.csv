@@ -1,0 +1,44 @@
+repo_url,language,star_bucket,replacement_reason,replacement_notes,replaced_by,server_signals,processed_at
+https://github.com/keboola/keboola-mcp-server,Python,50-199,parser_fixed,FunctionTool.from_function pattern added to Python extractor,,True,2026-06-26T00:00:00+00:00
+https://github.com/XeroAPI/xero-mcp-server,TypeScript,200-999,parser_fixed,CreateXeroTool factory + backtick template literal regex added,,True,2026-06-26T00:00:00+00:00
+https://github.com/elastic/mcp-server-elasticsearch,Rust,200-999,parser_fixed,Rust #[tool()] paren-balancer fixed for nested annotations(),,True,2026-06-26T00:00:00+00:00
+https://github.com/MindscapeHQ/mcp-server-raygun,(unknown),10-49,not_a_server,remote_hosted_server,,,2026-06-26T03:49:40.332587+00:00
+https://github.com/appcypher/awesome-mcp-servers,(unknown),1000+,not_a_server,curator_list,,,2026-06-26T03:49:41.254447+00:00
+https://github.com/punkpeye/awesome-mcp-servers,(unknown),1000+,not_a_server,curator_list,,,2026-06-26T03:49:42.270743+00:00
+https://github.com/apappascs/mcp-servers-hub,(unknown),200-999,not_a_server,,,False,2026-06-26T03:49:44.021270+00:00
+https://github.com/IBM/wxflows,(unknown),50-199,zero_tools_found,,,True,2026-06-26T03:49:46.837747+00:00
+https://github.com/jiangtao/blog,Astro,50-199,zero_tools_found,,,True,2026-06-26T03:49:58.705471+00:00
+https://github.com/justinpbarnett/unity-mcp,C#,1000+,zero_tools_found,,https://github.com/CoderGamester/mcp-unity,True,2026-06-26T03:50:02.815102+00:00
+https://github.com/CoderGamester/mcp-unity,C#,1000+,zero_tools_found,,,True,2026-06-26T03:50:04.933410+00:00
+https://github.com/explorium-ai/mcp-explorium,Dockerfile,10-49,not_a_server,remote_hosted_server,https://github.com/TaazKareem/clickup-mcp-server,,2026-06-26T03:50:09.962560+00:00
+https://github.com/TaazKareem/clickup-mcp-server,Dockerfile,10-49,zero_tools_found,,,True,2026-06-26T03:50:12.815504+00:00
+https://github.com/chaindead/telegram-mcp,Go,200-999,zero_tools_found,,https://github.com/strowk/mcp-k8s-go,True,2026-06-26T03:50:33.139969+00:00
+https://github.com/strowk/mcp-k8s-go,Go,200-999,zero_tools_found,,,True,2026-06-26T03:50:35.070650+00:00
+https://github.com/oschina/mcp-gitee,Go,50-199,zero_tools_found,,https://github.com/metoro-io/metoro-mcp-server,True,2026-06-26T03:50:49.257210+00:00
+https://github.com/metoro-io/metoro-mcp-server,Go,50-199,zero_tools_found,,,True,2026-06-26T03:50:50.816847+00:00
+https://github.com/worldnine/scrapbox-cosense-mcp,HTML,10-49,zero_tools_found,,https://github.com/Cam10001110101/mcp-server-obsidian-jsoncanvas,True,2026-06-26T03:50:55.921836+00:00
+https://github.com/AI-QL/chat-mcp,HTML,200-999,not_a_server,,,False,2026-06-26T03:50:59.170323+00:00
+https://github.com/hungryrobot1/MCP-PIF,Haskell,50-199,not_a_server,,,False,2026-06-26T03:51:00.579621+00:00
+https://github.com/kazuph/mcp-fetch,JavaScript,10-49,zero_tools_found,,https://github.com/wrediam/coolify-mcp-server,True,2026-06-26T03:51:29.122530+00:00
+https://github.com/kazuph/mcp-screenshot,JavaScript,10-49,zero_tools_found,,https://github.com/idoru/influxdb-mcp-server,True,2026-06-26T03:51:33.639739+00:00
+https://github.com/DMontgomery40/meta-mcp-server,JavaScript,10-49,zero_tools_found,,https://github.com/peancor/moodle-mcp-server,True,2026-06-26T03:51:38.173946+00:00
+https://github.com/mendableai/firecrawl-mcp-server,JavaScript,1000+,zero_tools_found,,https://github.com/vrknetha/mcp-server-firecrawl,True,2026-06-26T03:51:42.874533+00:00
+https://github.com/vrknetha/mcp-server-firecrawl,JavaScript,1000+,zero_tools_found,,,True,2026-06-26T03:51:44.743139+00:00
+https://github.com/benborla/mcp-server-mysql,JavaScript,1000+,zero_tools_found,,https://github.com/DMontgomery40/mcp-3D-printer-server,True,2026-06-26T03:51:56.693458+00:00
+https://github.com/angiejones/mcp-selenium,JavaScript,200-999,zero_tools_found,,https://github.com/JetBrains/mcp-jetbrains,True,2026-06-26T03:52:05.365217+00:00
+https://github.com/JetBrains/mcp-jetbrains,JavaScript,200-999,not_a_server,,,False,2026-06-26T03:52:06.831517+00:00
+https://github.com/ravitemer/mcp-hub,JavaScript,200-999,zero_tools_found,,https://github.com/jasonjmcghee/WebMCP,True,2026-06-26T03:52:12.993665+00:00
+https://github.com/seekrays/seekchat,JavaScript,50-199,not_a_server,,https://github.com/dkmaker/mcp-rest-api,False,2026-06-26T03:52:32.719723+00:00
+https://github.com/dkmaker/mcp-rest-api,JavaScript,50-199,not_a_server,,,False,2026-06-26T03:52:34.242227+00:00
+https://github.com/inkdropapp/mcp-server,JavaScript,50-199,zero_tools_found,,https://github.com/66julienmartin/MCP-server-Deepseek_R1,True,2026-06-26T03:52:40.526592+00:00
+https://github.com/mcpdotdirect/template-mcp-server,JavaScript,50-199,zero_tools_found,,https://github.com/George5562/Jira-MCP-Server,True,2026-06-26T03:52:49.232299+00:00
+https://github.com/George5562/Jira-MCP-Server,JavaScript,50-199,zero_tools_found,,,True,2026-06-26T03:52:50.551146+00:00
+https://github.com/tinyfish-io/agentql-mcp,JavaScript,50-199,zero_tools_found,,https://github.com/rtuin/mcp-mermaid-validator,True,2026-06-26T03:52:53.595756+00:00
+https://github.com/wooorm/npm-high-impact,JavaScript,50-199,not_a_server,,https://github.com/gotohuman/gotohuman-mcp-server,False,2026-06-26T03:52:56.652257+00:00
+https://github.com/ragieai/ragie-mcp-server,JavaScript,50-199,zero_tools_found,,https://github.com/wong2/mcp-cli,True,2026-06-26T03:52:59.403780+00:00
+https://github.com/wong2/mcp-cli,JavaScript,200-999,zero_tools_found,,,True,2026-06-26T03:53:00.752823+00:00
+https://github.com/kimtth/azure-openai-cookbook,Jupyter Notebook,10-49,clone_failed,,https://github.com/Unstructured-IO/UNS-MCP,,2026-06-26T03:55:02.716364+00:00
+https://github.com/singlestore-labs/mcp-server-singlestore,Python,10-49,zero_tools_found,,https://github.com/zenml-io/mcp-zenml,True,2026-06-26T03:56:37.312144+00:00
+https://github.com/Fibery-inc/fibery-mcp-server,Python,10-49,zero_tools_found,,https://github.com/Tomatio13/mcp-server-tavily,True,2026-06-26T03:56:48.414421+00:00
+https://github.com/yangkyeongmo/mcp-server-openmetadata,Python,10-49,zero_tools_found,,https://github.com/hdresearch/mcp-python,True,2026-06-26T03:57:14.648535+00:00
+https://github.com/DTeam-Top/tsw-cli,Python,10-49,zero_tools_found,,https://github.com/esignaturescom/mcp-server-esignatures,True,2026-06-26T03:57:20.418507+00:00

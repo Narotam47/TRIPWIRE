@@ -414,16 +414,12 @@ def extract_go(src: str, rel_path: str) -> list[LocatedTool]:
     return tools
 
 
-# ── Rust extractor (regex) ────────────────────────────────────────────────────
+# ── Rust extractor ────────────────────────────────────────────────────────────
 
-# #[tool(description = "...")]
-# (pub)? (async)? fn name(
-_RUST_TOOL_ATTR = re.compile(
-    r'#\[tool\s*\([^)]*description\s*=\s*"([^"]*)"[^)]*\)\]'
-    r'[\s\S]{0,200}?'
-    r'(?:pub\s+)?(?:async\s+)?fn\s+(\w+)\s*\(',
-    re.DOTALL,
-)
+# Regex finding the start of a tool attribute (not _router/_handler)
+_RUST_TOOL_ATTR_START = re.compile(r'#\[tool\s*\(')
+_RUST_DESC_IN_ATTR    = re.compile(r'description\s*=\s*"([^"]*)"')
+_RUST_FN_AFTER_ATTR   = re.compile(r'(?:pub\s+)?(?:async\s+)?fn\s+(\w+)\s*[<(]')
 
 # Tool::new("name").description("desc")
 _RUST_TOOL_BUILDER = re.compile(
@@ -433,21 +429,59 @@ _RUST_TOOL_BUILDER = re.compile(
 )
 
 
+def _rust_attr_body(src: str, open_pos: int) -> tuple[str, int]:
+    """
+    Starting just after the opening '(' of a Rust attribute, balance
+    parentheses while respecting string literals, and return
+    (content_inside_parens, position_after_closing_paren).
+    """
+    depth = 1
+    pos = open_pos
+    n = len(src)
+    while pos < n and depth > 0:
+        c = src[pos]
+        if c == '(':
+            depth += 1
+        elif c == ')':
+            depth -= 1
+        elif c == '"':
+            pos += 1
+            while pos < n:
+                if src[pos] == '\\':
+                    pos += 1          # skip escaped char
+                elif src[pos] == '"':
+                    break
+                pos += 1
+        pos += 1
+    return src[open_pos : pos - 1], pos
+
+
 def extract_rust(src: str, rel_path: str) -> list[LocatedTool]:
     tools: list[LocatedTool] = []
     seen: set[str] = set()
 
-    for m in _RUST_TOOL_ATTR.finditer(src):
-        desc, name = m.group(1), m.group(2)
-        if name in seen:
+    # Pass 1: #[tool(description = "...", ...)] attribute macros
+    # Uses paren-balancing to handle nested attributes like annotations(...).
+    for start_m in _RUST_TOOL_ATTR_START.finditer(src):
+        attr_content, after_pos = _rust_attr_body(src, start_m.end())
+        desc_m = _RUST_DESC_IN_ATTR.search(attr_content)
+        if not desc_m:
             continue
-        seen.add(name)
+        desc = desc_m.group(1)
+        fn_m = _RUST_FN_AFTER_ATTR.search(src, after_pos, after_pos + 600)
+        if not fn_m:
+            continue
+        fn_name = fn_m.group(1)
+        if fn_name in seen:
+            continue
+        seen.add(fn_name)
         tools.append(LocatedTool(
-            tool_name=name, description=desc,
+            tool_name=fn_name, description=desc,
             input_schema={}, source_file=rel_path,
-            extractor="rust-regex-tool-attr",
+            extractor="rust-attr-macro",
         ))
 
+    # Pass 2: Tool::new("name").description("desc") builder pattern
     for m in _RUST_TOOL_BUILDER.finditer(src):
         name, desc = m.group(1), m.group(2)
         if name in seen:
@@ -456,7 +490,7 @@ def extract_rust(src: str, rel_path: str) -> list[LocatedTool]:
         tools.append(LocatedTool(
             tool_name=name, description=desc,
             input_schema={}, source_file=rel_path,
-            extractor="rust-regex-tool-builder",
+            extractor="rust-tool-builder",
         ))
 
     return tools
