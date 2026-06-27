@@ -12,10 +12,16 @@ happens in real, deployed MCP servers.
 
 1. **Git-history mining** — reconstruct per-tool definition changes from the
    full commit history of public MCP server repositories.
-2. **Live-polling arm** — weekly snapshots of hosted MCP servers to catch
-   behavioral drift that never surfaces in public repos.
-3. **Agentic behavioral validation** — run real before/after definition pairs
+2. **Agentic behavioral validation** — run real before/after definition pairs
    through a live AI agent (Anthropic API) and measure decision change.
+
+> **Considered but not pursued (future work):** A live-polling arm — weekly
+> snapshots of hosted MCP servers — was scoped but not built due to project
+> timeline constraints. The git-history-mining approach (Phase 1–4) captures
+> the large majority of drift; live-polling would additionally catch
+> undisclosed runtime-only changes never committed to a public repo, a
+> narrower blind spot left as future work. No live-polling code or data is
+> committed to this repository.
 
 Related papers used as sample-frame sources:
 - arXiv:2509.25292 — MCPCrawler dataset
@@ -28,7 +34,7 @@ mcp-drift-study/
   data/
     raw/          # Unmodified inputs: seed repo lists, raw API responses
     processed/    # Parsed, normalized data ready for analysis
-    snapshots/    # Point-in-time live-poll snapshots
+    snapshots/    # Reserved for the unbuilt live-poll arm (see Research design); currently empty
   src/            # Importable library modules
   scripts/        # Runnable pipeline scripts (one task each)
   notebooks/      # Exploratory analysis and figures
@@ -132,7 +138,7 @@ pytest tests/ -v
 
 ## Limitations and threats to validity
 
-- Git-history mining cannot observe changes to hosted (non-open-source) MCP servers.
-- Live-polling arm only covers servers reachable without authentication.
+- Git-history mining cannot observe changes to hosted (non-open-source) MCP servers;
+  the live-polling arm that would have addressed this was not built (see Research design).
 - LLM-jury classification is validated against a human-labeled sample (Cohen's κ
   reported); ground truth for "security-relevant" is inherently judgment-dependent.

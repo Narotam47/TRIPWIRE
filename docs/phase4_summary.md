@@ -32,6 +32,15 @@ Walk success rate: **276 / 280 = 98.6%**.
 > **Tool-level change rate: 84.1% (4,023 / 4,784)**  
 > 84.1% of tracked tool definitions changed at least once during their observable history.
 
+> **Note on the 4,023 count:** This figure (derived from the diff engine's
+> `drift_event` grouping) includes 9 tools whose only detected "change" is the L7
+> same-SHA artifact (a tool defined in multiple source files at the same commit —
+> a spatial, not temporal, difference; see §5 L7). Counting unique commit SHAs per
+> tool in the history walk instead yields 4,014 genuinely-changed tools, i.e.
+> **83.9% (4,014 / 4,784)**. **84.1% remains the reported headline figure**; the
+> 9-tool effect is negligible (0.2 percentage points) and does not affect any
+> downstream finding.
+
 ### Repo-level change rate
 
 - 266 of 276 walked repos had at least one tool definition change: **96.4%**.
@@ -55,6 +64,18 @@ pairs within a `(repo_url, tool_name)` group, sorted chronologically.
 ### Change breakdown
 
 Of the 42,969 drift events:
+
+**Definition note — what counts toward "valid temporal change events":** The "≥1
+detected change (raw)" row and the resulting **2,481 valid temporal change events**
+count only events with a **content change** — a description change or a schema change
+(fields added/removed, type changes). Events whose *only* detected change is
+`source_file_changed = True` (a file move/rename with no accompanying change to the
+description or schema) are **excluded**, because a pure relocation of an unchanged
+definition is not a temporal change to the tool itself. The `source_file_changed`
+row (968) is therefore listed in the table for completeness but is **not additive**
+to the 2,548 raw / 2,481 valid totals; the 2,548 figure is the union of the first
+four rows only, after which 67 degenerate same-SHA records (§5 L7) are removed to
+reach 2,481.
 
 | Change type | Events | % of drift_events |
 |---|---|---|
@@ -304,9 +325,12 @@ Fleiss' Kappa. Requires `scikit-learn`.
 
 - [x] Pass 2 bias fix implemented and validated
 - [x] 75-event human validation sample generated and machine-classified
-- [ ] Human labels (pending — user hand-labeling)
-- [ ] Kappa computation (pending — after human labels returned)
-- [ ] Full 2,481-event classification run (pending — after Kappa confirms acceptability)
+- [x] Human labels complete (74 hand-labeled; E074 excluded as L7 cross-file artifact)
+- [x] Kappa computation complete (Human/P1 κ=0.605, Human/P2 κ=0.638, P1/P2 κ=0.826, Fleiss κ=0.687)
+- [x] Full 2,481-event classification run complete (0 errors, 87.7% pass agreement)
+
+> Phase 5 and Phase 6 are both complete. See [`docs/phase5_summary.md`](phase5_summary.md)
+> and [`docs/phase6_summary.md`](phase6_summary.md) for final results.
 
 ---
 

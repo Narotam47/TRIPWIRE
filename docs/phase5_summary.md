@@ -436,5 +436,5 @@ Tutorial and educational repositories (e.g., `mahm/softwaredesign-llm-applicatio
 - [x] Full 2,481-event classification run complete (2,481 events, 0 errors, 87.7% pass agreement)
 - [x] BEHAVIORAL_DRIFT headline decided: 309 conservative / 474 best estimate (range 309–474, P2=474 recommended)
 - [x] 9-event follow-up review: 6/8 support P2 on desc-only boundary; archive_gist excluded as truncation artifact
-- [ ] Cross-tabulation by repo star tier, language, and repo type
-- [ ] Phase 4 summary §6 updated to reflect final classifier status
+- [x] Cross-tabulation by repo star tier, language, and repo type (see §4)
+- [x] Phase 4 summary §6 updated to reflect final classifier status

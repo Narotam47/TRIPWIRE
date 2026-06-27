@@ -11,8 +11,8 @@
 Phase 6 tests whether the BEHAVIORAL_DRIFT events identified by the Phase 5 classifier produce measurable differences in how an LLM agent actually behaves when given only a tool's before- or after-drift definition. Fifteen candidate events were selected from the 309-event conservative set (both classifier passes agree on BEHAVIORAL_DRIFT), run against a single-turn agent harness at temperature=0 with 3 independent replications per side.
 
 **Findings:**
-- **13/15 cases showed a stable, reproducible behavioral difference** between the before and after tool definition.
-- **2/15 showed no behavioral difference** (slots 15 and, confirmed, slot 11 at temperature=1 only — reversed at temperature=0).
+- **14/15 cases showed a stable, reproducible behavioral difference** between the before and after tool definition.
+- **1/15 showed no behavioral difference** (slot 15, chroma_list_collections). Slot 11 showed no difference in the discarded temperature=1 pilot, but the temperature=0 3×-replicated re-run reversed that finding — slot 11 is a behavioral-difference case under the final protocol and is counted among the 14.
 - **0/15 were unstable** across the three replications at temperature=0.
 
 The dominant finding categories are: silent false-success reporting, security/authentication parameter ambiguity, constraint removal permitting invalid calls, and silent correctness failures from parameter guessing or silent dropping.
@@ -133,7 +133,7 @@ All 15 slots were stable across all 3 runs at temperature=0. No case showed with
 
 ## 4. Taxonomy of Consequence
 
-The 13 behavioral-difference cases fall into four categories, ordered by operational severity.
+The 14 behavioral-difference cases fall into four categories, ordered by operational severity.
 
 ### Category 1 — Silent false-success reporting
 
