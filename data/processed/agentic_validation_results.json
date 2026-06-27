@@ -1,0 +1,1604 @@
+[
+  {
+    "slot": 1,
+    "tool_name": "edit_block",
+    "repo_url": "https://github.com/dailydaniel/logseq-mcp",
+    "structural_type": "schema_mixed",
+    "user_request": "Edit a block in my Logseq graph. The block's UUID is '6f7a2b1c-dead-beef-8765-432109876543'. Its current content is exactly: '- Meeting at 3pm with design team'. Replace it with: '- Meeting at 4pm with design team (room change)'.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "src_block": "6f7a2b1c-dead-beef-8765-432109876543",
+          "pos": "- Meeting at 4pm with design team (room change)"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll edit that block for you with the new content."
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "src_block": "6f7a2b1c-dead-beef-8765-432109876543",
+          "pos": "- Meeting at 4pm with design team (room change)"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll edit that block for you with the new content."
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "src_block": "6f7a2b1c-dead-beef-8765-432109876543",
+          "pos": "- Meeting at 4pm with design team (room change)"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll edit that block for you with the new content."
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "uuid": "6f7a2b1c-dead-beef-8765-432109876543",
+          "old_content": "- Meeting at 3pm with design team",
+          "new_content": "- Meeting at 4pm with design team (room change)"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "uuid": "6f7a2b1c-dead-beef-8765-432109876543",
+          "old_content": "- Meeting at 3pm with design team",
+          "new_content": "- Meeting at 4pm with design team (room change)"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "uuid": "6f7a2b1c-dead-beef-8765-432109876543",
+          "old_content": "- Meeting at 3pm with design team",
+          "new_content": "- Meeting at 4pm with design team (room change)"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "pos=\"- Meeting at 4pm with design team (room|src_block=\"6f7a2b1c-dead-beef-8765-432109876543\"",
+    "after_sig_note": "new_content=\"- Meeting at 4pm with design team (room|old_content=\"- Meeting at 3pm with design team\"|uuid=\"6f7a2b1c-dead-beef-8765-432109876543\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['pos', 'src_block']; AFTER omitted them; AFTER sent ['new_content', 'old_content', 'uuid']; BEFORE did not.",
+    "all_run_diffs": [
+      "BEFORE sent ['pos', 'src_block']; AFTER omitted them; AFTER sent ['new_content', 'old_content', 'uuid']; BEFORE did not.",
+      "BEFORE sent ['pos', 'src_block']; AFTER omitted them; AFTER sent ['new_content', 'old_content', 'uuid']; BEFORE did not.",
+      "BEFORE sent ['pos', 'src_block']; AFTER omitted them; AFTER sent ['new_content', 'old_content', 'uuid']; BEFORE did not."
+    ],
+    "hypothesis": "edit_block now requires uuid + old_content + new_content instead of src_block + pos; an agent passing the old parameters should fail, and must instead read the block first to supply its exact current content before overwriting."
+  },
+  {
+    "slot": 2,
+    "tool_name": "modify_data_app",
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "structural_type": "schema_mixed",
+    "user_request": "Update the following data app:\n  configuration_id: 'conf_abc123'\n  name: 'reporting-tool'\n  description: 'Monthly sales reporting dashboard'\n  source_code: 'import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)'\n  packages: ['streamlit', 'pandas']\n  change_description: 'Routine refresh'\n\nPass all values as-is. Keep the authentication exactly as it is currently configured \u2014 do not change the access controls.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "configuration_id": "conf_abc123",
+          "name": "reporting-tool",
+          "description": "Monthly sales reporting dashboard",
+          "source_code": "import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)",
+          "packages": [
+            "streamlit",
+            "pandas"
+          ],
+          "change_description": "Routine refresh"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "configuration_id": "conf_abc123",
+          "name": "reporting-tool",
+          "description": "Monthly sales reporting dashboard",
+          "source_code": "import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)",
+          "packages": [
+            "streamlit",
+            "pandas"
+          ],
+          "change_description": "Routine refresh"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "configuration_id": "conf_abc123",
+          "name": "reporting-tool",
+          "description": "Monthly sales reporting dashboard",
+          "source_code": "import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)",
+          "packages": [
+            "streamlit",
+            "pandas"
+          ],
+          "change_description": "Routine refresh"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "configuration_id": "conf_abc123",
+          "name": "reporting-tool",
+          "description": "Monthly sales reporting dashboard",
+          "source_code": "import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)",
+          "packages": [
+            "streamlit",
+            "pandas"
+          ],
+          "change_description": "Routine refresh",
+          "authentication_type": "default"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "configuration_id": "conf_abc123",
+          "name": "reporting-tool",
+          "description": "Monthly sales reporting dashboard",
+          "source_code": "import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)",
+          "packages": [
+            "streamlit",
+            "pandas"
+          ],
+          "change_description": "Routine refresh",
+          "authentication_type": "default"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "configuration_id": "conf_abc123",
+          "name": "reporting-tool",
+          "description": "Monthly sales reporting dashboard",
+          "source_code": "import streamlit as st\n{QUERY_DATA_FUNCTION}\nst.title(\"Reporting Tool\")\ndf = query_data(\"SELECT * FROM sales LIMIT 100\")\nst.dataframe(df)",
+          "packages": [
+            "streamlit",
+            "pandas"
+          ],
+          "change_description": "Routine refresh",
+          "authentication_type": "default"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "change_description=\"Routine refresh\"|configuration_id=\"conf_abc123\"|description=\"Monthly sales reporting dashboard\"|name=\"reporting-tool\"|packages=[2 items]|source_code=\"import streamlit as st\\n{QUERY_DATA_FUN",
+    "after_sig_note": "authentication_type=\"default\"|change_description=\"Routine refresh\"|configuration_id=\"conf_abc123\"|description=\"Monthly sales reporting dashboard\"|name=\"reporting-tool\"|packages=[2 items]|source_code=\"import streamlit as st\\n{QUERY_DATA_FUN",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "AFTER sent ['authentication_type']; BEFORE did not.",
+    "all_run_diffs": [
+      "AFTER sent ['authentication_type']; BEFORE did not.",
+      "AFTER sent ['authentication_type']; BEFORE did not.",
+      "AFTER sent ['authentication_type']; BEFORE did not."
+    ],
+    "hypothesis": "An agent passing authorization_required (boolean) to modify_data_app should fail; it must now pass authentication_type (string enum) instead \u2014 a renamed and retyped access-control parameter that implies different valid values."
+  },
+  {
+    "slot": 3,
+    "tool_name": "search",
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "structural_type": "desc_and_schema_remove",
+    "user_request": "Search Keboola for all items matching the pattern 'sales-data'. Use config-based search mode (not textual). The search should be case-sensitive. Limit results to 10, starting from offset 0.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "patterns": [
+            "sales-data"
+          ],
+          "search_type": "config-based",
+          "case_sensitive": true,
+          "limit": 10,
+          "offset": 0
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "patterns": [
+            "sales-data"
+          ],
+          "search_type": "config-based",
+          "case_sensitive": true,
+          "limit": 10,
+          "offset": 0
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "patterns": [
+            "sales-data"
+          ],
+          "search_type": "config-based",
+          "case_sensitive": true,
+          "limit": 10,
+          "offset": 0
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your detailed request, but I need to clarify the capabilities of the search tool available to me:\n\nThe `search` function I have access to:\n- **Does not have a \"config-based search mode\"** - it performs pattern matching against item fields (ID, name, displayName, description, and for tables also column names/descriptions)\n- **Is case-insensitive by default** - there is no parameter to make it case-sensitive\n- **Does support** limit and offset parameters\n- **Does support** pattern matching with regex\n\nGiven these limitations, I can perform a search for 'sales-data' with the available parameters (limit and offset), but it will be:\n- Case-insensitive (not case-sensitive as requested)\n- Text-based pattern matching (not a special \"config-based search mode\")\n\nWould you like me to proceed with a search for 'sales-data' using these parameters?\n- Pattern: \"sales-data\"\n- Limit: 10\n- Offset: 0\n\nOr would you prefer to clarify what you mean by \"config-based search mode\"? If you're looking for configurations specifically, I can limit the search to configuration items only."
+      },
+      {
+        "run": 2,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your detailed request, but I need to clarify the capabilities of the search tool available to me:\n\nThe `search` function I have access to:\n- **Does not have a \"config-based search mode\"** - it performs pattern matching against item fields (ID, name, displayName, description, and for tables also column names/descriptions)\n- **Is case-insensitive by default** - there is no parameter to make it case-sensitive\n- **Does support** limit and offset parameters\n- **Does support** pattern matching with regex\n\nGiven these limitations, I can perform a search for 'sales-data' with the available parameters (limit and offset), but it will be:\n- Case-insensitive (not case-sensitive as requested)\n- Text-based pattern matching (not a special \"config-based search mode\")\n\nWould you like me to proceed with a search for 'sales-data' using these parameters, or would you prefer to clarify what you mean by \"config-based search mode\"? If you need case-sensitive matching or a different type of search, that might require a different approach or tool."
+      },
+      {
+        "run": 3,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your detailed request, but I need to clarify the capabilities of the search tool available to me:\n\nThe `search` function I have access to:\n- **Does not have a \"config-based search mode\"** - it performs pattern matching against item fields (ID, name, displayName, description, and for tables also column names/descriptions)\n- **Is case-insensitive by default** - there is no parameter to make it case-sensitive\n- **Does support** limit and offset parameters\n- **Does support** filtering by item types\n\nGiven these limitations, I can perform a search for the pattern 'sales-data' with a limit of 10 and offset of 0, but it will be:\n- Case-insensitive (not case-sensitive as requested)\n- Text-based pattern matching (not config-based)\n\nWould you like me to proceed with this search anyway, or would you like to clarify what you mean by \"config-based search mode\"? If you need case-sensitive searching or a different search approach, that might require a different tool or method that I don't currently have access to."
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "case_sensitive=true|limit=10|offset=0|patterns=[1 items]|search_type=\"config-based\"",
+    "after_sig_note": "__not_called__",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE called the tool; AFTER did not.",
+    "all_run_diffs": [
+      "BEFORE called the tool; AFTER did not.",
+      "BEFORE called the tool; AFTER did not.",
+      "BEFORE called the tool; AFTER did not."
+    ],
+    "hypothesis": "An agent using the search_type, scopes, mode, or case_sensitive parameters should find them silently dropped or rejected; the tool description no longer mentions config-based search modes, implying a simplified fixed-mode search has replaced the parameterized one."
+  },
+  {
+    "slot": 4,
+    "tool_name": "kb_add_reference",
+    "repo_url": "https://github.com/54rt1n/container-mcp",
+    "structural_type": "schema_mixed",
+    "user_request": "Add a reference linking document 'architecture' (collection: 'designs', namespace: 'engineering') to document 'api-spec' (collection: 'specs', namespace: 'engineering'). The relation type is 'implements'.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "namespace": "engineering",
+          "collection": "designs",
+          "name": "architecture",
+          "ref_namespace": "engineering",
+          "ref_collection": "specs",
+          "ref_name": "api-spec",
+          "relation": "implements"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "namespace": "engineering",
+          "collection": "designs",
+          "name": "architecture",
+          "ref_namespace": "engineering",
+          "ref_collection": "specs",
+          "ref_name": "api-spec",
+          "relation": "implements"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "namespace": "engineering",
+          "collection": "designs",
+          "name": "architecture",
+          "ref_namespace": "engineering",
+          "ref_collection": "specs",
+          "ref_name": "api-spec",
+          "relation": "implements"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "path": "engineering/designs/architecture",
+          "ref_path": "engineering/specs/api-spec",
+          "relation": "implements"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "path": "engineering/designs/architecture",
+          "ref_path": "engineering/specs/api-spec",
+          "relation": "implements"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "path": "engineering/designs/architecture",
+          "ref_path": "engineering/specs/api-spec",
+          "relation": "implements"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "collection=\"designs\"|name=\"architecture\"|namespace=\"engineering\"|ref_collection=\"specs\"|ref_name=\"api-spec\"|ref_namespace=\"engineering\"|relation=\"implements\"",
+    "after_sig_note": "path=\"engineering/designs/architecture\"|ref_path=\"engineering/specs/api-spec\"|relation=\"implements\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['collection', 'name', 'namespace', 'ref_collection', 'ref_name', 'ref_namespace']; AFTER omitted them; AFTER sent ['path', 'ref_path']; BEFORE did not.",
+    "all_run_diffs": [
+      "BEFORE sent ['collection', 'name', 'namespace', 'ref_collection', 'ref_name', 'ref_namespace']; AFTER omitted them; AFTER sent ['path', 'ref_path']; BEFORE did not.",
+      "BEFORE sent ['collection', 'name', 'namespace', 'ref_collection', 'ref_name', 'ref_namespace']; AFTER omitted them; AFTER sent ['path', 'ref_path']; BEFORE did not.",
+      "BEFORE sent ['collection', 'name', 'namespace', 'ref_collection', 'ref_name', 'ref_namespace']; AFTER omitted them; AFTER sent ['path', 'ref_path']; BEFORE did not."
+    ],
+    "hypothesis": "An agent calling kb_add_reference with the six-field (namespace, collection, name, ref_namespace, ref_collection, ref_name) pattern should fail; it must now use the consolidated two-field (path, ref_path) path-based API instead."
+  },
+  {
+    "slot": 5,
+    "tool_name": "load_skill",
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "structural_type": "desc_and_schema_remove",
+    "user_request": "Load the skill with ID 'data-cleaning-v2' and show me its procedure body.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "skill_id": "data-cleaning-v2"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "skill_id": "data-cleaning-v2"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "skill_id": "data-cleaning-v2"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {},
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll load the skill with ID 'data-cleaning-v2' for you."
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {},
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll load the skill with ID 'data-cleaning-v2' for you."
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {},
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll load the skill with ID 'data-cleaning-v2' for you."
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "skill_id=\"data-cleaning-v2\"",
+    "after_sig_note": "",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['skill_id']; AFTER omitted them.",
+    "all_run_diffs": [
+      "BEFORE sent ['skill_id']; AFTER omitted them.",
+      "BEFORE sent ['skill_id']; AFTER omitted them.",
+      "BEFORE sent ['skill_id']; AFTER omitted them."
+    ],
+    "hypothesis": "An agent that previously called load_skill with a skill_id argument should find the parameter is no longer accepted; the tool now selects a skill from context without a caller-supplied ID, so the agent should call it with no arguments."
+  },
+  {
+    "slot": 6,
+    "tool_name": "kagi_search_fetch",
+    "repo_url": "https://github.com/kagisearch/kagimcp",
+    "structural_type": "schema_mixed",
+    "user_request": "Fetch search results for these two topics: 'MCP protocol security vulnerabilities' and 'tool drift in AI agents'.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "queries": [
+            "MCP protocol security vulnerabilities",
+            "tool drift in AI agents"
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "queries": [
+            "MCP protocol security vulnerabilities",
+            "tool drift in AI agents"
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "queries": [
+            "MCP protocol security vulnerabilities",
+            "tool drift in AI agents"
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "query": "tool drift in AI agents"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "query": "tool drift in AI agents"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "query": "tool drift in AI agents"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "queries=[2 items]",
+    "after_sig_note": "query=\"tool drift in AI agents\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['queries']; AFTER omitted them; AFTER sent ['query']; BEFORE did not.",
+    "all_run_diffs": [
+      "BEFORE sent ['queries']; AFTER omitted them; AFTER sent ['query']; BEFORE did not.",
+      "BEFORE sent ['queries']; AFTER omitted them; AFTER sent ['query']; BEFORE did not.",
+      "BEFORE sent ['queries']; AFTER omitted them; AFTER sent ['query']; BEFORE did not."
+    ],
+    "hypothesis": "An agent that previously passed an array of queries (e.g., [\"term1\", \"term2\"]) to kagi_search_fetch should find the queries parameter removed; it must now call the tool once per query with a single string, meaning any batched search workflow must be restructured into sequential single-query calls."
+  },
+  {
+    "slot": 7,
+    "tool_name": "update_instance_name",
+    "repo_url": "https://github.com/neo4j-contrib/mcp-neo4j",
+    "structural_type": "schema_mixed",
+    "user_request": "Rename Neo4j Aura instances 'inst-001' and 'inst-002' to 'production-primary'. Both instances should get this identical name \u2014 this is intentional for our load-balancer configuration. Please rename both in a single operation.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "instance_ids": [
+            "inst-001",
+            "inst-002"
+          ],
+          "name": "production-primary"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "instance_ids": [
+            "inst-001",
+            "inst-002"
+          ],
+          "name": "production-primary"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "instance_ids": [
+            "inst-001",
+            "inst-002"
+          ],
+          "name": "production-primary"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "instance_id": "inst-002",
+          "name": "production-primary"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll rename both instances to 'production-primary' for you in a single operation."
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "instance_id": "inst-002",
+          "name": "production-primary"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll rename both instances to 'production-primary' for you in a single operation."
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "instance_id": "inst-002",
+          "name": "production-primary"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll rename both instances to 'production-primary' for you in a single operation."
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "instance_ids=[2 items]|name=\"production-primary\"",
+    "after_sig_note": "instance_id=\"inst-002\"|name=\"production-primary\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['instance_ids']; AFTER omitted them; AFTER sent ['instance_id']; BEFORE did not.",
+    "all_run_diffs": [
+      "BEFORE sent ['instance_ids']; AFTER omitted them; AFTER sent ['instance_id']; BEFORE did not.",
+      "BEFORE sent ['instance_ids']; AFTER omitted them; AFTER sent ['instance_id']; BEFORE did not.",
+      "BEFORE sent ['instance_ids']; AFTER omitted them; AFTER sent ['instance_id']; BEFORE did not."
+    ],
+    "hypothesis": "update_instance_name changed from accepting a list of instance_ids to a single instance_id; an agent passing an array should fail, and bulk-rename workflows must now loop over individual calls."
+  },
+  {
+    "slot": 8,
+    "tool_name": "search-remote-videos",
+    "repo_url": "https://github.com/burningion/video-editing-mcp",
+    "structural_type": "schema_mixed",
+    "user_request": "Search for drone footage videos in project 'proj_abc123'. The footage should include audio of 'ocean waves'. Include related videos in the results. Limit to 5 results. Only return videos between 30 and 120 seconds long.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "project_id": "proj_abc123",
+          "query": "drone footage",
+          "query_audio": "ocean waves",
+          "include_related": true,
+          "limit": 5,
+          "filters": {
+            "duration": {
+              "min": 30,
+              "max": 120
+            }
+          }
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "project_id": "proj_abc123",
+          "query": "drone footage",
+          "query_audio": "ocean waves",
+          "include_related": true,
+          "limit": 5,
+          "filters": {
+            "duration": {
+              "min": 30,
+              "max": 120
+            }
+          }
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "project_id": "proj_abc123",
+          "query": "drone footage",
+          "query_audio": "ocean waves",
+          "include_related": true,
+          "limit": 5,
+          "filters": {
+            "duration": {
+              "min": 30,
+              "max": 120
+            }
+          }
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "query": "drone footage ocean waves",
+          "project_id": "proj_abc123",
+          "duration_min": 30,
+          "duration_max": 120,
+          "limit": 5
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "query": "drone footage ocean waves",
+          "project_id": "proj_abc123",
+          "duration_min": 30,
+          "duration_max": 120,
+          "limit": 5
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "query": "drone footage ocean waves",
+          "project_id": "proj_abc123",
+          "duration_min": 30,
+          "duration_max": 120,
+          "limit": 5
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "filters={...}|include_related=true|limit=5|project_id=\"proj_abc123\"|query=\"drone footage\"|query_audio=\"ocean waves\"",
+    "after_sig_note": "duration_max=120|duration_min=30|limit=5|project_id=\"proj_abc123\"|query=\"drone footage ocean waves\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['filters', 'include_related', 'query_audio']; AFTER omitted them; AFTER sent ['duration_max', 'duration_min']; BEFORE did not; query: BEFORE=\"drone footage\" vs AFTER=\"drone footage ocean waves\".",
+    "all_run_diffs": [
+      "BEFORE sent ['filters', 'include_related', 'query_audio']; AFTER omitted them; AFTER sent ['duration_max', 'duration_min']; BEFORE did not; query: BEFORE=\"drone footage\" vs AFTER=\"drone footage ocean waves\".",
+      "BEFORE sent ['filters', 'include_related', 'query_audio']; AFTER omitted them; AFTER sent ['duration_max', 'duration_min']; BEFORE did not; query: BEFORE=\"drone footage\" vs AFTER=\"drone footage ocean waves\".",
+      "BEFORE sent ['filters', 'include_related', 'query_audio']; AFTER omitted them; AFTER sent ['duration_max', 'duration_min']; BEFORE did not; query: BEFORE=\"drone footage\" vs AFTER=\"drone footage ocean waves\"."
+    ],
+    "hypothesis": "An agent using filters, include_segments, include_related, query_audio, or query_img for search-remote-videos should find those parameters removed; duration_min and duration_max are the new filter surface, shifting the search from content-based to duration-based filtering."
+  },
+  {
+    "slot": 9,
+    "tool_name": "remove_scheduled_trade",
+    "repo_url": "https://github.com/ferdousbhai/tasty-agent",
+    "structural_type": "schema_mixed",
+    "user_request": "Cancel the scheduled trade. Its task ID is 'task-8823' and its job ID is 'job-7719'.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "task_id": "task-8823"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "task_id": "task-8823"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "task_id": "task-8823"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "job_id": "job-7719"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "job_id": "job-7719"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "job_id": "job-7719"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "task_id=\"task-8823\"",
+    "after_sig_note": "job_id=\"job-7719\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['task_id']; AFTER omitted them; AFTER sent ['job_id']; BEFORE did not.",
+    "all_run_diffs": [
+      "BEFORE sent ['task_id']; AFTER omitted them; AFTER sent ['job_id']; BEFORE did not.",
+      "BEFORE sent ['task_id']; AFTER omitted them; AFTER sent ['job_id']; BEFORE did not.",
+      "BEFORE sent ['task_id']; AFTER omitted them; AFTER sent ['job_id']; BEFORE did not."
+    ],
+    "hypothesis": "remove_scheduled_trade renamed its only parameter from task_id to job_id; an agent passing task_id should receive an unknown-parameter error and must instead look up the job_id from the scheduler's job listing."
+  },
+  {
+    "slot": 10,
+    "tool_name": "start_thread",
+    "repo_url": "https://github.com/InditexTech/mcp-teams-server",
+    "structural_type": "desc_and_schema_remove",
+    "user_request": "Start a new thread in the #engineering channel (channel ID: 'C_ENG_001'). Title: 'Sprint 47 kickoff'. Message: 'Team, let's align on priorities for this sprint \u2014 please review the backlog before Wednesday.'",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "channel_id": "C_ENG_001",
+          "title": "Sprint 47 kickoff",
+          "content": "Team, let's align on priorities for this sprint \u2014 please review the backlog before Wednesday."
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "channel_id": "C_ENG_001",
+          "title": "Sprint 47 kickoff",
+          "content": "Team, let's align on priorities for this sprint \u2014 please review the backlog before Wednesday."
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "channel_id": "C_ENG_001",
+          "title": "Sprint 47 kickoff",
+          "content": "Team, let's align on priorities for this sprint \u2014 please review the backlog before Wednesday."
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": true,
+        "expressed_uncertainty": true,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your request, but I need to clarify something: the `start_thread` function I have available doesn't include a parameter for specifying a channel ID. The function only accepts a title and content for the thread.\n\nBased on the tool's capabilities, I can create a thread with the title and message you've provided, but I won't be able to directly specify that it should be posted in the #engineering channel (C_ENG_001).\n\nWould you like me to:\n1. Go ahead and create the thread with the title and message as-is, understanding that you may need to manually select the channel when posting, or\n2. Wait while you clarify how the channel specification should be handled in your system?\n\nPlease let me know how you'd like to proceed!"
+      },
+      {
+        "run": 2,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": true,
+        "expressed_uncertainty": true,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your request, but I need to clarify something: the `start_thread` function I have available doesn't include a parameter for specifying a channel ID. The function only accepts a title and content for the thread.\n\nBased on the tool's capabilities, I can create a thread with the title and message you've provided, but I won't be able to directly specify that it should be posted in the #engineering channel (C_ENG_001).\n\nWould you like me to:\n1. Go ahead and create the thread with the title and message as-is, understanding that you may need to manually post it to the correct channel, or\n2. Wait while you clarify if there's another way to specify the channel for this thread?\n\nPlease let me know how you'd like to proceed!"
+      },
+      {
+        "run": 3,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": false,
+        "expressed_uncertainty": true,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your request, but I need to clarify something. The `start_thread` function I have available creates a new thread with a title and content, but it doesn't have a parameter to specify which channel to post it to.\n\nBased on the function's capabilities, I can create the thread with the title and message you've provided, but I won't be able to directly specify that it goes to the #engineering channel (C_ENG_001).\n\nWould you like me to:\n1. Go ahead and create the thread with the title and message as-is, understanding that you may need to manually post it to the #engineering channel, or\n2. Wait while you clarify if there's another way to specify the channel for this thread?\n\nLet me know how you'd like to proceed!"
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "channel_id=\"C_ENG_001\"|content=\"Team, let's align on priorities for thi|title=\"Sprint 47 kickoff\"",
+    "after_sig_note": "__not_called__",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE called the tool; AFTER did not.",
+    "all_run_diffs": [
+      "BEFORE called the tool; AFTER did not.",
+      "BEFORE called the tool; AFTER did not.",
+      "BEFORE called the tool; AFTER did not."
+    ],
+    "hypothesis": "start_thread dropped the channel_id parameter; an agent that previously routed threads to a specific channel by ID should find the routing parameter gone, implying the thread destination is now determined by context rather than an explicit caller-supplied ID."
+  },
+  {
+    "slot": 11,
+    "tool_name": "codelogic-build-info",
+    "repo_url": "https://github.com/CodeLogicIncEngineering/codelogic-mcp-server",
+    "structural_type": "desc_and_schema_remove",
+    "user_request": "Generate CodeLogic integration commands for our GitHub Actions pipeline. Build type: 'gradle'. Job name: 'build-and-test'. Build number: '1234'. Build status: 'SUCCESS'. Log file path: '/logs/build-1234.log'. Output format: shell script.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": true,
+        "expressed_uncertainty": true,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your request, but I need to clarify something about the available options. The `build_type` parameter in the CodeLogic integration tool accepts specific values: `git-info`, `build-log`, `metadata`, or `all`.\n\nThe value `gradle` you mentioned appears to be a build tool rather than a build information type. \n\nCould you please clarify which type of build information you'd like to generate commands for?\n\n- **git-info**: Collect Git repository information\n- **build-log**: Collect build log data\n- **metadata**: Collect build metadata\n- **all**: Collect all of the above\n\nAlso, regarding the output format, the available options are:\n- `docker`\n- `standalone`\n- `jenkins`\n- `yaml`\n\nUnfortunately, `shell script` isn't directly available, but `standalone` would be the closest option for a shell script format that can be executed independently.\n\nOnce you clarify these two points, I'll generate the CodeLogic integration commands for your GitHub Actions pipeline with the job name, build number, status, and log file path you've specified."
+      },
+      {
+        "run": 2,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": true,
+        "expressed_uncertainty": true,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your request, but I need to clarify something about the available options. The `build_type` parameter for the CodeLogic integration tool accepts specific values: `git-info`, `build-log`, `metadata`, or `all`.\n\nThe value `gradle` you mentioned appears to be a build tool rather than the type of build information to collect. \n\nCould you please clarify which type of build information you'd like to generate commands for?\n\n- **git-info**: Collect Git repository information (commits, branches, etc.)\n- **build-log**: Collect and send build log information\n- **metadata**: Collect build metadata (build number, status, job name, etc.)\n- **all**: Collect all of the above\n\nAlso, regarding the output format, the available options are:\n- `docker`\n- `standalone`\n- `jenkins`\n- `yaml`\n\nUnfortunately, `shell script` isn't directly available as an output format. Would `standalone` work for you (which typically generates standalone shell commands), or would you prefer one of the other formats?\n\nOnce you clarify these details, I'll generate the appropriate CodeLogic integration commands for your GitHub Actions pipeline."
+      },
+      {
+        "run": 3,
+        "tool_called": false,
+        "tool_input": null,
+        "asked_clarification": true,
+        "expressed_uncertainty": true,
+        "stop_reason": "end_turn",
+        "response_text": "I appreciate your request, but I need to clarify something about the available options. The `build_type` parameter for the CodeLogic integration tool accepts specific values: `git-info`, `build-log`, `metadata`, or `all`.\n\nThe value `gradle` you mentioned appears to be a build tool rather than the type of build information to collect. \n\nCould you please clarify which type of build information you'd like to generate commands for?\n\n- **git-info**: Collect Git repository information\n- **build-log**: Collect build log data\n- **metadata**: Collect build metadata\n- **all**: Collect all of the above\n\nAlso, regarding the output format, the available options are:\n- `docker`\n- `standalone`\n- `jenkins`\n- `yaml`\n\nUnfortunately, `shell script` isn't directly available as an output format. Would `standalone` work for you (which typically generates standalone commands that can be run in a shell)?\n\nOnce you clarify these two points, I'll generate the CodeLogic integration commands for your GitHub Actions pipeline with the job details you've provided."
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "ci_platform": "github-actions",
+          "output_format": "standalone"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll generate the CodeLogic integration commands for your GitHub Actions pipeline with the specifications you provided."
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "ci_platform": "github-actions",
+          "output_format": "standalone"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll generate the CodeLogic integration commands for your GitHub Actions pipeline with the specifications you provided."
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "ci_platform": "github-actions",
+          "output_format": "standalone"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll generate the CodeLogic integration commands for your GitHub Actions pipeline with the specifications you provided."
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "__not_called__",
+    "after_sig_note": "ci_platform=\"github-actions\"|output_format=\"standalone\"",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "AFTER called the tool; BEFORE did not.",
+    "all_run_diffs": [
+      "AFTER called the tool; BEFORE did not.",
+      "AFTER called the tool; BEFORE did not.",
+      "AFTER called the tool; BEFORE did not."
+    ],
+    "hypothesis": "An agent supplying build_number, build_status, build_type, job_name, or log_file_path to codelogic-build-info should find those parameters removed; the tool's scope narrowed from general CI/CD metadata collection to build-and-test error reporting only, and an agent that relied on the old parameter set to trigger metadata collection will receive no output for those fields."
+  },
+  {
+    "slot": 12,
+    "tool_name": "search_by_cve",
+    "repo_url": "https://github.com/AppThreat/vulnerability-db",
+    "structural_type": "desc_and_schema_remove",
+    "user_request": "Find all vulnerabilities associated with CVE-2024-12345.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "cve_id": "CVE-2024-12345"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "cve_id": "CVE-2024-12345"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "cve_id": "CVE-2024-12345"
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {},
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll search for vulnerabilities associated with CVE-2024-12345."
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {},
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll search for vulnerabilities associated with CVE-2024-12345."
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {},
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": "I'll search for vulnerabilities associated with CVE-2024-12345."
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "cve_id=\"CVE-2024-12345\"",
+    "after_sig_note": "",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "BEFORE sent ['cve_id']; AFTER omitted them.",
+    "all_run_diffs": [
+      "BEFORE sent ['cve_id']; AFTER omitted them.",
+      "BEFORE sent ['cve_id']; AFTER omitted them.",
+      "BEFORE sent ['cve_id']; AFTER omitted them."
+    ],
+    "hypothesis": "An agent that previously called search_by_cve with a cve_id argument should find the parameter is no longer accepted; the tool now takes no parameters, implying it retrieves a fixed or context-determined set of vulnerabilities rather than querying by a specific identifier."
+  },
+  {
+    "slot": 13,
+    "tool_name": "add_list_items_to_list_in_docling_document",
+    "repo_url": "https://github.com/docling-project/docling-mcp",
+    "structural_type": "type_change",
+    "user_request": "Add two bullet points to the open list in document 'report_draft_q4'. First item: text='Revenue increased 15% YoY', marker='-'. Second item: text='Customer base grew to 2,400 accounts', marker='-'.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "document_key": "report_draft_q4",
+          "list_items": [
+            {
+              "list_item_text": "Revenue increased 15% YoY",
+              "list_marker_text": "-"
+            },
+            {
+              "list_item_text": "Customer base grew to 2,400 accounts",
+              "list_marker_text": "-"
+            }
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "document_key": "report_draft_q4",
+          "list_items": [
+            {
+              "list_item_text": "Revenue increased 15% YoY",
+              "list_marker_text": "-"
+            },
+            {
+              "list_item_text": "Customer base grew to 2,400 accounts",
+              "list_marker_text": "-"
+            }
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "document_key": "report_draft_q4",
+          "list_items": [
+            {
+              "list_item_text": "Revenue increased 15% YoY",
+              "list_marker_text": "-"
+            },
+            {
+              "list_item_text": "Customer base grew to 2,400 accounts",
+              "list_marker_text": "-"
+            }
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "document_key": "report_draft_q4",
+          "list_items": [
+            {
+              "text": "Revenue increased 15% YoY",
+              "marker": "-"
+            },
+            {
+              "text": "Customer base grew to 2,400 accounts",
+              "marker": "-"
+            }
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "document_key": "report_draft_q4",
+          "list_items": [
+            {
+              "text": "Revenue increased 15% YoY",
+              "marker": "-"
+            },
+            {
+              "text": "Customer base grew to 2,400 accounts",
+              "marker": "-"
+            }
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "document_key": "report_draft_q4",
+          "list_items": [
+            {
+              "text": "Revenue increased 15% YoY",
+              "marker": "-"
+            },
+            {
+              "text": "Customer base grew to 2,400 accounts",
+              "marker": "-"
+            }
+          ]
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "document_key=\"report_draft_q4\"|list_items=[2 items]",
+    "after_sig_note": "document_key=\"report_draft_q4\"|list_items=[2 items]",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "list_items: BEFORE=[{\"list_item_text\": \"Revenue increased 15% YoY\", \"list_marke vs AFTER=[{\"text\": \"Revenue increased 15% YoY\", \"marker\": \"-\"}, {\"tex.",
+    "all_run_diffs": [
+      "list_items: BEFORE=[{\"list_item_text\": \"Revenue increased 15% YoY\", \"list_marke vs AFTER=[{\"text\": \"Revenue increased 15% YoY\", \"marker\": \"-\"}, {\"tex.",
+      "list_items: BEFORE=[{\"list_item_text\": \"Revenue increased 15% YoY\", \"list_marke vs AFTER=[{\"text\": \"Revenue increased 15% YoY\", \"marker\": \"-\"}, {\"tex.",
+      "list_items: BEFORE=[{\"list_item_text\": \"Revenue increased 15% YoY\", \"list_marke vs AFTER=[{\"text\": \"Revenue increased 15% YoY\", \"marker\": \"-\"}, {\"tex."
+    ],
+    "hypothesis": "document_key changed from string to object and list_items changed from array to object; an agent passing a plain document key string or a JSON array of items should receive a schema validation error and must instead construct the new object-shaped inputs."
+  },
+  {
+    "slot": 14,
+    "tool_name": "forward_message",
+    "repo_url": "https://github.com/chigwell/telegram-mcp",
+    "structural_type": "type_change",
+    "user_request": "Forward messages 1001, 1002, and 1003 from chat -100123456789 to chat -100987654321.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "from_chat_id": -100123456789,
+          "message_id": 1003,
+          "to_chat_id": -100987654321
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "from_chat_id": -100123456789,
+          "message_id": 1003,
+          "to_chat_id": -100987654321
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "from_chat_id": -100123456789,
+          "message_id": 1003,
+          "to_chat_id": -100987654321
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "from_chat_id": -100123456789,
+          "message_id": [
+            1001,
+            1002,
+            1003
+          ],
+          "to_chat_id": -100987654321
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "from_chat_id": -100123456789,
+          "message_id": [
+            1001,
+            1002,
+            1003
+          ],
+          "to_chat_id": -100987654321
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "from_chat_id": -100123456789,
+          "message_id": [
+            1001,
+            1002,
+            1003
+          ],
+          "to_chat_id": -100987654321
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "from_chat_id=-100123456789|message_id=1003|to_chat_id=-100987654321",
+    "after_sig_note": "from_chat_id=-100123456789|message_id=[3 items]|to_chat_id=-100987654321",
+    "finding_stable": true,
+    "behavioral_difference": true,
+    "diff_description": "message_id: BEFORE=1003 vs AFTER=[1001, 1002, 1003].",
+    "all_run_diffs": [
+      "message_id: BEFORE=1003 vs AFTER=[1001, 1002, 1003].",
+      "message_id: BEFORE=1003 vs AFTER=[1001, 1002, 1003].",
+      "message_id: BEFORE=1003 vs AFTER=[1001, 1002, 1003]."
+    ],
+    "hypothesis": "message_id changed from integer to object (accepting a list of IDs); an agent passing a single integer message ID should fail or be coerced \u2014 the tool now expects a structured object to support forwarding multiple messages in one call."
+  },
+  {
+    "slot": 15,
+    "tool_name": "chroma_list_collections",
+    "repo_url": "https://github.com/chroma-core/chroma-mcp",
+    "structural_type": "type_change",
+    "user_request": "List the Chroma collections. Return a maximum of 20 results, starting from offset 40.",
+    "n_runs": 3,
+    "before_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "limit": 20,
+          "offset": 40
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "limit": 20,
+          "offset": 40
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "limit": 20,
+          "offset": 40
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "after_runs": [
+      {
+        "run": 1,
+        "tool_called": true,
+        "tool_input": {
+          "limit": 20,
+          "offset": 40
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 2,
+        "tool_called": true,
+        "tool_input": {
+          "limit": 20,
+          "offset": 40
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      },
+      {
+        "run": 3,
+        "tool_called": true,
+        "tool_input": {
+          "limit": 20,
+          "offset": 40
+        },
+        "asked_clarification": false,
+        "expressed_uncertainty": false,
+        "stop_reason": "tool_use",
+        "response_text": ""
+      }
+    ],
+    "before_stable": true,
+    "after_stable": true,
+    "before_sig_note": "limit=20|offset=40",
+    "after_sig_note": "limit=20|offset=40",
+    "finding_stable": true,
+    "behavioral_difference": false,
+    "diff_description": "No meaningful parameter difference \u2014 both agents called identically.",
+    "all_run_diffs": [
+      "No meaningful parameter difference \u2014 both agents called identically.",
+      "No meaningful parameter difference \u2014 both agents called identically.",
+      "No meaningful parameter difference \u2014 both agents called identically."
+    ],
+    "hypothesis": "limit and offset both changed from integer to object; an agent passing plain integer pagination values to chroma_list_collections should receive a type error and must instead wrap them in the new object structure the schema now requires."
+  }
+]

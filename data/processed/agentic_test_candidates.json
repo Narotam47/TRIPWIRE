@@ -1,0 +1,990 @@
+[
+  {
+    "slot": 1,
+    "selection_label": "named_E031",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/dailydaniel/logseq-mcp",
+    "tool_name": "edit_block",
+    "from_sha": "ec48ed70",
+    "to_sha": "a901fe63",
+    "before_definition": {
+      "description": "Enter editing mode for a specific block (UI side effect).",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "src_block": {},
+          "pos": {}
+        },
+        "required": [
+          "src_block"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Replace a block's content, confined to the agent namespace.\n\nRead the block first: you must pass its exact current content as `old_content`.\nThe edit is rejected if it doesn't match (you didn't read it, or it changed) \u2014\nthis enforces read-before-write and guards a concurrent edit. The block must\nlive under the agent namespace. To change a task's status use set_task_status.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "uuid": {},
+          "old_content": {},
+          "new_content": {}
+        },
+        "required": [
+          "uuid",
+          "old_content",
+          "new_content"
+        ]
+      }
+    },
+    "schema_fields_added": [
+      "new_content",
+      "old_content",
+      "uuid"
+    ],
+    "schema_fields_removed": [
+      "pos",
+      "src_block"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "edit_block now requires uuid + old_content + new_content instead of src_block + pos; an agent passing the old parameters should fail, and must instead read the block first to supply its exact current content before overwriting."
+  },
+  {
+    "slot": 2,
+    "selection_label": "named_E048",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "modify_data_app",
+    "from_sha": "987d406e",
+    "to_sha": "68fa8d23",
+    "before_definition": {
+      "description": "Creates or updates a Streamlit data app.\n\nConsiderations:\n- The `source_code` parameter must be a complete and runnable Streamlit app. It must include a placeholder\n`{QUERY_DATA_FUNCTION}` where a `query_data` function will be injected. This function queries the workspace to get\ndata, it accepts a string of SQL query following current sql dialect and returns a pandas DataFrame with the results\nfrom the workspace.\n- Write SQL queries so they are compatible with the current workspace backend, you can ensure this by using the\n`query_data` tool to inspect the data in the workspace before using it in the data app.\n- If you're updating an existing data app, provide the `configuration_id` parameter and the `change_description`\nparameter.\n- If the data app is updated while running, it must be redeployed for the changes to take effect.\n- The Data App requires basic authorization by default for security reasons, unless explicitly specified otherwise\nby the user.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": {},
+          "description": {},
+          "source_code": {},
+          "packages": {},
+          "authorization_required": {},
+          "configuration_id": {},
+          "change_description": {}
+        },
+        "required": [
+          "name",
+          "description",
+          "source_code",
+          "packages"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Creates or updates a Streamlit data app.\n\nConsiderations:\n- The `source_code` parameter must be a complete and runnable Streamlit app. It must include a placeholder\n`{QUERY_DATA_FUNCTION}` where a `query_data` function will be injected. This function queries the workspace to get\ndata, it accepts a string of SQL query following current sql dialect and returns a pandas DataFrame with the results\nfrom the workspace.\n- Write SQL queries so they are compatible with the current workspace backend, you can ensure this by using the\n`query_data` tool to inspect the data in the workspace before using it in the data app.\n- If you're updating an existing data app, provide the `configuration_id` parameter and the `change_description`\nparameter. To keep existing data app values during an update, leave them as empty strings, lists, or None\nappropriately based on the parameter type.\n- If the data app is updated while running, it must be redeployed for the changes to take effect.\n- New apps use basic authentication by default for security unless explicitly specified otherwise; when updating,\nset `authentication_type` to `default` to keep the existing authentication type configuration (including OIDC\nsetups) unless explicitly specified otherwise.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "name": {},
+          "description": {},
+          "source_code": {},
+          "packages": {},
+          "authentication_type": {},
+          "configuration_id": {},
+          "change_description": {}
+        },
+        "required": [
+          "name",
+          "description",
+          "source_code",
+          "packages"
+        ]
+      }
+    },
+    "schema_fields_added": [
+      "authentication_type"
+    ],
+    "schema_fields_removed": [
+      "authorization_required"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent passing authorization_required (boolean) to modify_data_app should fail; it must now pass authentication_type (string enum) instead \u2014 a renamed and retyped access-control parameter that implies different valid values."
+  },
+  {
+    "slot": 3,
+    "selection_label": "named_E022",
+    "structural_type": "desc_and_schema_remove",
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "search",
+    "from_sha": "e421ed80",
+    "to_sha": "5caf708b",
+    "before_definition": {
+      "description": "Searches for Keboola items (tables, buckets, configurations, transformations, flows, data-apps etc.) in the current\nproject. Returns matching items with IDs and metadata.\nSupports two modes:\n- textual: match patterns against ID, name, display name, description (and table columns)\n- config-based: match patterns against stringified configuration payloads, optionally limited to specific scopes\nwhich can be derived from the configuration schemas or objects.\n\n\nWHEN TO USE:\n- User asks to \"find\", \"locate\", or \"search for\" something by name or text\n- User mentions a partial name and you need to find the full item (e.g., \"find the customer table\")\n- User asks \"what tables/configs/flows do I have with X in the name?\"\n- User asks to find configs containing a value in parameters (use config-based + scopes and regex patterns)\n- Use this tool to trace lineage by searching for IDs referenced in configurations, or to find flows using a\nspecific component, or find usage of a bucket/table in transformations, or to find items with specific parameters.\n- You need to discover items before performing operations on them\n- User assks to \"what is the genesis of this item?\" or \"explain me bussiness logic of this item?\"\n- User asks to \"list all items with [name] or [configuration value/part] in it\"\n- DO NOT use for listing all items of a specific type. Use get_configs, list_tables, get_flows, etc instead.\n\nHOW IT WORKS:\n- mode: \"regex\" (default) or \"literal\" (escape special characters)\n- case_sensitive: false by default; set true for exact casing\n- search_type:\n  - \"textual\": matches id/name/display_name/description fields\n  - \"config-based\": matches stringified configuration payloads (JSON) via scopes or the whole config using\n  regex patterns.\n- scopes: dot-separated paths (e.g., \"parameters\", \"storage.input\", \"parameters.script\")\n- For tables, textual search also checks column names and column descriptions\n- Multiple patterns are ORed: any match includes the item\n- Results are ordered by update time, newest first, and can be paginated via limit/offset\n\nIMPORTANT:\n- Always use this tool when the user mentions a name but you don't have the exact ID\n- The search returns IDs that you can use with other tools (e.g., get_table, get_configs, get_flows)\n- Use item_types to make the search more efficient when you know the type; scanning buckets and tables can be\nexpensive\n- For exact ID lookups, use specific tools like get_table, get_configs, get_flows instead\n\nUSAGE EXAMPLES:\n- user_input: \"Find all tables with 'customer' in the name\"\n  \u2192 patterns=[\"customer\"], search_type=\"textual\", mode=\"literal\", item_types=[\"table\"]\n\n- user_input: \"Find tables with 'email' column\"\n  \u2192 patterns=[\"email\"], search_type=\"textual\", mode=\"literal\", item_types=[\"table\"]\n\n- user_input: \"Search for the sales transformation\"\n  \u2192 patterns=[\"sales\"], search_type=\"textual\", mode=\"literal\", item_types=[\"transformation\"]\n  \u2192 Returns transformations with \"sales\" in any searchable field\n\n- user_input: \"Find items named 'daily report' or 'weekly summary'\"\n  \u2192 patterns=[\"daily.*report\", \"weekly.*summary\"], search_type=\"textual\", mode=\"regex\", item_types=[]\n\n- user_input: \"Show me all configurations/components related to Google Analytics\"\n  \u2192 patterns=[\"google.*analytics\"], search_type=\"textual\", mode=\"regex\", item_types=[\"component\"]\n\n- user_input: \"Find storage input mappings referencing specific tables:\"\n  \u2192 patterns=[\"\"storage\"\\.*\"input\"\\.*:\\s*\"in\\.*\\.customers\"\"], search_type=\"config-based\", mode=\"regex\",\n  item_types=[\"transformation\", \"component\"]\n\n- user input: \"Find components or transformations using 'my_bucket' in output mappings\"\n  \u2192 patterns=[\"my_bucket\"], item_types=[\"component\", \"transformation\"], search_type=\"config-based\",\n    scopes=[\"storage.output\"], mode=\"literal\"\n\n- user input: \"Find configs with specific authentication type\"\n  \u2192 patterns=[\"\"authentication\":\\s*\\{.*\"type\":\\s*\"oauth20\"\"], search_type=\"config-based\", mode=\"regex\",\n  item_types=[\"component\"]\n\n- user input: \"Find flows using this configuration ID: 01k9cz233cvd1rga3zzx40g8qj\"\n  \u2192 patterns=[\"01k9cz233cvd1rga3zzx40g8qj\"], search_type=\"config-based\", item_types=[\"flow\"], mode=\"literal\",\n  scopes=[\"tasks\"]\n\n- user input: \"Find data apps using specific code part ...\"\n  \u2192 patterns=[\"regex-representing-the-code-part\"], search_type=\"config-based\", item_types=[\"data-app\"],\n  mode=\"regex\"], scopes=[\"script\"]",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "patterns": {},
+          "item_types": {},
+          "search_type": {},
+          "scopes": {},
+          "mode": {},
+          "case_sensitive": {},
+          "limit": {},
+          "offset": {}
+        },
+        "required": [
+          "patterns"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Searches for Keboola items (tables, buckets, configurations, transformations, flows, etc.) in the current project\nby matching patterns against item ID, name, display name, or description. Returns matching items grouped by type\nwith their IDs and metadata.\n\nWHEN TO USE:\n- User asks to \"find\", \"locate\", or \"search for\" something by name\n- User mentions a partial name and you need to find the full item (e.g., \"find the customer table\")\n- User asks \"what tables/configs/flows do I have with X in the name?\"\n- You need to discover items before performing operations on them\n- User asks to \"list all items with [name] in it\"\n- DO NOT use for listing all items of a specific type. Use get_configs, list_tables, get_flows, etc instead.\n\nHOW IT WORKS:\n- Searches by regex pattern matching against id, name, displayName, and description fields\n- For tables, also searches column names and column descriptions\n- Case-insensitive search\n- Multiple patterns work as OR condition - matches items containing ANY of the patterns\n- Returns grouped results by item type (tables, buckets, configurations, flows, etc.)\n- Each result includes the item's ID, name, creation date, and relevant metadata\n\nIMPORTANT:\n- Always use this tool when the user mentions a name but you don't have the exact ID\n- The search returns IDs that you can use with other tools (e.g., get_table, get_configs, get_flows)\n- Results are ordered by update time. The most recently updated items are returned first.\n- For exact ID lookups, use specific tools like get_table, get_configs, get_flows instead\n- Use find_component_id and get_configs tools to find configurations related to a specific component\n\nUSAGE EXAMPLES:\n- user_input: \"Find all tables with 'customer' in the name\"\n  \u2192 patterns=[\"customer\"], item_types=[\"table\"]\n  \u2192 Returns all tables whose id, name, displayName, or description contains \"customer\"\n\n- user_input: \"Find tables with 'email' column\"\n  \u2192 patterns=[\"email\"], item_types=[\"table\"]\n  \u2192 Returns all tables that have a column named \"email\" or with \"email\" in column description\n\n- user_input: \"Search for the sales transformation\"\n  \u2192 patterns=[\"sales\"], item_types=[\"transformation\"]\n  \u2192 Returns transformations with \"sales\" in any searchable field\n\n- user_input: \"Find items named 'daily report' or 'weekly summary'\"\n  \u2192 patterns=[\"daily.*report\", \"weekly.*summary\"], item_types=[]\n  \u2192 Returns all items matching any of these patterns\n\n- user_input: \"Show me all configurations related to Google Analytics\"\n  \u2192 patterns=[\"google.*analytics\"], item_types=[\"configuration\"]\n  \u2192 Returns configurations with matching patterns",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "patterns": {},
+          "item_types": {},
+          "limit": {},
+          "offset": {}
+        },
+        "required": [
+          "patterns"
+        ]
+      }
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [
+      "case_sensitive",
+      "mode",
+      "scopes",
+      "search_type"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent using the search_type, scopes, mode, or case_sensitive parameters should find them silently dropped or rejected; the tool description no longer mentions config-based search modes, implying a simplified fixed-mode search has replaced the parameterized one."
+  },
+  {
+    "slot": 4,
+    "selection_label": "named_E069",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/54rt1n/container-mcp",
+    "tool_name": "kb_add_reference",
+    "from_sha": "53b7c1cd",
+    "to_sha": "8b279374",
+    "before_definition": {
+      "description": "Add a reference to another document.\n\nArgs:\n    namespace: Source document namespace\n    collection: Source document collection\n    name: Source document name\n    ref_namespace: Referenced document namespace\n    ref_collection: Referenced document collection\n    ref_name: Referenced document name\n    relation: Relation predicate connecting the documents\n    \nReturns:\n    Dictionary with status and updated reference count\n    \nRaises:\n    ValueError: If any parameter is an empty string",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string"
+          },
+          "collection": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "ref_namespace": {
+            "type": "string"
+          },
+          "ref_collection": {
+            "type": "string"
+          },
+          "ref_name": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "namespace",
+          "collection",
+          "name",
+          "ref_namespace",
+          "ref_collection",
+          "ref_name",
+          "relation"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Add a reference to another document.\n\nArgs:\n    path: Source document path\n    ref_path: Referenced document path\n    relation: Relation predicate connecting the documents\n    \nReturns:\n    Dictionary with status and updated reference count",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "ref_path": {
+            "type": "string"
+          },
+          "relation": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "path",
+          "ref_path",
+          "relation"
+        ]
+      }
+    },
+    "schema_fields_added": [
+      "path",
+      "ref_path"
+    ],
+    "schema_fields_removed": [
+      "collection",
+      "name",
+      "namespace",
+      "ref_collection",
+      "ref_name",
+      "ref_namespace"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent calling kb_add_reference with the six-field (namespace, collection, name, ref_namespace, ref_collection, ref_name) pattern should fail; it must now use the consolidated two-field (path, ref_path) path-based API instead."
+  },
+  {
+    "slot": 5,
+    "selection_label": "named_E060",
+    "structural_type": "desc_and_schema_remove",
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "tool_name": "load_skill",
+    "from_sha": "2cbff053",
+    "to_sha": "766e72a9",
+    "before_definition": {
+      "description": "Load full details for a skill by its skill_id.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "skill_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "skill_id"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Load the full procedure body of a named skill. Use this when the skill description suggests the skill applies to the current task.",
+      "input_schema": {}
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [
+      "skill_id"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent that previously called load_skill with a skill_id argument should find the parameter is no longer accepted; the tool now selects a skill from context without a caller-supplied ID, so the agent should call it with no arguments."
+  },
+  {
+    "slot": 6,
+    "selection_label": "additional_2_replacement",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/kagisearch/kagimcp",
+    "tool_name": "kagi_search_fetch",
+    "from_sha": "5277cc49",
+    "to_sha": "043c4397",
+    "before_definition": {
+      "description": "Fetch web results based on one or more queries using the Kagi Search API. Use for general search and when the user explicitly tells you to 'fetch' results/information. Results are from all queries given. They are numbered continuously, so that a user may be able to refer to a result by a specific number.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "after_definition": {
+      "description": "Fetch web results for a query using the Kagi Search API. Use for general search and when the user explicitly tells you to 'fetch' results/information. Results are numbered so that a user may refer to a result by a specific number.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schema_fields_added": [
+      "query"
+    ],
+    "schema_fields_removed": [
+      "queries"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent that previously passed an array of queries (e.g., [\"term1\", \"term2\"]) to kagi_search_fetch should find the queries parameter removed; it must now call the tool once per query with a single string, meaning any batched search workflow must be restructured into sequential single-query calls."
+  },
+  {
+    "slot": 7,
+    "selection_label": "additional_2",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/neo4j-contrib/mcp-neo4j",
+    "tool_name": "update_instance_name",
+    "from_sha": "0877b77b",
+    "to_sha": "091ee778",
+    "before_definition": {
+      "description": "Update the name of one or more Neo4j Aura instances",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "instance_ids": {
+            "oneOf": [
+              {
+                "type": "string",
+                "description": "ID of a single instance to update"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of instance IDs to update"
+              }
+            ],
+            "description": "ID(s) of the instance(s) to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "New name for the instance(s)"
+          }
+        },
+        "required": [
+          "instance_ids",
+          "name"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Update the name of a Neo4j Aura instance",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "description": "ID of the instance to update"
+          },
+          "name": {
+            "type": "string",
+            "description": "New name for the instance"
+          }
+        },
+        "required": [
+          "instance_id",
+          "name"
+        ]
+      }
+    },
+    "schema_fields_added": [
+      "instance_id"
+    ],
+    "schema_fields_removed": [
+      "instance_ids"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "update_instance_name changed from accepting a list of instance_ids to a single instance_id; an agent passing an array should fail, and bulk-rename workflows must now loop over individual calls."
+  },
+  {
+    "slot": 8,
+    "selection_label": "additional_3",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/burningion/video-editing-mcp",
+    "tool_name": "search-remote-videos",
+    "from_sha": "a0c1dd97",
+    "to_sha": "093c67a6",
+    "before_definition": {
+      "description": "Search remote videos hosted on Video Jungle by query",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Text search query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Project ID to scope the search"
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "duration": {
+                "type": "object",
+                "properties": {
+                  "min": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Minimum video duration in seconds"
+                  },
+                  "max": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Maximum video duration in seconds"
+                  }
+                }
+              },
+              "created_after": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Filter videos created after this datetime"
+              },
+              "created_before": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Filter videos created before this datetime"
+              },
+              "tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true,
+                "description": "Set of tags to filter by"
+              },
+              "min_relevance": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Minimum relevance score threshold"
+              }
+            }
+          },
+          "include_segments": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to include video segments in results"
+          },
+          "include_related": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to include related videos"
+          },
+          "query_audio": {
+            "type": "string",
+            "description": "Audio search query"
+          },
+          "query_img": {
+            "type": "string",
+            "description": "Image search query"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "query"
+            ]
+          },
+          {
+            "required": [
+              "query_audio"
+            ]
+          },
+          {
+            "required": [
+              "query_img"
+            ]
+          }
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Search remote videos hosted on Video Jungle by query",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Text search query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "description": "Maximum number of results to return"
+          },
+          "project_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Project ID to scope the search"
+          },
+          "duration_min": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Minimum video duration in seconds"
+          },
+          "duration_max": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum video duration in seconds"
+          }
+        },
+        "created_after": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter videos created after this datetime"
+        },
+        "created_before": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Filter videos created before this datetime"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true,
+          "description": "Set of tags to filter by"
+        },
+        "include_segments": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether to include video segments in results"
+        },
+        "include_related": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to include related videos"
+        },
+        "query_audio": {
+          "type": "string",
+          "description": "Audio search query"
+        },
+        "query_img": {
+          "type": "string",
+          "description": "Image search query"
+        },
+        "oneOf": [
+          {
+            "required": [
+              "query"
+            ]
+          }
+        ]
+      }
+    },
+    "schema_fields_added": [
+      "duration_max",
+      "duration_min"
+    ],
+    "schema_fields_removed": [
+      "filters",
+      "include_related",
+      "include_segments",
+      "query_audio",
+      "query_img"
+    ],
+    "schema_type_changes": [],
+    "description_changed": false,
+    "hypothesis": "An agent using filters, include_segments, include_related, query_audio, or query_img for search-remote-videos should find those parameters removed; duration_min and duration_max are the new filter surface, shifting the search from content-based to duration-based filtering."
+  },
+  {
+    "slot": 9,
+    "selection_label": "additional_4",
+    "structural_type": "schema_mixed",
+    "repo_url": "https://github.com/ferdousbhai/tasty-agent",
+    "tool_name": "remove_scheduled_trade",
+    "from_sha": "c2cec896",
+    "to_sha": "8dd58007",
+    "before_definition": {
+      "description": "Remove a scheduled trade by its task ID.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "task_id"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Remove a scheduled trade by its job ID.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "job_id"
+        ]
+      }
+    },
+    "schema_fields_added": [
+      "job_id"
+    ],
+    "schema_fields_removed": [
+      "task_id"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "remove_scheduled_trade renamed its only parameter from task_id to job_id; an agent passing task_id should receive an unknown-parameter error and must instead look up the job_id from the scheduler's job listing."
+  },
+  {
+    "slot": 10,
+    "selection_label": "additional_5",
+    "structural_type": "desc_and_schema_remove",
+    "repo_url": "https://github.com/InditexTech/mcp-teams-server",
+    "tool_name": "start_thread",
+    "from_sha": "1100474f",
+    "to_sha": "24b95666",
+    "before_definition": {
+      "description": "Start a new thread in a channel",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "channel_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel_id",
+          "title",
+          "content"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Start a new thread with a given title and content",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [
+      "channel_id"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "start_thread dropped the channel_id parameter; an agent that previously routed threads to a specific channel by ID should find the routing parameter gone, implying the thread destination is now determined by context rather than an explicit caller-supplied ID."
+  },
+  {
+    "slot": 11,
+    "selection_label": "additional_5_replacement",
+    "structural_type": "desc_and_schema_remove",
+    "repo_url": "https://github.com/CodeLogicIncEngineering/codelogic-mcp-server",
+    "tool_name": "codelogic-build-info",
+    "from_sha": "848be630",
+    "to_sha": "7dc6e404",
+    "before_definition": {
+      "description": "Generate build information and send commands for CodeLogic integration.\nThis tool provides AI models with specific prompts to modify CI/CD files for build information collection.\nIncludes code snippets, environment variable setup, and file modification examples.\nSupports Git info, build logs, and metadata collection across all major CI/CD platforms.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "build_type": {
+            "type": "string",
+            "description": "Type of build information to send",
+            "enum": [
+              "git-info",
+              "build-log",
+              "metadata",
+              "all"
+            ]
+          },
+          "log_file_path": {
+            "type": "string",
+            "description": "Path to build log file (optional)"
+          },
+          "job_name": {
+            "type": "string",
+            "description": "CI/CD job name (optional)"
+          },
+          "build_number": {
+            "type": "string",
+            "description": "Build number (optional)"
+          },
+          "build_status": {
+            "type": "string",
+            "description": "Build status (SUCCESS, FAILURE, etc.) (optional)"
+          },
+          "ci_platform": {
+            "type": "string",
+            "description": "CI/CD platform (jenkins, github-actions, etc.) (optional)"
+          },
+          "output_format": {
+            "type": "string",
+            "description": "Output format for the generated commands",
+            "enum": [
+              "docker",
+              "standalone",
+              "jenkins",
+              "yaml"
+            ]
+          }
+        },
+        "required": [
+          "build_type"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "This tool provides AI models with specific prompts to modify CI/CD files for build and test error reporting.\nIncludes code snippets, environment variable setup, and file modification examples.\nSupports Git info, build logs, and metadata reporting across all major CI/CD platforms.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "ci_platform": {
+            "type": "string",
+            "description": "CI/CD platform (jenkins, github-actions, etc.) (optional)"
+          },
+          "output_format": {
+            "type": "string",
+            "description": "Output format for the generated commands",
+            "enum": [
+              "docker",
+              "standalone",
+              "jenkins",
+              "yaml"
+            ]
+          }
+        }
+      }
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [
+      "build_number",
+      "build_status",
+      "build_type",
+      "job_name",
+      "log_file_path"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent supplying build_number, build_status, build_type, job_name, or log_file_path to codelogic-build-info should find those parameters removed; the tool's scope narrowed from general CI/CD metadata collection to build-and-test error reporting only, and an agent that relied on the old parameter set to trigger metadata collection will receive no output for those fields."
+  },
+  {
+    "slot": 12,
+    "selection_label": "additional_7",
+    "structural_type": "desc_and_schema_remove",
+    "repo_url": "https://github.com/AppThreat/vulnerability-db",
+    "tool_name": "search_by_cve",
+    "from_sha": "d5097ca8",
+    "to_sha": "314b54c9",
+    "before_definition": {
+      "description": "Search for vulnerabilities for a CVE or GHSA id",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "cve_id": {
+            "type": "string",
+            "description": "CVE or GHSA id to search"
+          }
+        },
+        "required": [
+          "cve_id"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Search vulnerabilities for a CVE or advisory identifier.",
+      "input_schema": {}
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [
+      "cve_id"
+    ],
+    "schema_type_changes": [],
+    "description_changed": true,
+    "hypothesis": "An agent that previously called search_by_cve with a cve_id argument should find the parameter is no longer accepted; the tool now takes no parameters, implying it retrieves a fixed or context-determined set of vulnerabilities rather than querying by a specific identifier."
+  },
+  {
+    "slot": 13,
+    "selection_label": "additional_8",
+    "structural_type": "type_change",
+    "repo_url": "https://github.com/docling-project/docling-mcp",
+    "tool_name": "add_list_items_to_list_in_docling_document",
+    "from_sha": "29ef941e",
+    "to_sha": "cd43fd34",
+    "before_definition": {
+      "description": "Adds list items to an open list in an existing document in the local document cache.\n\nThis tool inserts new list items with the specified text and marker into an\nopen list within a document. It requires that the document exists and that\nthere is at least one item in the document's stack cache.\n\nArgs:\n    document_key (str): The unique identifier for the document in the local cache.\n    list_items (list[ListItem]): A list of list_item_text and list_marker_text items\n\nReturns:\n    str: A confirmation message indicating the list item was successfully added.\n\nRaises:\n    ValueError: If the specified document_key does not exist in the local cache.\n\nExample:\n    add_list_items_to_list_in_docling_document(document_key=\"doc123\", list_items=[ListItem(list_item_text=\"First item in the list\", list_marker_text=\"-\")])",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "type": "string"
+          },
+          "list_items": {
+            "type": "array",
+            "items": {}
+          }
+        },
+        "required": [
+          "document_key",
+          "list_items"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Add list items to an open list in an existing document in the local document cache.\n\nThis tool inserts new list items with the specified text and marker into an\nopen list within a document. It requires that the document exists and that\nthere is at least one item in the document's stack cache.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "document_key": {},
+          "list_items": {}
+        },
+        "required": [
+          "document_key",
+          "list_items"
+        ]
+      }
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [],
+    "schema_type_changes": [
+      {
+        "field": "document_key",
+        "from_type": "string",
+        "to_type": "object"
+      },
+      {
+        "field": "list_items",
+        "from_type": "array",
+        "to_type": "object"
+      }
+    ],
+    "description_changed": true,
+    "hypothesis": "document_key changed from string to object and list_items changed from array to object; an agent passing a plain document key string or a JSON array of items should receive a schema validation error and must instead construct the new object-shaped inputs."
+  },
+  {
+    "slot": 14,
+    "selection_label": "additional_9",
+    "structural_type": "type_change",
+    "repo_url": "https://github.com/chigwell/telegram-mcp",
+    "tool_name": "forward_message",
+    "from_sha": "3d2452e3",
+    "to_sha": "aaa4f28d",
+    "before_definition": {
+      "description": "Forward a message from one chat to another.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "from_chat_id": {},
+          "message_id": {
+            "type": "integer"
+          },
+          "to_chat_id": {},
+          "account": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_chat_id",
+          "message_id",
+          "to_chat_id"
+        ]
+      }
+    },
+    "after_definition": {
+      "description": "Forward one or more messages from one chat to another.\n\nPass a list of message IDs to forward multiple messages in a single call.\nMessages that share a Telegram album (same grouped_id) are preserved as a\ngrouped album in the destination when forwarded together in one list.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "from_chat_id": {},
+          "message_id": {},
+          "to_chat_id": {},
+          "account": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_chat_id",
+          "message_id",
+          "to_chat_id"
+        ]
+      }
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [],
+    "schema_type_changes": [
+      {
+        "field": "message_id",
+        "from_type": "integer",
+        "to_type": "object"
+      }
+    ],
+    "description_changed": true,
+    "hypothesis": "message_id changed from integer to object (accepting a list of IDs); an agent passing a single integer message ID should fail or be coerced \u2014 the tool now expects a structured object to support forwarding multiple messages in one call."
+  },
+  {
+    "slot": 15,
+    "selection_label": "additional_10",
+    "structural_type": "type_change",
+    "repo_url": "https://github.com/chroma-core/chroma-mcp",
+    "tool_name": "chroma_list_collections",
+    "from_sha": "20a2ae8d",
+    "to_sha": "0aaaa138",
+    "before_definition": {
+      "description": "List all collection names in the Chroma database with pagination support.\n\nArgs:\n    limit: Optional maximum number of collections to return\n    offset: Optional number of collections to skip before returning results\n\nReturns:\n    List of collection names",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "after_definition": {
+      "description": "List all collection names in the Chroma database with pagination support.\n\nArgs:\n    limit: Optional maximum number of collections to return\n    offset: Optional number of collections to skip before returning results\n\nReturns:\n    List of collection names or [\"__NO_COLLECTIONS_FOUND__\"] if database is empty",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {},
+          "offset": {}
+        }
+      }
+    },
+    "schema_fields_added": [],
+    "schema_fields_removed": [],
+    "schema_type_changes": [
+      {
+        "field": "limit",
+        "from_type": "integer",
+        "to_type": "object"
+      },
+      {
+        "field": "offset",
+        "from_type": "integer",
+        "to_type": "object"
+      }
+    ],
+    "description_changed": true,
+    "hypothesis": "limit and offset both changed from integer to object; an agent passing plain integer pagination values to chroma_list_collections should receive a type error and must instead wrap them in the new object structure the schema now requires."
+  }
+]

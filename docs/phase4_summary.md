@@ -10,12 +10,12 @@
 | Stage | Count | Notes |
 |---|---|---|
 | Repos sampled from MCPCrawler seed | 380 | Stratified by star tier and language |
-| Successfully cloned and tool-located | 285 primaries (pre-final-fix) | After 3 rounds of contamination fixes |
-| Walkable primaries (final) | **279** | After 4 exclusions (see §5) |
-| Successfully walked | **276** | 3 `generic-inputSchema-search` repos produced 0 walk records |
+| Successfully cloned and tool-located | 285 primaries (post-round-1) | After round 1 of test-directory contamination fixes |
+| After all 3 L4 fix rounds | **280** | Round 2 −5; round 3 −0 |
+| Successfully walked | **276** | 4 L3 repos produced 0 walk records (see §5 L3) |
 | Unique (repo, tool_name) pairs captured | **4,784** | Across 276 repos |
 
-Walk success rate: **276 / 279 = 98.9%**.
+Walk success rate: **276 / 280 = 98.6%**.
 
 ---
 
@@ -63,13 +63,16 @@ Of the 42,969 drift events:
 | `schema_fields_removed` non-empty | **326** | 0.8% |
 | `schema_type_changes` non-empty | **102** | 0.2% |
 | `source_file_changed = True` | **968** | 2.3% |
-| **Events with ≥1 detected change** | **2,548** | **5.9%** |
+| **Events with ≥1 detected change (raw)** | **2,548** | **5.9%** |
+| — of which: degenerate same-SHA events (see §5 L7) | 67 | — |
+| **Valid temporal change events** | **2,481** | **5.8%** |
 | Events with no detected change | 40,421 | 94.1% |
 
 The 94.1% zero-change rate is expected: the history walker records a snapshot for
 every commit touching a tool's source file, but most such commits do not modify the
 tool definition itself (they may touch surrounding code, imports, comments, etc.).
-The study's signal is in the 2,548 events where the tool contract changed.
+The study's signal is in the **2,481 valid temporal change events** (2,548 minus 67
+degenerate same-SHA records — see L7).
 
 ### Field-level semantics
 
@@ -173,6 +176,21 @@ primary `tool_diffs.jsonl`. Rename chains linking old and new names are availabl
 `rename_candidates.csv` but are not integrated into the drift event counts.
 Reported rename counts are a lower bound.
 
+### L7 — Degenerate same-SHA diff records (67 events, 7 repos)
+
+When a tool name appears in multiple source files in the same commit (e.g., a primary
+implementation and a re-export or test fixture that survived contamination filtering),
+the history walker may record two snapshots for the same `(repo_url, tool_name, commit_sha)`.
+The differ then produces a diff record with `from_sha == to_sha` but a non-zero detected
+change — a spatial inconsistency between two concurrent definitions, not a temporal change.
+
+67 such records were found across 7 repos:
+`mcp-atlassian` (30), `n8n-workflow-builder` (16), `cloudflare/ai` (11), `llmvm` (3),
+`mcp-server-cloudflare` (3), `learn-agentic-ai` (2), `mcp-simple-timeserver` (2).
+
+These 67 events are excluded from the LLM classifier input and from human validation.
+The corrected headline count for valid temporal change events is **2,481** (not 2,548).
+
 ### L6 — History walk scope
 The per-file history walker uses `git log --follow -- <file>` per source file.
 Commits that moved tool definitions to a completely new file not tracked by
@@ -181,9 +199,118 @@ by `source_file_changed=True` in drift records (968 events, 59 repos) but the
 transition commit itself may be recorded as a no-change pair if the file content
 is identical at the point of extraction.
 
+### L11 — Representativeness of the 276-repo walked set vs. the 364-repo achieved sample
+
+The history walker processed only the 276 primary repos (those selected in the
+initial stratified draw); 78 backup repos that filled unfilled strata slots were
+not targeted by the walker. The table below compares the language and star-tier
+distribution of the walked set against the full 364-repo achieved sample.
+
+**Language distribution:**
+
+| Language | 364-repo achieved | | 276-repo walked | | Δ (pp) |
+|---|---|---|---|---|---|
+| TypeScript | 161 | 44.2% | 108 | 39.1% | −5.1 |
+| Python | 130 | 35.7% | 102 | 37.0% | +1.2 |
+| JavaScript | 50 | 13.7% | 47 | 17.0% | +3.3 |
+| Go | 9 | 2.5% | 8 | 2.9% | +0.4 |
+| Rust | 4 | 1.1% | 4 | 1.4% | +0.4 |
+| Other | 10 | 2.7% | 7 | 2.5% | −0.2 |
+| **Total** | **364** | | **276** | | |
+
+**Star-tier distribution:**
+
+| Tier | 364-repo achieved | | 276-repo walked | | Δ (pp) |
+|---|---|---|---|---|---|
+| 10–49 | 109 | 29.9% | 85 | 30.8% | +0.9 |
+| 50–199 | 107 | 29.4% | 82 | 29.7% | +0.3 |
+| 200–999 | 85 | 23.4% | 67 | 24.3% | +0.9 |
+| 1000+ | 63 | 17.3% | 42 | 15.2% | −2.1 |
+| **Total** | **364** | | **276** | | |
+
+The largest single deviation is −5.1 pp for TypeScript (39.1% walked vs. 44.2% achieved) and −2.1 pp for the 1000+ star tier. All other cells differ by ≤3.3 pp. No language or tier stratum is absent from the walked set. The 276-repo walked set is materially close to the 364-repo achieved sample in both dimensions; the backup-repo exclusion does not introduce a representativeness gap large enough to qualify the drift findings by stratum.
+
 ---
 
-## 6. Artifact Index
+---
+
+## 6. LLM Classifier — Phase 5 Status
+
+### Design
+
+Two-pass classifier using `claude-haiku-4-5-20251001` on the 2,481 valid temporal
+change events. Each event is classified into one of five categories:
+
+| Label | Definition |
+|---|---|
+| `COSMETIC` | Formatting/typo/wording with no meaning change |
+| `CLARIFICATION` | Description adds detail about existing behavior |
+| `SCHEMA_EXPANSION` | New input fields added |
+| `SCHEMA_CONTRACTION` | Input fields removed |
+| `BEHAVIORAL_DRIFT` | Description implies changed purpose, scope, or side-effects |
+
+**Pass 1:** before→after, neutral framing, categories listed COSMETIC→BEHAVIORAL_DRIFT  
+**Pass 2:** before→after (same direction), neutral framing, categories listed
+CLARIFICATION→SCHEMA_EXPANSION→BEHAVIORAL_DRIFT→COSMETIC→SCHEMA_CONTRACTION
+(different ordering and inline definitions to test label stability without a severity bias).
+
+An earlier Pass 2 design used an "auditor" persona and severity-first ordering. After
+a 20-event test showed systematic over-escalation to `BEHAVIORAL_DRIFT` (3/4
+ground-truth keboola cases wrong), Pass 2 was redesigned to be neutrally framed. The
+revised 20-event test resolved the clear-cut disagreement (keboola schema+desc →
+SCHEMA_EXPANSION on both passes); the 4 remaining disagreements are genuinely borderline
+cases (optionality changes in text, large schema restructures) with defensible labels
+on both sides.
+
+### Pilot results
+
+20-event ground-truth test (fixed Pass 2):
+
+| Case | Expected | Pass 1 | Pass 2 | Agree |
+|---|---|---|---|---|
+| keboola `create_sql_transformation` (schema+desc) | SCHEMA_EXPANSION | ✓ | ✓ | ✓ |
+| keboola `create_sql_transformation` (desc-only) | CLARIFICATION | ✓ P1 | BEHAVIORAL_DRIFT P2 | ✗ |
+| things-mcp `get_inbox` (limit+offset) | SCHEMA_EXPANSION | ✓ | ✓ | ✓ |
+| linear-mcp-go `linear_add_comment` (desc-only) | CLARIFICATION | ✓ | ✓ | ✓ |
+
+Agreement on 20-event test: **16/20 = 80.0%**  
+Agreement on 75-event validation sample (clean): **64/75 = 85.3%**
+
+### Human validation sample
+
+75 events sampled from 2,481 valid temporal change events, stratified by structural
+change type:
+
+| Structural type | Events in pool | In sample |
+|---|---|---|
+| desc_only | 1,770 (71.3%) | 27 |
+| desc_and_schema_add | 182 (7.3%) | 11 |
+| schema_mixed | 166 (6.7%) | 6 |
+| schema_add_only | 135 (5.4%) | 12 |
+| type_change | 102 (4.1%) | 5 |
+| schema_remove_only | 65 (2.6%) | 8 |
+| desc_and_schema_remove | 61 (2.5%) | 6 |
+
+Files:
+- `data/processed/human_validation_sample.csv` — for hand-labeling (no machine labels)
+- `data/processed/human_validation_machine.jsonl` — machine labels (kept separate until Kappa computation)
+- `data/processed/human_validation_seeds.json` — event identifiers for reproducibility
+
+After hand-labeling, run `python scripts/11_human_validation.py --compute-kappa` to
+compute pairwise Cohen's Kappa (human vs P1, human vs P2, P1 vs P2) and three-rater
+Fleiss' Kappa. Requires `scikit-learn`.
+
+### Status
+
+- [x] Pass 2 bias fix implemented and validated
+- [x] 75-event human validation sample generated and machine-classified
+- [ ] Human labels (pending — user hand-labeling)
+- [ ] Kappa computation (pending — after human labels returned)
+- [ ] Full 2,481-event classification run (pending — after Kappa confirms acceptability)
+
+---
+
+## 7. Artifact Index
 
 | File | Description |
 |---|---|
@@ -196,3 +323,8 @@ is identical at the point of extraction.
 | `scripts/07_history_walk.py` | Per-file and whole-repo history walk engine |
 | `scripts/08_rerun_locate.py` | Re-evaluation script (ran 3× during contamination fix cycles) |
 | `scripts/09_diff_tools.py` | Consecutive-version diff engine |
+| `scripts/10_llm_classifier.py` | Two-pass LLM classifier (Haiku); use `--batch N --seed-events PATH` for test mode |
+| `scripts/11_human_validation.py` | Human validation sample generator and Kappa computation |
+| `data/processed/human_validation_sample.csv` | 75-event stratified sample for hand-labeling |
+| `data/processed/human_validation_machine.jsonl` | Machine labels for the 75-event sample (P1 + P2) |
+| `data/processed/human_validation_seeds.json` | Event identifiers for the 75-event sample (reproducible) |

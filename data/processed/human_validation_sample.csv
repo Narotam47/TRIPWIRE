@@ -1,0 +1,2934 @@
+event_id,repo_url,tool_name,from_sha,to_sha,from_date,to_date,structural_change_type,before_description,after_description,schema_fields_added,schema_fields_removed,schema_type_changes,before_required,after_required,before_all_fields,after_all_fields,human_label,human_notes
+E001,https://github.com/sooperset/mcp-atlassian,create_issue_link,b434c1da,db5e7de2,2025-04-22T00:30:53+09:00,2025-04-22T00:59:56+09:00,type_change,Create a link between two Jira issues,Create a link between two Jira issues,,,inward_issue_key: string→object; link_type: string→object; outward_issue_key: string→object,"['link_type', 'inward_issue_key', 'outward_issue_key']","['link_type', 'inward_issue_key', 'outward_issue_key']","{link_type: string, inward_issue_key: string, outward_issue_key: string, comment: any, comment_visibility: any}","{link_type: any, inward_issue_key: any, outward_issue_key: any, comment: any, comment_visibility: any}",COSMETIC,"""type loosened string→any, likely extraction artifact, no behavior change apparent"""
+E002,https://github.com/sooperset/mcp-atlassian,create_issue_link,77323df2,d57b7fd6,2026-02-20T16:40:21+09:00,2026-02-22T00:05:15+09:00,desc_only,"Create a link between two Jira issues.
+
+Args:
+    ctx: The FastMCP context.
+    link_type: The type of link (e.g., 'Blocks').
+    inward_issue_key: The key of the source issue.
+    outward_issue_key: The key of the target issue.
+    comment: Optional comment text.
+    comment_visibility: Optional dictionary for comment visibility.
+
+Returns:
+    JSON string indicating success or failure.
+
+Raises:
+    ValueError: If required fields are missing, invalid input, in read-only mode, or Jira client unavailable.","Create a link between two Jira issues.
+
+Args:
+    ctx: The FastMCP context.
+    link_type: The type of link (e.g., 'Blocks').
+    inward_issue_key: The key of the source issue.
+    outward_issue_key: The key of the target issue.
+    comment: Optional comment text.
+    comment_visibility: Optional JSON string for comment visibility.
+
+Returns:
+    JSON string indicating success or failure.
+
+Raises:
+    ValueError: If required fields are missing, invalid input, in read-only mode, or Jira client unavailable.",,,,"['link_type', 'inward_issue_key', 'outward_issue_key']","['link_type', 'inward_issue_key', 'outward_issue_key']","{link_type: any, inward_issue_key: any, outward_issue_key: any, comment: any, comment_visibility: any}","{link_type: any, inward_issue_key: any, outward_issue_key: any, comment: any, comment_visibility: any}",CLARIFICATION,"""Doc precision fix on comment_visibility input format; no schema change accompanies it; tool's actual outcome unchanged — leaning CLARIFICATION despite initial lean toward BEHAVIORAL_DRIFT, since category requires a new possible outcome, not just a stricter input format."""
+E003,https://github.com/keboola/keboola-mcp-server,update_config,5caf708b,3b34a5b0,2026-01-30T16:42:18+01:00,2026-02-09T16:26:29+01:00,schema_remove_only,"Updates an existing root component configuration by modifying its parameters, storage mappings, name or description.
+
+This tool allows PARTIAL parameter updates - you only need to provide the fields you want to change.
+All other fields will remain unchanged.
+Use this tool when modifying existing configurations; for configuration rows, use update_config_row instead.
+
+WHEN TO USE:
+- Modifying configuration parameters (credentials, settings, API keys, etc.)
+- Updating storage mappings (input/output tables or files)
+- Changing configuration name or description
+- Any combination of the above
+
+PREREQUISITES:
+- Configuration must already exist (use create_config for new configurations)
+- You must know both component_id and configuration_id
+- For parameter updates: Review the component's root_configuration_schema using get_components.
+- For storage updates: Ensure mappings are valid for the component type
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only specify fields you want to change
+- parameter_updates supports granular operations: set keys, replace strings, remove keys, or append to lists
+- Parameters must conform to the component's root_configuration_schema
+- Validate schemas before calling: use get_components to retrieve root_configuration_schema
+- For row-based components, this updates the ROOT only (use update_config_row for individual rows)
+
+WORKFLOW:
+1. Retrieve current configuration using get_config (to understand current state)
+2. Identify specific parameters/storage mappings to modify
+3. Prepare parameter_updates list with targeted operations
+4. Call update_config with only the fields to change","Updates an existing root component configuration by modifying its parameters, storage mappings, name or description.
+
+This tool allows PARTIAL parameter updates - you only need to provide the fields you want to change.
+All other fields will remain unchanged.
+Use this tool when modifying existing configurations; for configuration rows, use update_config_row instead.
+
+WHEN TO USE:
+- Modifying configuration parameters (credentials, settings, API keys, etc.)
+- Updating storage mappings (input/output tables or files)
+- Changing configuration name or description
+- Any combination of the above
+
+PREREQUISITES:
+- Configuration must already exist (use create_config for new configurations)
+- You must know both component_id and configuration_id
+- For parameter updates: Review the component's root_configuration_schema using get_components.
+- For storage updates: Ensure mappings are valid for the component type
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only specify fields you want to change
+- parameter_updates supports granular operations: set keys, replace strings, remove keys, or append to lists
+- Parameters must conform to the component's root_configuration_schema
+- Validate schemas before calling: use get_components to retrieve root_configuration_schema
+- For row-based components, this updates the ROOT only (use update_config_row for individual rows)
+
+WORKFLOW:
+1. Retrieve current configuration using get_config (to understand current state)
+2. Identify specific parameters/storage mappings to modify
+3. Prepare parameter_updates list with targeted operations
+4. Call update_config with only the fields to change",,is_disabled,,"['change_description', 'component_id', 'configuration_id']","['change_description', 'component_id', 'configuration_id']","{change_description: any, component_id: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, processors_before: any, processors_after: any, is_disabled: any}","{change_description: any, component_id: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, processors_before: any, processors_after: any}",SCHEMA_CONTRACTION,"""clean field removal (is_disabled), no description change, no type change — straightforward contraction,"""
+E004,https://github.com/translated/lara-mcp,check_import_status,b71a0459,ec86716b,2026-01-29T14:55:01+01:00,2026-03-20T12:50:13+01:00,desc_only,Checks the status of a TMX file import job in your Lara Translate account.,Checks the status of a TMX import job started by import_tmx. Poll this tool with the import_id returned from import_tmx until the import is complete. The response includes a progress field to track completion.,,,,[],[],(none),(none),CLARIFICATION,"""description expanded to explain existing polling workflow with import_tmx and progress field; no schema change; behavior unchanged, just better documented."""
+E005,https://github.com/keboola/keboola-mcp-server,create_config,0ca9f593,d32e21a7,2026-04-24T09:14:39+02:00,2026-04-24T11:08:07+02:00,schema_add_only,"Creates a root component configuration using the specified name, component ID, configuration JSON, and description.
+
+BEFORE CALLING - REQUIRED STEPS:
+1. Call `get_components([component_id])` to retrieve the component's `configuration_schema`.
+2. Read `configuration_schema.required` to find ALL mandatory top-level fields.
+3. Call `get_config_examples(component_id)` to see real-world parameter examples.
+4. Populate `parameters` with every required field before calling this tool.
+Skipping these steps will cause a schema validation error.
+
+USAGE:
+- Use when you want to create a new root configuration for a specific component.
+
+WHEN NOT TO USE:
+- `keboola.orchestrator` / `keboola.flow` → use flows tools
+- `keboola.data-apps` → use data applications tools
+- `keboola.snowflake-transformation` / `keboola.google-bigquery-transformation` → use SQL transformation tools
+
+EXAMPLES:
+- user_input: `Create a new configuration for component X with these settings`
+    - set the component_id and configuration parameters accordingly
+    - returns the created component configuration if successful.","Creates a root component configuration using the specified name, component ID, configuration JSON, and description.
+
+BEFORE CALLING - REQUIRED STEPS:
+1. Call `get_components([component_id])` to retrieve the component's `configuration_schema`.
+2. Read `configuration_schema.required` to find ALL mandatory top-level fields.
+3. Call `get_config_examples(component_id)` to see real-world parameter examples.
+4. Populate `parameters` with every required field before calling this tool.
+Skipping these steps will cause a schema validation error.
+
+USAGE:
+- Use when you want to create a new root configuration for a specific component.
+
+WHEN NOT TO USE:
+- `keboola.orchestrator` / `keboola.flow` → use flows tools
+- `keboola.data-apps` → use data applications tools
+- `keboola.snowflake-transformation` / `keboola.google-bigquery-transformation` → use SQL transformation tools
+
+EXAMPLES:
+- user_input: `Create a new configuration for component X with these settings`
+    - set the component_id and configuration parameters accordingly
+    - returns the created component configuration if successful.",variables,,,"['name', 'description', 'component_id', 'parameters']","['name', 'description', 'component_id', 'parameters']","{name: any, description: any, component_id: any, parameters: any, storage: any, processors_before: any, processors_after: any}","{name: any, description: any, component_id: any, parameters: any, storage: any, processors_before: any, processors_after: any, variables: any}",SCHEMA_EXPANSION,"""clean field addition (variables), no description change, no removals — straightforward expansion."""
+E006,https://github.com/sooperset/mcp-atlassian,search,1d1cbb97,36ed652f,2026-02-24T22:11:36+09:00,2026-02-24T22:37:09+09:00,schema_mixed,"Search Jira issues using JQL (Jira Query Language).
+
+Args:
+    ctx: The FastMCP context.
+    jql: JQL query string.
+    fields: Comma-separated fields to return.
+    limit: Maximum number of results.
+    start_at: Starting index for pagination.
+    projects_filter: Comma-separated list of project keys to filter by.
+    expand: Optional fields to expand.
+
+Returns:
+    JSON string representing the search results including pagination info.","Search Confluence content using simple terms or CQL.
+
+Args:
+    ctx: The FastMCP context.
+    query: Search query - can be simple text or a CQL query string.
+    limit: Maximum number of results (1-50).
+    spaces_filter: Comma-separated list of space keys to filter by.
+
+Returns:
+    JSON string representing a list of simplified Confluence page objects.",query; spaces_filter,expand; fields; jql; projects_filter; start_at,,['jql'],['query'],"{jql: any, fields: any, limit: any, start_at: any, projects_filter: any, expand: any}","{query: any, limit: any, spaces_filter: any}",BEHAVIORAL_DRIFT,"""Complete tool identity replacement under same name (Jira search → Confluence search), not incremental drift — possible name reuse/refactor across unrelated functions rather than genuine evolution of one tool. Worth flagging as a distinct sub-pattern in writeup, separate from typical drift cases."""
+E007,https://github.com/sooperset/mcp-atlassian,add_comment,835080fe,c1a7059d,2026-02-27T16:21:34+09:00,2026-03-01T22:28:41+09:00,schema_mixed,"Add a comment to a Jira issue.
+
+Args:
+    ctx: The FastMCP context.
+    issue_key: Jira issue key.
+    body: Comment text in Markdown.
+    visibility: (Optional) Comment visibility as JSON string.
+    public: (Optional) For JSM issues. True = customer-visible,
+        False = internal/agent-only. Uses ServiceDesk API.
+
+Returns:
+    JSON string representing the added comment object.
+
+Raises:
+    ValueError: If in read-only mode or Jira client unavailable.","Add a comment to a Jira issue.
+
+Args:
+    ctx: The FastMCP context.
+    issue_key: Jira issue key.
+    body: Comment text in Markdown.
+    visibility: (Optional) Comment visibility as JSON string.
+    public: (Optional) For JSM issues. True = customer-visible,
+        False = internal/agent-only. Uses ServiceDesk API.
+
+Returns:
+    JSON string representing the added comment object.
+
+Raises:
+    ValueError: If in read-only mode or Jira client unavailable.",page_id,issue_key; public; visibility,,"['issue_key', 'body']","['issue_key', 'body']","{issue_key: any, body: any, visibility: any, public: any}","{issue_key: any, body: any, visibility: any, public: any}",BEHAVIORAL_DRIFT,"""Cross-file name collision (jira.py add_comment vs confluence.py add_comment, same as E006 search pattern). Display bug confirmed and fixed by Claude Code mid-session; corrected display shows Jira issue-comment -> Confluence page-comment transition. 20/2,481 full-dataset events share this root cause per investigation."""
+E008,https://github.com/neka-nat/freecad-mcp,create_object,1f6d26e3,ad59f553,2025-03-28T01:35:36+09:00,2025-03-30T16:58:17+09:00,desc_and_schema_add,"Create a new object in FreeCAD.
+Object type is starts with ""Part::"" or ""Draft::"" or ""PartDesign::"" or ""Fem::"".
+
+Args:
+    doc_name: The name of the document to create the object in.
+    obj_type: The type of the object to create (e.g. 'Part::Box', 'Part::Cylinder', 'Draft::Circle', 'PartDesign::Body', etc.).
+    obj_name: The name of the object to create.
+    obj_properties: The properties of the object to create.
+
+Returns:
+    A message indicating the success or failure of the object creation and a screenshot of the object.
+
+Examples:
+    If you want to create a cylinder with a height of 30 and a radius of 10, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyCylinder"",
+        ""obj_name"": ""Cylinder"",
+        ""obj_type"": ""Part::Cylinder"",
+        ""obj_properties"": {
+            ""Height"": 30,
+            ""Radius"": 10,
+            ""Placement"": {
+                ""Base"": {
+                    ""x"": 10,
+                    ""y"": 10,
+                    ""z"": 0
+                },
+                ""Rotation"": {
+                    ""Axis"": {
+                        ""x"": 0,
+                        ""y"": 0,
+                        ""z"": 1
+                    },
+                    ""Angle"": 45
+                }
+            },
+            ""ViewObject"": {
+                ""ShapeColor"": [0.5, 0.5, 0.5, 1.0]
+            }
+        }
+    }
+    ```
+
+    If you want to create a circle with a radius of 10, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyCircle"",
+        ""obj_name"": ""Circle"",
+        ""obj_type"": ""Draft::Circle"",
+    }
+    ```
+
+    If you want to create a FEM analysis, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyFEMAnalysis"",
+        ""obj_name"": ""FemAnalysis"",
+        ""obj_type"": ""Fem::AnalysisPython"",
+    }
+    ```
+
+    If you want to create a FEM constraint, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyFEMConstraint"",
+        ""obj_name"": ""FemConstraint"",
+        ""obj_type"": ""Fem::ConstraintFixed"",
+        ""obj_properties"": {
+            ""References"": [
+                {
+                    ""object_name"": ""MyObject"",
+                    ""face"": ""Face1""
+                }
+            ]
+        }
+    }
+    ```
+
+    If you want to create a FEM mechanical material, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyFEMAnalysis"",
+        ""obj_name"": ""FemMechanicalMaterial"",
+        ""obj_type"": ""Fem::MaterialCommon"",
+        ""obj_properties"": {
+            ""Material"": {
+                ""Name"": ""MyMaterial"",
+                ""Density"": ""7900 kg/m^3"",
+                ""YoungModulus"": ""210 GPa"",
+                ""PoissonRatio"": 0.3
+            }
+        }
+    }
+    ```
+
+    If you want to create a FEM mesh, you can use the following data.
+    The `Part` property is required.
+    ```json
+    {
+        ""doc_name"": ""MyFEMMesh"",
+        ""obj_name"": ""FemMesh"",
+        ""obj_type"": ""Fem::FemMeshGmsh"",
+        ""obj_properties"": {
+            ""Part"": ""MyObject"",
+            ""ElementSizeMax"": 10,
+            ""ElementSizeMin"": 0.1,
+            ""MeshAlgorithm"": 2
+        }
+    }
+    ```","Create a new object in FreeCAD.
+Object type is starts with ""Part::"" or ""Draft::"" or ""PartDesign::"" or ""Fem::"".
+
+Args:
+    doc_name: The name of the document to create the object in.
+    obj_type: The type of the object to create (e.g. 'Part::Box', 'Part::Cylinder', 'Draft::Circle', 'PartDesign::Body', etc.).
+    obj_name: The name of the object to create.
+    obj_properties: The properties of the object to create.
+
+Returns:
+    A message indicating the success or failure of the object creation and a screenshot of the object.
+
+Examples:
+    If you want to create a cylinder with a height of 30 and a radius of 10, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyCylinder"",
+        ""obj_name"": ""Cylinder"",
+        ""obj_type"": ""Part::Cylinder"",
+        ""obj_properties"": {
+            ""Height"": 30,
+            ""Radius"": 10,
+            ""Placement"": {
+                ""Base"": {
+                    ""x"": 10,
+                    ""y"": 10,
+                    ""z"": 0
+                },
+                ""Rotation"": {
+                    ""Axis"": {
+                        ""x"": 0,
+                        ""y"": 0,
+                        ""z"": 1
+                    },
+                    ""Angle"": 45
+                }
+            },
+            ""ViewObject"": {
+                ""ShapeColor"": [0.5, 0.5, 0.5, 1.0]
+            }
+        }
+    }
+    ```
+
+    If you want to create a circle with a radius of 10, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyCircle"",
+        ""obj_name"": ""Circle"",
+        ""obj_type"": ""Draft::Circle"",
+    }
+    ```
+
+    If you want to create a FEM analysis, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyFEMAnalysis"",
+        ""obj_name"": ""FemAnalysis"",
+        ""obj_type"": ""Fem::AnalysisPython"",
+    }
+    ```
+
+    If you want to create a FEM constraint, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyFEMConstraint"",
+        ""obj_name"": ""FemConstraint"",
+        ""obj_type"": ""Fem::ConstraintFixed"",
+        ""analysis_name"": ""MyFEMAnalysis"",
+        ""obj_properties"": {
+            ""References"": [
+                {
+                    ""object_name"": ""MyObject"",
+                    ""face"": ""Face1""
+                }
+            ]
+        }
+    }
+    ```
+
+    If you want to create a FEM mechanical material, you can use the following data.
+    ```json
+    {
+        ""doc_name"": ""MyFEMAnalysis"",
+        ""obj_name"": ""FemMechanicalMaterial"",
+        ""obj_type"": ""Fem::MaterialCommon"",
+        ""analysis_name"": ""MyFEMAnalysis"",
+        ""obj_properties"": {
+            ""Material"": {
+                ""Name"": ""MyMaterial"",
+                ""Density"": ""7900 kg/m^3"",
+                ""YoungModulus"": ""210 GPa"",
+                ""PoissonRatio"": 0.3
+            }
+        }
+    }
+    ```
+
+    If you want to create a FEM mesh, you can use the following data.
+    The `Part` property is required.
+    ```json
+    {
+        ""doc_name"": ""MyFEMMesh"",
+        ""obj_name"": ""FemMesh"",
+        ""obj_type"": ""Fem::FemMeshGmsh"",
+        ""analysis_name"": ""MyFEMAnalysis"",
+        ""obj_properties"": {
+            ""Part"": ""MyObject"",
+            ""ElementSizeMax"": 10,
+            ""ElementSizeMin"": 0.1,
+            ""MeshAlgorithm"": 2
+        }
+    }
+    ```",analysis_name,,,"['doc_name', 'obj_type', 'obj_name']","['doc_name', 'obj_type', 'obj_name']","{doc_name: string, obj_type: string, obj_name: string, obj_properties: object}","{doc_name: string, obj_type: string, obj_name: string, analysis_name: any, obj_properties: object}",SCHEMA_EXPANSION,"""Pure additive field (analysis_name, optional); existing examples for non-FEM object types unaffected; new examples for FEM-specific objects demonstrate the new field. Clean expansion, not drift — old calls remain valid."""
+E009,https://github.com/chroma-core/chroma-mcp,query_documents,28159309,b11e6db8,2025-02-10T16:48:00-08:00,2025-02-10T17:00:53-08:00,desc_and_schema_add,"Query documents from a Chroma collection with advanced filtering.
+
+Args:
+    collection_name: Name of the collection to query
+    query_texts: List of query texts to search for
+    n_results: Number of results to return per query
+    where: Optional metadata filters using Chroma's query operators
+           Examples:
+           - Simple equality: {""metadata_field"": ""value""}
+           - Comparison: {""metadata_field"": {""$gt"": 5}}
+           - Logical AND: {""$and"": [{""field1"": {""$eq"": ""value1""}}, {""field2"": {""$gt"": 5}}]}
+           - Logical OR: {""$or"": [{""field1"": {""$eq"": ""value1""}}, {""field1"": {""$eq"": ""value2""}}]}
+           - Contains/In: {""metadata_field"": {""$in"": [""value1"", ""value2""]}}
+           Supported operators: $eq, $ne, $gt, $gte, $lt, $lte, $in, $nin
+    where_document: Optional document content filters
+           Examples:
+           - Contains text: {""$contains"": ""search text""}
+           - Does not contain: {""$not_contains"": ""excluded text""}","Query documents from a Chroma collection with advanced filtering.
+
+Args:
+    collection_name: Name of the collection to query
+    query_texts: List of query texts to search for
+    n_results: Number of results to return per query
+    where: Optional metadata filters using Chroma's query operators
+           Examples:
+           - Simple equality: {""metadata_field"": ""value""}
+           - Comparison: {""metadata_field"": {""$gt"": 5}}
+           - Logical AND: {""$and"": [{""field1"": {""$eq"": ""value1""}}, {""field2"": {""$gt"": 5}}]}
+           - Logical OR: {""$or"": [{""field1"": {""$eq"": ""value1""}}, {""field1"": {""$eq"": ""value2""}}]}
+    where_document: Optional document content filters
+    include: Optional list of what to include in response. Can contain any of:
+            [""documents"", ""embeddings"", ""metadatas"", ""distances""]",include,,,"['collection_name', 'query_texts']","['collection_name', 'query_texts']","{collection_name: string, query_texts: array, n_results: integer, where: any, where_document: any}","{collection_name: string, query_texts: array, n_results: integer, where: any, where_document: any, include: array}",SCHEMA_EXPANSION,"""New `include` field added (response shape control); description simultaneously trimmed some `where`/`where_document` operator examples — schema itself shows no field removal, so treating as expansion with incidental doc condensing, not contraction. Genuine capability loss for in/in/"
+E010,https://github.com/neo4j-contrib/mcp-neo4j,validate_relationship,078830c3,d896accd,2025-06-12T14:33:25-05:00,2025-06-12T14:51:55-05:00,desc_and_schema_add,"Validate a single relationship. Returns True if the relationship is valid, otherwise raises a ValueError.","Validate a single relationship. Returns True if the relationship is valid, otherwise raises a ValueError. If return_validated is True, returns the validated relationship.",return_validated,,,['relationship'],['relationship'],{relationship: any},"{relationship: any, return_validated: boolean}",SCHEMA_EXPANSION,"""Single optional field added (return_validated) with exactly matching description addition; original behavior preserved verbatim; clean expansion."""
+E011,https://github.com/sooperset/mcp-atlassian,get_sprints_from_board,b434c1da,db5e7de2,2025-04-22T00:30:53+09:00,2025-04-22T00:59:56+09:00,type_change,Get jira sprints from board by state,Get jira sprints from board by state,,,board_id: string→object,['board_id'],['board_id'],"{board_id: string, state: any, start_at: any, limit: any}","{board_id: any, state: any, start_at: any, limit: any}",COSMETIC,
+E012,https://github.com/delorenj/mcp-server-trello,attach_image_to_card,db3812f3,5dd2543d,2025-05-06T16:04:08+01:00,2025-05-12T11:12:49-04:00,desc_only,Attach an image to a card from a URL on a specific board,Attach an image to a card directly from a URL,,,,[],[],(none),(none),COSMETIC,
+E013,https://github.com/wonderwhy-er/ClaudeDesktopCommander,read_process_output,bdaab6e8,e28b6f95,2025-12-09T19:22:40+02:00,2025-12-11T11:43:39+02:00,desc_only,"Read output from a running process with intelligent completion detection.
+                        
+                        Automatically detects when process is ready for more input instead of timing out.
+                        
+                        SMART FEATURES:
+                        - Early exit when REPL shows prompt (>>>, >, etc.)
+                        - Detects process completion vs still running
+                        - Prevents hanging on interactive prompts
+                        - Clear status messages about process state
+                        
+                        REPL USAGE:
+                        - Stops immediately when REPL prompt detected
+                        - Shows clear status: waiting for input vs finished
+                        - Shorter timeouts needed due to smart detection
+                        - Works with Python, Node.js, R, Julia, etc.
+                        
+                        DETECTION STATES:
+                        Process waiting for input (ready for interact_with_process)
+                        Process finished execution
+                        Timeout reached (may still be running)
+
+                        PERFORMANCE DEBUGGING (verbose_timing parameter):
+                        Set verbose_timing: true to get detailed timing information including:
+                        - Exit reason (early_exit_quick_pattern, early_exit_periodic_check, process_finished, timeout)
+                        - Total duration and time to first output
+                        - Complete timeline of all output events with timestamps
+                        - Which detection mechanism triggered early exit
+                        Use this to identify when timeouts could be reduced or detection patterns improved.
+
+                        ${CMD_PREFIX_DESCRIPTION}","Read output from a running process with file-like pagination support.
+                        
+                        Supports partial output reading with offset and length parameters (like read_file):
+                        - 'offset' (start line, default: 0)
+                          * offset=0: Read NEW output since last read (default, like old behavior)
+                          * Positive: Read from absolute line position
+                          * Negative: Read last N lines from end (tail behavior)
+                        - 'length' (max lines to read, default: configurable via 'fileReadLineLimit' setting)
+                        
+                        Examples:
+                        - offset: 0, length: 100     → First 100 NEW lines since last read
+                        - offset: 0                  → All new lines (respects config limit)
+                        - offset: 500, length: 50    → Lines 500-549 (absolute position)
+                        - offset: -20                → Last 20 lines (tail)
+                        - offset: -50, length: 10    → Start 50 from end, read 10 lines
+                        
+                        OUTPUT PROTECTION:
+                        - Uses same fileReadLineLimit as read_file (default: 1000 lines)
+                        - Returns status like: [Reading 100 lines from line 0 (total: 5000 lines, 4900 remaining)]
+                        - Prevents context overflow from verbose processes
+                        
+                        SMART FEATURES:
+                        - For offset=0, waits up to timeout_ms for new output to arrive
+                        - Detects REPL prompts and process completion
+                        - Shows process state (waiting for input, finished, etc.)
+                        
+                        DETECTION STATES:
+                        Process waiting for input (ready for interact_with_process)
+                        Process finished execution
+                        Timeout reached (may still be running)
+
+                        ${CMD_PREFIX_DESCRIPTION}",,,,[],[],(none),(none),BEHAVIORAL_DRIFT,Tool redesigned from completion-detection model to file-like pagination with offset and length. Old REPL early-exit and verbose_timing debugging removed. Default behavior changed from full output to new-output-only.
+E014,https://github.com/dvejsada/mcp-pptx-presentations-creator,create_excel_document,d0c937dc,4aac88f6,2026-02-20T18:33:03+01:00,2026-03-24T13:59:31+01:00,schema_add_only,Converts markdown content with tables and formulas to Excel (.xlsx) format. Use '## Sheet: Name' headings to create multiple sheets.,Converts markdown content with tables and formulas to Excel (.xlsx) format. Use '## Sheet: Name' headings to create multiple sheets.,file_name,,,['markdown_content'],['markdown_content'],{markdown_content: any},"{markdown_content: any, file_name: any}",SCHEMA_EXPANSION,
+E015,https://github.com/keboola/keboola-mcp-server,create_sql_transformation,d32e21a7,340f257e,2026-04-24T11:08:07+02:00,2026-04-28T11:25:02+02:00,schema_remove_only,"Creates an SQL transformation using the specified name, SQL query following the current SQL dialect, a detailed
+description, and a list of created table names.
+
+CONSIDERATIONS:
+- By default, SQL transformation must create at least one table to produce a result; omit only if the user
+  explicitly indicates that no table creation is needed.
+- Each SQL code block must include descriptive name that reflects its purpose and group one or more executable
+  semantically related SQL statements.
+- Each SQL query statement within a code block must be executable and follow the current SQL dialect.
+- Use delimited identifiers for the current SQL dialect for all identifiers and FQN references.
+- When referring to the input tables within the SQL query, use fully qualified table names, which can be
+  retrieved using appropriate tools.
+- When creating a new table within the SQL query (e.g. CREATE TABLE ...): use only the table name with
+  delimited identifiers, without the fully qualified path; add the plain table name without delimiters
+  to the `created_table_names` list.
+- Unless otherwise specified by user, transformation name and description are generated based on the SQL query
+  and user intent.
+- If there are 20 or more SQL transformations in the project, consider organizing them with a folder: existing
+  folder names are surfaced in the response's change_summary — use one of them or create a new one.
+
+USAGE:
+- Use when you want to create a new SQL transformation.
+
+EXAMPLES:
+- user_input: `Can you create a new transformation out of this sql query?`
+    - set the sql_code_blocks to the query, and set other parameters accordingly.
+    - returns the created SQL transformation configuration if successful.
+- user_input: `Generate me an SQL transformation which [USER INTENT]`
+    - set the sql_code_blocks to the query based on the [USER INTENT], and set other parameters accordingly.
+    - returns the created SQL transformation configuration if successful.","Creates an SQL transformation using the specified name, SQL query following the current SQL dialect, a detailed
+description, and a list of created table names.
+
+CONSIDERATIONS:
+- By default, SQL transformation must create at least one table to produce a result; omit only if the user
+  explicitly indicates that no table creation is needed.
+- Each SQL code block must include descriptive name that reflects its purpose and group one or more executable
+  semantically related SQL statements.
+- Each SQL query statement within a code block must be executable and follow the current SQL dialect.
+- Use delimited identifiers for the current SQL dialect for all identifiers and FQN references.
+- When referring to the input tables within the SQL query, use fully qualified table names, which can be
+  retrieved using appropriate tools.
+- When creating a new table within the SQL query (e.g. CREATE TABLE ...): use only the table name with
+  delimited identifiers, without the fully qualified path; add the plain table name without delimiters
+  to the `created_table_names` list.
+- Unless otherwise specified by user, transformation name and description are generated based on the SQL query
+  and user intent.
+- If there are 20 or more SQL transformations in the project, consider organizing them with a folder: existing
+  folder names are surfaced in the response's change_summary — use one of them or create a new one.
+
+USAGE:
+- Use when you want to create a new SQL transformation.
+
+EXAMPLES:
+- user_input: `Can you create a new transformation out of this sql query?`
+    - set the sql_code_blocks to the query, and set other parameters accordingly.
+    - returns the created SQL transformation configuration if successful.
+- user_input: `Generate me an SQL transformation which [USER INTENT]`
+    - set the sql_code_blocks to the query based on the [USER INTENT], and set other parameters accordingly.
+    - returns the created SQL transformation configuration if successful.",,variables,,"['name', 'description', 'sql_code_blocks']","['name', 'description', 'sql_code_blocks']","{name: any, description: any, sql_code_blocks: any, created_table_names: any, folder: any, variables: any}","{name: any, description: any, sql_code_blocks: any, created_table_names: any, folder: any}",SCHEMA_CONTRACTION,"variables field removed here while it was added to create_config in E005 same repo - possibly a feature that didnt fit this tool or was reverted, worth noting as a pattern in this codebase."
+E016,https://github.com/hald/things-mcp,get_anytime,92a54d27,929763a9,2026-06-04T18:46:53-07:00,2026-06-04T19:05:12-07:00,desc_and_schema_add,Get todos from Anytime list,"Get todos from Anytime list
+
+Args:
+    limit: Maximum number of items to return (default: all)
+    offset: Number of items to skip from the start (default: 0)",limit; offset,,,[],[],(none),"{limit: integer, offset: integer}",SCHEMA_EXPANSION,"Same limit/offset pagination pattern as get_inbox verified earlier, rolled out to another tool in this repo, both default to original full-list behavior."
+E017,https://github.com/sooperset/mcp-atlassian,add_comment,5960ab47,207d267f,2025-12-29T17:20:34+09:00,2025-12-30T12:31:54-05:00,desc_and_schema_add,"Add a comment to a Jira issue.
+
+Args:
+    ctx: The FastMCP context.
+    issue_key: Jira issue key.
+    comment: Comment text in Markdown.
+
+Returns:
+    JSON string representing the added comment object.
+
+Raises:
+    ValueError: If in read-only mode or Jira client unavailable.","Add a comment to a Jira issue.
+
+Args:
+    ctx: The FastMCP context.
+    issue_key: Jira issue key.
+    comment: Comment text in Markdown.
+    visibility: (Optional) Comment visibility (e.g. {""type"":""group"",""value"":""jira-users""}).
+
+Returns:
+    JSON string representing the added comment object.
+
+Raises:
+    ValueError: If in read-only mode or Jira client unavailable.",visibility,,,"['issue_key', 'comment']","['issue_key', 'comment']","{issue_key: any, comment: any}","{issue_key: any, comment: any, visibility: any}",SCHEMA_EXPANSION,"Jira add_comment gaining visibility field normally, not the same collision issue as E007, this is genuine same-file evolution."
+E018,https://github.com/makafeli/n8n-workflow-builder,list_workflows,8ec769fd,e50a8cc7,2025-07-27T17:19:12+02:00,2025-07-27T18:05:59+02:00,desc_only,List all workflows from n8n instance,"List all workflows from your n8n instance. Returns a comprehensive list of all workflows with their IDs, names, status (active/inactive), creation dates, and basic metadata. Perfect for getting an overview of your automation landscape.",,,,[],[],(none),(none),CLARIFICATION,
+E019,https://github.com/cloudflare/ai,add,bec6e7b3,099ce9eb,2025-09-12T13:50:06+01:00,2025-10-29T18:36:17Z,desc_only,,Add two numbers the way only MCP can,,,,[],[],(none),(none),COSMETIC,"Before text appears empty, only an addition shown, likely first time this trivial demo tool description was set rather than a real before-after comparison, worth checking if this pattern recurs."
+E020,https://github.com/keboola/keboola-mcp-server,update_sql_transformation,052d9703,30f4179a,2026-03-12T09:29:43+01:00,2026-03-24T16:14:16+01:00,schema_add_only,"Updates an existing SQL transformation configuration by modifying its SQL code, storage mappings,
+name or description.
+
+This tool allows PARTIAL parameter updates for transformation SQL blocks and code - you only need to provide
+the operations you want to perform. All other fields will remain unchanged.
+Use this for modifying SQL transformations created with create_sql_transformation.
+
+WHEN TO USE:
+- Modifying SQL queries in transformation (add/edit/remove SQL statements)
+- Updating transformation block or code block names
+- Changing input/output table mappings for the transformation
+- Updating the transformation name or description
+- Any combination of the above
+
+PREREQUISITES:
+- Transformation must already exist (use create_sql_transformation for new transformations)
+- You must know the configuration_id of the transformation
+- SQL dialect is determined automatically from the workspace
+- CRITICAL: Use get_configs first to see the current transformation structure and get block_id/code_id values
+
+TRANSFORMATION STRUCTURE:
+A transformation has this hierarchy:
+  transformation
+  └─ blocks[] - List of transformation blocks (each has a unique block_id)
+     └─ block.name - Descriptive name for the block
+     └─ block.codes[] - List of code blocks within the block (each has a unique code_id)
+        └─ code.name - Descriptive name for the code block
+        └─ code.script - SQL script (string with SQL statements)
+
+Example structure from get_configs:
+{
+  ""blocks"": [
+    {
+      ""id"": ""b0"",  ← block_id needed for operations (format: b{index})
+      ""name"": ""Data Preparation"",
+      ""codes"": [
+        {
+          ""id"": ""b0.c0"",  ← code_id needed for operations (format: b{block_index}.c{code_index})
+          ""name"": ""Load customers"",
+          ""script"": ""SELECT * FROM customers WHERE status = 'active';""
+        }
+      ]
+    }
+  ]
+}
+
+PARAMETER UPDATE OPERATIONS:
+All operations use block_id and code_id to identify elements (get these from get_configs first).
+
+ID Format:
+- block_id: ""b0"", ""b1"", ""b2"", etc. (format: b{index})
+- code_id: ""b0.c0"", ""b0.c1"", ""b1.c0"", etc. (format: b{block_index}.c{code_index})
+
+1. BLOCK OPERATIONS:
+   - add_block: Create a new block in the transformation
+     {""op"": ""add_block"", ""block"": {""name"": ""New Block"", ""codes"": []}, ""position"": ""end""}
+
+   - remove_block: Delete an entire block
+     {""op"": ""remove_block"", ""block_id"": ""b0""}
+
+   - rename_block: Change a block's name
+     {""op"": ""rename_block"", ""block_id"": ""b2"", ""block_name"": ""Updated Name""}
+
+2. CODE BLOCK OPERATIONS:
+   - add_code: Create a new code block within an existing block
+     {""op"": ""add_code"", ""block_id"": ""b1"", ""code"": {""name"": ""New Code"", ""script"": ""SELECT 1;""}, ""position"": ""end""}
+
+   - remove_code: Delete a code block
+     {""op"": ""remove_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0""}
+
+   - rename_code: Change a code block's name
+     {""op"": ""rename_code"", ""block_id"": ""b1"", ""code_id"": ""b1.c2"", ""code_name"": ""Updated Name""}
+
+3. SQL SCRIPT OPERATIONS:
+   - set_code: Replace the entire SQL script (overwrites existing)
+     {""op"": ""set_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0"", ""script"": ""SELECT * FROM new_table;""}
+
+   - add_script: Append or prepend SQL to existing script (preserves existing)
+     {""op"": ""add_script"", ""block_id"": ""b2"", ""code_id"": ""b2.c1"", ""script"": ""WHERE date > '2024-01-01'"",
+      ""position"": ""end""}
+
+   - str_replace: Find and replace text in SQL scripts
+     {""op"": ""str_replace"", ""search_for"": ""old_table"", ""replace_with"": ""new_table"", ""block_id"": ""b0"",'
+      ""code_id"": ""b0.c0""}
+     - Omit code_id to replace in all codes of a block
+     - Omit both block_id and code_id to replace everywhere
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only the operations you specify are applied
+- All other parts of the transformation remain unchanged
+- Each SQL script must be executable and follow the current SQL dialect
+- Storage configuration is COMPLETE REPLACEMENT - include ALL mappings you want to keep
+- Leave updated_description empty to preserve the original description
+- SCHEMA CHANGES: Destructive schema changes (removing columns, changing types, renaming columns) require
+  manually deleting the output table before running the updated transformation to avoid schema mismatch errors.
+  Non-destructive changes (adding columns) typically do not require table deletion.
+
+WORKFLOW:
+1. Call get_configs to retrieve current transformation structure and identify block_id/code_id values
+2. Identify what needs to change (SQL code, storage, description)
+3. For SQL changes: Prepare parameter_updates list with targeted operations
+4. For storage changes: Build complete storage configuration (include all mappings)
+5. Call update_sql_transformation with change_description and only the fields to change
+
+EXAMPLE WORKFLOWS:
+
+Example 1 - Update SQL script in existing code block:
+Step 1: Get current config
+  result = get_configs(component_id=""keboola.snowflake-transformation"", configuration_id=""12345"")
+  # Note the block_id (e.g., ""b0"") and code_id (e.g., ""b0.c1"") from result
+
+Step 2: Update the SQL
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Updated WHERE clause to filter active customers only"",
+    parameter_updates=[
+      {
+        ""op"": ""set_code"",
+        ""block_id"": ""b0"",      # from step 1
+        ""code_id"": ""b0.c0"",    # from step 1
+        ""script"": ""SELECT * FROM customers WHERE status = 'active' AND region = 'US';""
+      }
+    ]
+  )
+
+Example 2 - Append a new code block to the second block of an existing transformation:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added aggregation step"",
+    parameter_updates=[
+      {
+        ""op"": ""add_code"",
+        ""block_id"": ""b1"",  # second block
+        ""code"": {
+          ""name"": ""Aggregate Sales"",
+          ""script"": ""SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id;""
+        },
+        ""position"": ""end""
+      }
+    ]
+  )
+
+Example 3 - Replace table name across all SQL scripts:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Renamed source table from old_customers to customers"",
+    parameter_updates=[
+      {
+        ""op"": ""str_replace"",
+        ""search_for"": ""old_customers"",
+        ""replace_with"": ""customers""
+        # No block_id or code_id = applies to all scripts
+      }
+    ]
+  )
+
+Example 4 - Update storage mappings:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added new input table"",
+    storage={
+      ""input"": {
+        ""tables"": [
+          {
+            ""source"": ""in.c-main.customers"",
+            ""destination"": ""customers""
+          },
+          {
+            ""source"": ""in.c-main.orders"",
+            ""destination"": ""orders""
+          }
+        ]
+      },
+      ""output"": {
+        ""tables"": [
+          {
+            ""source"": ""result"",
+            ""destination"": ""out.c-main.customer_summary""
+          }
+        ]
+      }
+    }
+  )","Updates an existing SQL transformation configuration by modifying its SQL code, storage mappings,
+name or description.
+
+This tool allows PARTIAL parameter updates for transformation SQL blocks and code - you only need to provide
+the operations you want to perform. All other fields will remain unchanged.
+Use this for modifying SQL transformations created with create_sql_transformation.
+
+WHEN TO USE:
+- Modifying SQL queries in transformation (add/edit/remove SQL statements)
+- Updating transformation block or code block names
+- Changing input/output table mappings for the transformation
+- Updating the transformation name or description
+- Any combination of the above
+
+PREREQUISITES:
+- Transformation must already exist (use create_sql_transformation for new transformations)
+- You must know the configuration_id of the transformation
+- SQL dialect is determined automatically from the workspace
+- CRITICAL: Use get_configs first to see the current transformation structure and get block_id/code_id values
+
+TRANSFORMATION STRUCTURE:
+A transformation has this hierarchy:
+  transformation
+  └─ blocks[] - List of transformation blocks (each has a unique block_id)
+     └─ block.name - Descriptive name for the block
+     └─ block.codes[] - List of code blocks within the block (each has a unique code_id)
+        └─ code.name - Descriptive name for the code block
+        └─ code.script - SQL script (string with SQL statements)
+
+Example structure from get_configs:
+{
+  ""blocks"": [
+    {
+      ""id"": ""b0"",  ← block_id needed for operations (format: b{index})
+      ""name"": ""Data Preparation"",
+      ""codes"": [
+        {
+          ""id"": ""b0.c0"",  ← code_id needed for operations (format: b{block_index}.c{code_index})
+          ""name"": ""Load customers"",
+          ""script"": ""SELECT * FROM customers WHERE status = 'active';""
+        }
+      ]
+    }
+  ]
+}
+
+PARAMETER UPDATE OPERATIONS:
+All operations use block_id and code_id to identify elements (get these from get_configs first).
+
+ID Format:
+- block_id: ""b0"", ""b1"", ""b2"", etc. (format: b{index})
+- code_id: ""b0.c0"", ""b0.c1"", ""b1.c0"", etc. (format: b{block_index}.c{code_index})
+
+1. BLOCK OPERATIONS:
+   - add_block: Create a new block in the transformation
+     {""op"": ""add_block"", ""block"": {""name"": ""New Block"", ""codes"": []}, ""position"": ""end""}
+
+   - remove_block: Delete an entire block
+     {""op"": ""remove_block"", ""block_id"": ""b0""}
+
+   - rename_block: Change a block's name
+     {""op"": ""rename_block"", ""block_id"": ""b2"", ""block_name"": ""Updated Name""}
+
+2. CODE BLOCK OPERATIONS:
+   - add_code: Create a new code block within an existing block
+     {""op"": ""add_code"", ""block_id"": ""b1"", ""code"": {""name"": ""New Code"", ""script"": ""SELECT 1;""}, ""position"": ""end""}
+
+   - remove_code: Delete a code block
+     {""op"": ""remove_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0""}
+
+   - rename_code: Change a code block's name
+     {""op"": ""rename_code"", ""block_id"": ""b1"", ""code_id"": ""b1.c2"", ""code_name"": ""Updated Name""}
+
+3. SQL SCRIPT OPERATIONS:
+   - set_code: Replace the entire SQL script (overwrites existing)
+     {""op"": ""set_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0"", ""script"": ""SELECT * FROM new_table;""}
+
+   - add_script: Append or prepend SQL to existing script (preserves existing)
+     {""op"": ""add_script"", ""block_id"": ""b2"", ""code_id"": ""b2.c1"", ""script"": ""WHERE date > '2024-01-01'"",
+      ""position"": ""end""}
+
+   - str_replace: Find and replace text in SQL scripts
+     {""op"": ""str_replace"", ""search_for"": ""old_table"", ""replace_with"": ""new_table"", ""block_id"": ""b0"",'
+      ""code_id"": ""b0.c0""}
+     - Omit code_id to replace in all codes of a block
+     - Omit both block_id and code_id to replace everywhere
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only the operations you specify are applied
+- All other parts of the transformation remain unchanged
+- Each SQL script must be executable and follow the current SQL dialect
+- Storage configuration is COMPLETE REPLACEMENT - include ALL mappings you want to keep
+- Leave updated_description empty to preserve the original description
+- SCHEMA CHANGES: Destructive schema changes (removing columns, changing types, renaming columns) require
+  manually deleting the output table before running the updated transformation to avoid schema mismatch errors.
+  Non-destructive changes (adding columns) typically do not require table deletion.
+
+WORKFLOW:
+1. Call get_configs to retrieve current transformation structure and identify block_id/code_id values
+2. Identify what needs to change (SQL code, storage, description)
+3. For SQL changes: Prepare parameter_updates list with targeted operations
+4. For storage changes: Build complete storage configuration (include all mappings)
+5. Call update_sql_transformation with change_description and only the fields to change
+
+EXAMPLE WORKFLOWS:
+
+Example 1 - Update SQL script in existing code block:
+Step 1: Get current config
+  result = get_configs(component_id=""keboola.snowflake-transformation"", configuration_id=""12345"")
+  # Note the block_id (e.g., ""b0"") and code_id (e.g., ""b0.c1"") from result
+
+Step 2: Update the SQL
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Updated WHERE clause to filter active customers only"",
+    parameter_updates=[
+      {
+        ""op"": ""set_code"",
+        ""block_id"": ""b0"",      # from step 1
+        ""code_id"": ""b0.c0"",    # from step 1
+        ""script"": ""SELECT * FROM customers WHERE status = 'active' AND region = 'US';""
+      }
+    ]
+  )
+
+Example 2 - Append a new code block to the second block of an existing transformation:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added aggregation step"",
+    parameter_updates=[
+      {
+        ""op"": ""add_code"",
+        ""block_id"": ""b1"",  # second block
+        ""code"": {
+          ""name"": ""Aggregate Sales"",
+          ""script"": ""SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id;""
+        },
+        ""position"": ""end""
+      }
+    ]
+  )
+
+Example 3 - Replace table name across all SQL scripts:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Renamed source table from old_customers to customers"",
+    parameter_updates=[
+      {
+        ""op"": ""str_replace"",
+        ""search_for"": ""old_customers"",
+        ""replace_with"": ""customers""
+        # No block_id or code_id = applies to all scripts
+      }
+    ]
+  )
+
+Example 4 - Update storage mappings:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added new input table"",
+    storage={
+      ""input"": {
+        ""tables"": [
+          {
+            ""source"": ""in.c-main.customers"",
+            ""destination"": ""customers""
+          },
+          {
+            ""source"": ""in.c-main.orders"",
+            ""destination"": ""orders""
+          }
+        ]
+      },
+      ""output"": {
+        ""tables"": [
+          {
+            ""source"": ""result"",
+            ""destination"": ""out.c-main.customer_summary""
+          }
+        ]
+      }
+    }
+  )",folder,,,"['change_description', 'configuration_id']","['change_description', 'configuration_id']","{change_description: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any}","{change_description: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, folder: any}",SCHEMA_EXPANSION,"Same folder field addition pattern seen in E005 (create_config), now on update_sql_transformation, consistent feature rollout across multiple tools in this repo, rest of description unchanged."
+E021,https://github.com/sooperset/mcp-atlassian,update_issue,8c68b566,315982dc,2025-05-10T14:47:01+09:00,2025-05-18T01:09:59+09:00,desc_only,"Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.
+
+Args:
+    ctx: The FastMCP context.
+    issue_key: Jira issue key.
+    fields: Dictionary of fields to update.
+    additional_fields: Optional dictionary of additional fields.
+    attachments: Optional JSON array string or comma-separated list of file paths.
+
+Returns:
+    JSON string representing the updated issue object and attachment results.
+
+Raises:
+    ValueError: If in read-only mode, Jira client unavailable, or invalid input.","Update an existing Jira issue including changing status, adding Epic links, updating fields, etc.
+
+Args:
+    ctx: The FastMCP context.
+    issue_key: Jira issue key.
+    fields: Dictionary of fields to update.
+    additional_fields: Optional dictionary of additional fields.
+    attachments: Optional JSON array string or comma-separated list of file paths.
+
+Returns:
+    JSON string representing the updated issue object and attachment results.
+
+Raises:
+    ValueError: If in read-only mode or Jira client unavailable, or invalid input.",,,,"['issue_key', 'fields']","['issue_key', 'fields']","{issue_key: any, fields: any, additional_fields: any, attachments: any}","{issue_key: any, fields: any, additional_fields: any, attachments: any}",COSMETIC,
+E022,https://github.com/keboola/keboola-mcp-server,search,e421ed80,5caf708b,2026-01-21T15:35:34+01:00,2026-01-30T16:42:18+01:00,desc_and_schema_remove,"Searches for Keboola items (tables, buckets, configurations, transformations, flows, data-apps etc.) in the current
+project. Returns matching items with IDs and metadata.
+Supports two modes:
+- textual: match patterns against ID, name, display name, description (and table columns)
+- config-based: match patterns against stringified configuration payloads, optionally limited to specific scopes
+which can be derived from the configuration schemas or objects.
+
+
+WHEN TO USE:
+- User asks to ""find"", ""locate"", or ""search for"" something by name or text
+- User mentions a partial name and you need to find the full item (e.g., ""find the customer table"")
+- User asks ""what tables/configs/flows do I have with X in the name?""
+- User asks to find configs containing a value in parameters (use config-based + scopes and regex patterns)
+- Use this tool to trace lineage by searching for IDs referenced in configurations, or to find flows using a
+specific component, or find usage of a bucket/table in transformations, or to find items with specific parameters.
+- You need to discover items before performing operations on them
+- User assks to ""what is the genesis of this item?"" or ""explain me bussiness logic of this item?""
+- User asks to ""list all items with [name] or [configuration value/part] in it""
+- DO NOT use for listing all items of a specific type. Use get_configs, list_tables, get_flows, etc instead.
+
+HOW IT WORKS:
+- mode: ""regex"" (default) or ""literal"" (escape special characters)
+- case_sensitive: false by default; set true for exact casing
+- search_type:
+  - ""textual"": matches id/name/display_name/description fields
+  - ""config-based"": matches stringified configuration payloads (JSON) via scopes or the whole config using
+  regex patterns.
+- scopes: dot-separated paths (e.g., ""parameters"", ""storage.input"", ""parameters.script"")
+- For tables, textual search also checks column names and column descriptions
+- Multiple patterns are ORed: any match includes the item
+- Results are ordered by update time, newest first, and can be paginated via limit/offset
+
+IMPORTANT:
+- Always use this tool when the user mentions a name but you don't have the exact ID
+- The search returns IDs that you can use with other tools (e.g., get_table, get_configs, get_flows)
+- Use item_types to make the search more efficient when you know the type; scanning buckets and tables can be
+expensive
+- For exact ID lookups, use specific tools like get_table, get_configs, get_flows instead
+
+USAGE EXAMPLES:
+- user_input: ""Find all tables with 'customer' in the name""
+  → patterns=[""customer""], search_type=""textual"", mode=""literal"", item_types=[""table""]
+
+- user_input: ""Find tables with 'email' column""
+  → patterns=[""email""], search_type=""textual"", mode=""literal"", item_types=[""table""]
+
+- user_input: ""Search for the sales transformation""
+  → patterns=[""sales""], search_type=""textual"", mode=""literal"", item_types=[""transformation""]
+  → Returns transformations with ""sales"" in any searchable field
+
+- user_input: ""Find items named 'daily report' or 'weekly summary'""
+  → patterns=[""daily.*report"", ""weekly.*summary""], search_type=""textual"", mode=""regex"", item_types=[]
+
+- user_input: ""Show me all configurations/components related to Google Analytics""
+  → patterns=[""google.*analytics""], search_type=""textual"", mode=""regex"", item_types=[""component""]
+
+- user_input: ""Find storage input mappings referencing specific tables:""
+  → patterns=[""""storage""\.*""input""\.*:\s*""in\.*\.customers""""], search_type=""config-based"", mode=""regex"",
+  item_types=[""transformation"", ""component""]
+
+- user input: ""Find components or transformations using 'my_bucket' in output mappings""
+  → patterns=[""my_bucket""], item_types=[""component"", ""transformation""], search_type=""config-based"",
+    scopes=[""storage.output""], mode=""literal""
+
+- user input: ""Find configs with specific authentication type""
+  → patterns=[""""authentication"":\s*\{.*""type"":\s*""oauth20""""], search_type=""config-based"", mode=""regex"",
+  item_types=[""component""]
+
+- user input: ""Find flows using this configuration ID: 01k9cz233cvd1rga3zzx40g8qj""
+  → patterns=[""01k9cz233cvd1rga3zzx40g8qj""], search_type=""config-based"", item_types=[""flow""], mode=""literal"",
+  scopes=[""tasks""]
+
+- user input: ""Find data apps using specific code part ...""
+  → patterns=[""regex-representing-the-code-part""], search_type=""config-based"", item_types=[""data-app""],
+  mode=""regex""], scopes=[""script""]","Searches for Keboola items (tables, buckets, configurations, transformations, flows, etc.) in the current project
+by matching patterns against item ID, name, display name, or description. Returns matching items grouped by type
+with their IDs and metadata.
+
+WHEN TO USE:
+- User asks to ""find"", ""locate"", or ""search for"" something by name
+- User mentions a partial name and you need to find the full item (e.g., ""find the customer table"")
+- User asks ""what tables/configs/flows do I have with X in the name?""
+- You need to discover items before performing operations on them
+- User asks to ""list all items with [name] in it""
+- DO NOT use for listing all items of a specific type. Use get_configs, list_tables, get_flows, etc instead.
+
+HOW IT WORKS:
+- Searches by regex pattern matching against id, name, displayName, and description fields
+- For tables, also searches column names and column descriptions
+- Case-insensitive search
+- Multiple patterns work as OR condition - matches items containing ANY of the patterns
+- Returns grouped results by item type (tables, buckets, configurations, flows, etc.)
+- Each result includes the item's ID, name, creation date, and relevant metadata
+
+IMPORTANT:
+- Always use this tool when the user mentions a name but you don't have the exact ID
+- The search returns IDs that you can use with other tools (e.g., get_table, get_configs, get_flows)
+- Results are ordered by update time. The most recently updated items are returned first.
+- For exact ID lookups, use specific tools like get_table, get_configs, get_flows instead
+- Use find_component_id and get_configs tools to find configurations related to a specific component
+
+USAGE EXAMPLES:
+- user_input: ""Find all tables with 'customer' in the name""
+  → patterns=[""customer""], item_types=[""table""]
+  → Returns all tables whose id, name, displayName, or description contains ""customer""
+
+- user_input: ""Find tables with 'email' column""
+  → patterns=[""email""], item_types=[""table""]
+  → Returns all tables that have a column named ""email"" or with ""email"" in column description
+
+- user_input: ""Search for the sales transformation""
+  → patterns=[""sales""], item_types=[""transformation""]
+  → Returns transformations with ""sales"" in any searchable field
+
+- user_input: ""Find items named 'daily report' or 'weekly summary'""
+  → patterns=[""daily.*report"", ""weekly.*summary""], item_types=[]
+  → Returns all items matching any of these patterns
+
+- user_input: ""Show me all configurations related to Google Analytics""
+  → patterns=[""google.*analytics""], item_types=[""configuration""]
+  → Returns configurations with matching patterns",,case_sensitive; mode; scopes; search_type,,['patterns'],['patterns'],"{patterns: any, item_types: any, search_type: any, scopes: any, mode: any, case_sensitive: any, limit: any, offset: any}","{patterns: any, item_types: any, limit: any, offset: any}",BEHAVIORAL_DRIFT,"Config-based search mode entirely removed - search_type, mode, scopes, case_sensitive fields all gone, several worked examples for config-payload searching deleted. Tool now only supports simple textual name search, real capability loss not just simplification."
+E023,https://github.com/2b3pro/roam-research-mcp,roam_create_outline,e6d40f69,f023b03e,2025-01-01T20:01:02-08:00,2025-01-13T21:55:32-08:00,desc_only,Create a structured outline in Roam from an array of outline items with explicit levels. Can be added under a specific page or block.,"Create a structured outline with nested structure in Roam from an array of items with explicit levels. Can be added on a specific page or under a specific block. Ideal for saving a conversation with an LLM response, research, or organizing thoughts.",,,,[],[],(none),(none),CLARIFICATION,"Same tool as the roam_create_outline rename candidate investigated earlier - this is a later content clarification after the rename already happened, not the rename event itself, no schema change."
+E024,https://github.com/topoteretes/cognee,cognify,bc67eb96,c686e396,2025-07-25T17:45:28+02:00,2025-08-04T11:13:28+02:00,desc_only,"Transform data into a structured knowledge graph in Cognee's memory layer.
+
+This function launches a background task that processes the provided text/file location and
+generates a knowledge graph representation. The function returns immediately while
+the processing continues in the background due to MCP timeout constraints.
+
+Parameters
+----------
+data : str
+    The data to be processed and transformed into structured knowledge.
+    This can include natural language, file location, or any text-based information
+    that should become part of the agent's memory.
+
+graph_model_file : str, optional
+    Path to a custom schema file that defines the structure of the generated knowledge graph.
+    If provided, this file will be loaded using importlib to create a custom graph model.
+    Default is None, which uses Cognee's built-in KnowledgeGraph model.
+
+graph_model_name : str, optional
+    Name of the class within the graph_model_file to instantiate as the graph model.
+    Required if graph_model_file is specified.
+    Default is None, which uses the default KnowledgeGraph class.
+
+Returns
+-------
+list
+    A list containing a single TextContent object with information about the
+    background task launch and how to check its status.
+
+Notes
+-----
+- The function launches a background task and returns immediately
+- The actual cognify process may take significant time depending on text length
+- Use the cognify_status tool to check the progress of the operation","Transform ingested data into a structured knowledge graph.
+
+This is the core processing step in Cognee that converts raw text and documents
+into an intelligent knowledge graph. It analyzes content, extracts entities and
+relationships, and creates semantic connections for enhanced search and reasoning.
+
+Prerequisites:
+    - **LLM_API_KEY**: Must be configured (required for entity extraction and graph generation)
+    - **Data Added**: Must have data previously added via `cognee.add()`
+    - **Vector Database**: Must be accessible for embeddings storage
+    - **Graph Database**: Must be accessible for relationship storage
+
+Input Requirements:
+    - **Content Types**: Works with any text-extractable content including:
+        * Natural language documents
+        * Structured data (CSV, JSON)
+        * Code repositories
+        * Academic papers and technical documentation
+        * Mixed multimedia content (with text extraction)
+
+Processing Pipeline:
+    1. **Document Classification**: Identifies document types and structures
+    2. **Permission Validation**: Ensures user has processing rights
+    3. **Text Chunking**: Breaks content into semantically meaningful segments
+    4. **Entity Extraction**: Identifies key concepts, people, places, organizations
+    5. **Relationship Detection**: Discovers connections between entities
+    6. **Graph Construction**: Builds semantic knowledge graph with embeddings
+    7. **Content Summarization**: Creates hierarchical summaries for navigation
+
+Parameters
+----------
+data : str
+    The data to be processed and transformed into structured knowledge.
+    This can include natural language, file location, or any text-based information
+    that should become part of the agent's memory.
+
+graph_model_file : str, optional
+    Path to a custom schema file that defines the structure of the generated knowledge graph.
+    If provided, this file will be loaded using importlib to create a custom graph model.
+    Default is None, which uses Cognee's built-in KnowledgeGraph model.
+
+graph_model_name : str, optional
+    Name of the class within the graph_model_file to instantiate as the graph model.
+    Required if graph_model_file is specified.
+    Default is None, which uses the default KnowledgeGraph class.
+
+Returns
+-------
+list
+    A list containing a single TextContent object with information about the
+    background task launch and how to check its status.
+
+Next Steps:
+    After successful cognify processing, use search functions to query the knowledge:
+
+    ```python
+    import cognee
+    from cognee import SearchType
+
+    # Process your data into knowledge graph
+    await cognee.cognify()
+
+    # Query for insights using different search types:
+
+    # 1. Natural language completion with graph context
+    insights = await cognee.search(
+        ""What are the main themes?"",
+        query_type=SearchType.GRAPH_COMPLETION
+    )
+
+    # 2. Get entity relationships and connections
+    relationships = await cognee.search(
+        ""connections between concepts"",
+        query_type=SearchType.INSIGHTS
+    )
+
+    # 3. Find relevant document chunks
+    chunks = await cognee.search(
+        ""specific topic"",
+        query_type=SearchType.CHUNKS
+    )
+    ```
+
+Environment Variables:
+    Required:
+    - LLM_API_KEY: API key for your LLM provider
+
+    Optional:
+    - LLM_PROVIDER, LLM_MODEL, VECTOR_DB_PROVIDER, GRAPH_DATABASE_PROVIDER
+    - LLM_RATE_LIMIT_ENABLED: Enable rate limiting (default: False)
+    - LLM_RATE_LIMIT_REQUESTS: Max requests per interval (default: 60)
+
+Notes
+-----
+- The function launches a background task and returns immediately
+- The actual cognify process may take significant time depending on text length
+- Use the cognify_status tool to check the progress of the operation
+
+Raises
+------
+InvalidValueError
+    If LLM_API_KEY is not set
+ValueError
+    If chunks exceed max token limits (reduce chunk_size)
+DatabaseNotCreatedError
+    If databases are not properly initialized",,,,['data'],['data'],"{data: string, graph_model_file: string, graph_model_name: string}","{data: string, graph_model_file: string, graph_model_name: string}",CLARIFICATION,"Very long addition but Parameters and Returns sections unchanged verbatim, all new content is prerequisites, pipeline explanation, and example usage of a different tool, no actual interface change, pure documentation expansion."
+E025,https://github.com/voska/hass-mcp,restart_ha,436516e8,40a33fc7,2025-03-16T19:47:36-03:00,2025-03-16T20:25:58-03:00,desc_only,"Restart Home Assistant
+
+Initiates a restart of the Home Assistant server. This is useful when you've made
+configuration changes that require a restart to take effect.
+
+⚠️ WARNING: This will temporarily disrupt Home Assistant operations and may
+disconnect clients. Use sparingly and only when absolutely necessary.
+
+Returns:
+    A dictionary with the result of the restart operation
+    
+Example:
+    ```python
+    # Restart Home Assistant
+    result = await restart_ha()
+    # Home Assistant is now restarting, it may take several seconds to complete
+    ```","Restart Home Assistant
+
+⚠️ WARNING: Temporarily disrupts all Home Assistant operations
+
+Returns:
+    Result of restart operation",,,,[],[],(none),(none),CLARIFICATION,"Description shortened rather than expanded but same underlying facts preserved (warning, no params, returns result dict) - good contrast case to E024 showing CLARIFICATION can go either direction in length, not just additions."
+E026,https://github.com/AppThreat/vulnerability-db,search_by_any,d5097ca8,314b54c9,2026-04-19T00:28:32+01:00,2026-05-07T13:50:22+01:00,desc_and_schema_remove,Search for vulnerabilities for the given string,Search vulnerabilities for a locator or advisory identifier.,,search,,['search'],[],{search: string},(none),BEHAVIORAL_DRIFT,"Only parameter (search, required) entirely removed leaving zero fields, but description still describes searching for an identifier - tool may be non-functional as described or input mechanism changed entirely, genuine capability break not just contraction, possibly a transitional state worth flagging."
+E027,https://github.com/rahulretnan/mcp-ragdocs,search_documentation,c72bb3f7,f2847dab,2024-12-13T15:36:27-07:00,2024-12-16T20:48:48-07:00,desc_only,Search through stored documentation,"Search through stored documentation using natural language queries. Use this tool to find relevant information across all stored documentation sources. Returns matching excerpts with context, ranked by relevance. Useful for finding specific information, code examples, or related documentation.",,,,[],[],(none),(none),CLARIFICATION,
+E028,https://github.com/keboola/keboola-mcp-server,update_sql_transformation,24192d8d,d2f79545,2026-05-12T15:41:50+02:00,2026-05-14T08:50:31+02:00,desc_and_schema_remove,"Updates an existing SQL transformation configuration by modifying its SQL code, storage mappings,
+name or description. Can also delete the transformation by passing delete=True.
+
+This tool allows PARTIAL parameter updates for transformation SQL blocks and code - you only need to provide
+the operations you want to perform. All other fields will remain unchanged.
+Use this for modifying SQL transformations created with create_sql_transformation.
+
+WHEN TO USE:
+- Modifying SQL queries in transformation (add/edit/remove SQL statements)
+- Updating transformation block or code block names
+- Changing input/output table mappings for the transformation
+- Updating the transformation name or description
+- Deleting a transformation (delete=True)
+- Any combination of the above
+
+PREREQUISITES:
+- Transformation must already exist (use create_sql_transformation for new transformations)
+- You must know the configuration_id of the transformation
+- SQL dialect is determined automatically from the workspace
+- CRITICAL: Use get_configs first to see the current transformation structure and get block_id/code_id values
+
+TRANSFORMATION STRUCTURE:
+A transformation has this hierarchy:
+  transformation
+  └─ blocks[] - List of transformation blocks (each has a unique block_id)
+     └─ block.name - Descriptive name for the block
+     └─ block.codes[] - List of code blocks within the block (each has a unique code_id)
+        └─ code.name - Descriptive name for the code block
+        └─ code.script - SQL script (string with SQL statements)
+
+Example structure from get_configs:
+{
+  ""blocks"": [
+    {
+      ""id"": ""b0"",  ← block_id needed for operations (format: b{index})
+      ""name"": ""Data Preparation"",
+      ""codes"": [
+        {
+          ""id"": ""b0.c0"",  ← code_id needed for operations (format: b{block_index}.c{code_index})
+          ""name"": ""Load customers"",
+          ""script"": ""SELECT * FROM customers WHERE status = 'active';""
+        }
+      ]
+    }
+  ]
+}
+
+PARAMETER UPDATE OPERATIONS:
+All operations use block_id and code_id to identify elements (get these from get_configs first).
+
+ID Format:
+- block_id: ""b0"", ""b1"", ""b2"", etc. (format: b{index})
+- code_id: ""b0.c0"", ""b0.c1"", ""b1.c0"", etc. (format: b{block_index}.c{code_index})
+
+1. BLOCK OPERATIONS:
+   - add_block: Create a new block in the transformation
+     {""op"": ""add_block"", ""block"": {""name"": ""New Block"", ""codes"": []}, ""position"": ""end""}
+
+   - remove_block: Delete an entire block
+     {""op"": ""remove_block"", ""block_id"": ""b0""}
+
+   - rename_block: Change a block's name
+     {""op"": ""rename_block"", ""block_id"": ""b2"", ""block_name"": ""Updated Name""}
+
+2. CODE BLOCK OPERATIONS:
+   - add_code: Create a new code block within an existing block
+     {""op"": ""add_code"", ""block_id"": ""b1"", ""code"": {""name"": ""New Code"", ""script"": ""SELECT 1;""}, ""position"": ""end""}
+
+   - remove_code: Delete a code block
+     {""op"": ""remove_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0""}
+
+   - rename_code: Change a code block's name
+     {""op"": ""rename_code"", ""block_id"": ""b1"", ""code_id"": ""b1.c2"", ""code_name"": ""Updated Name""}
+
+3. SQL SCRIPT OPERATIONS:
+   - set_code: Replace the entire SQL script (overwrites existing)
+     {""op"": ""set_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0"", ""script"": ""SELECT * FROM new_table;""}
+
+   - add_script: Append or prepend SQL to existing script (preserves existing)
+     {""op"": ""add_script"", ""block_id"": ""b2"", ""code_id"": ""b2.c1"", ""script"": ""WHERE date > '2024-01-01'"",
+      ""position"": ""end""}
+
+   - str_replace: Find and replace text in SQL scripts
+     {""op"": ""str_replace"", ""search_for"": ""old_table"", ""replace_with"": ""new_table"", ""block_id"": ""b0"",'
+      ""code_id"": ""b0.c0""}
+     - Omit code_id to replace in all codes of a block
+     - Omit both block_id and code_id to replace everywhere
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only the operations you specify are applied
+- All other parts of the transformation remain unchanged
+- Each SQL script must be executable and follow the current SQL dialect:
+  - Use delimited identifiers for the current SQL dialect.
+  - Never mix delimiter styles within a single query.
+- Storage configuration is COMPLETE REPLACEMENT - include ALL mappings you want to keep
+- Leave updated_description empty to preserve the original description
+- SCHEMA CHANGES: Destructive schema changes (removing columns, changing types, renaming columns) require
+  manually deleting the output table before running the updated transformation to avoid schema mismatch errors.
+  Non-destructive changes (adding columns) typically do not require table deletion.
+
+WORKFLOW:
+1. Call get_configs to retrieve current transformation structure and identify block_id/code_id values
+2. Identify what needs to change (SQL code, storage, description)
+3. For SQL changes: Prepare parameter_updates list with targeted operations
+4. For storage changes: Build complete storage configuration (include all mappings)
+5. Call update_sql_transformation with change_description and only the fields to change
+
+EXAMPLE WORKFLOWS:
+
+Example 1 - Update SQL script in existing code block:
+Step 1: Get current config
+  result = get_configs(component_id=""keboola.snowflake-transformation"", configuration_id=""12345"")
+  # Note the block_id (e.g., ""b0"") and code_id (e.g., ""b0.c1"") from result
+
+Step 2: Update the SQL
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Updated WHERE clause to filter active customers only"",
+    parameter_updates=[
+      {
+        ""op"": ""set_code"",
+        ""block_id"": ""b0"",      # from step 1
+        ""code_id"": ""b0.c0"",    # from step 1
+        ""script"": ""SELECT * FROM customers WHERE status = 'active' AND region = 'US';""
+      }
+    ]
+  )
+
+Example 2 - Append a new code block to the second block of an existing transformation:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added aggregation step"",
+    parameter_updates=[
+      {
+        ""op"": ""add_code"",
+        ""block_id"": ""b1"",  # second block
+        ""code"": {
+          ""name"": ""Aggregate Sales"",
+          ""script"": ""SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id;""
+        },
+        ""position"": ""end""
+      }
+    ]
+  )
+
+Example 3 - Replace table name across all SQL scripts:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Renamed source table from old_customers to customers"",
+    parameter_updates=[
+      {
+        ""op"": ""str_replace"",
+        ""search_for"": ""old_customers"",
+        ""replace_with"": ""customers""
+        # No block_id or code_id = applies to all scripts
+      }
+    ]
+  )
+
+Example 4 - Update storage mappings:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added new input table"",
+    storage={
+      ""input"": {
+        ""tables"": [
+          {
+            ""source"": ""in.c-main.customers"",
+            ""destination"": ""customers""
+          },
+          {
+            ""source"": ""in.c-main.orders"",
+            ""destination"": ""orders""
+          }
+        ]
+      },
+      ""output"": {
+        ""tables"": [
+          {
+            ""source"": ""result"",
+            ""destination"": ""out.c-main.customer_summary""
+          }
+        ]
+      }
+    }
+  )","Updates an existing SQL transformation configuration by modifying its SQL code, storage mappings,
+name or description.
+
+This tool allows PARTIAL parameter updates for transformation SQL blocks and code - you only need to provide
+the operations you want to perform. All other fields will remain unchanged.
+Use this for modifying SQL transformations created with create_sql_transformation.
+
+WHEN TO USE:
+- Modifying SQL queries in transformation (add/edit/remove SQL statements)
+- Updating transformation block or code block names
+- Changing input/output table mappings for the transformation
+- Updating the transformation name or description
+- Any combination of the above
+
+PREREQUISITES:
+- Transformation must already exist (use create_sql_transformation for new transformations)
+- You must know the configuration_id of the transformation
+- SQL dialect is determined automatically from the workspace
+- CRITICAL: Use get_configs first to see the current transformation structure and get block_id/code_id values
+
+TRANSFORMATION STRUCTURE:
+A transformation has this hierarchy:
+  transformation
+  └─ blocks[] - List of transformation blocks (each has a unique block_id)
+     └─ block.name - Descriptive name for the block
+     └─ block.codes[] - List of code blocks within the block (each has a unique code_id)
+        └─ code.name - Descriptive name for the code block
+        └─ code.script - SQL script (string with SQL statements)
+
+Example structure from get_configs:
+{
+  ""blocks"": [
+    {
+      ""id"": ""b0"",  ← block_id needed for operations (format: b{index})
+      ""name"": ""Data Preparation"",
+      ""codes"": [
+        {
+          ""id"": ""b0.c0"",  ← code_id needed for operations (format: b{block_index}.c{code_index})
+          ""name"": ""Load customers"",
+          ""script"": ""SELECT * FROM customers WHERE status = 'active';""
+        }
+      ]
+    }
+  ]
+}
+
+PARAMETER UPDATE OPERATIONS:
+All operations use block_id and code_id to identify elements (get these from get_configs first).
+
+ID Format:
+- block_id: ""b0"", ""b1"", ""b2"", etc. (format: b{index})
+- code_id: ""b0.c0"", ""b0.c1"", ""b1.c0"", etc. (format: b{block_index}.c{code_index})
+
+1. BLOCK OPERATIONS:
+   - add_block: Create a new block in the transformation
+     {""op"": ""add_block"", ""block"": {""name"": ""New Block"", ""codes"": []}, ""position"": ""end""}
+
+   - remove_block: Delete an entire block
+     {""op"": ""remove_block"", ""block_id"": ""b0""}
+
+   - rename_block: Change a block's name
+     {""op"": ""rename_block"", ""block_id"": ""b2"", ""block_name"": ""Updated Name""}
+
+2. CODE BLOCK OPERATIONS:
+   - add_code: Create a new code block within an existing block
+     {""op"": ""add_code"", ""block_id"": ""b1"", ""code"": {""name"": ""New Code"", ""script"": ""SELECT 1;""}, ""position"": ""end""}
+
+   - remove_code: Delete a code block
+     {""op"": ""remove_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0""}
+
+   - rename_code: Change a code block's name
+     {""op"": ""rename_code"", ""block_id"": ""b1"", ""code_id"": ""b1.c2"", ""code_name"": ""Updated Name""}
+
+3. SQL SCRIPT OPERATIONS:
+   - set_code: Replace the entire SQL script (overwrites existing)
+     {""op"": ""set_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0"", ""script"": ""SELECT * FROM new_table;""}
+
+   - add_script: Append or prepend SQL to existing script (preserves existing)
+     {""op"": ""add_script"", ""block_id"": ""b2"", ""code_id"": ""b2.c1"", ""script"": ""WHERE date > '2024-01-01'"",
+      ""position"": ""end""}
+
+   - str_replace: Find and replace text in SQL scripts
+     {""op"": ""str_replace"", ""search_for"": ""old_table"", ""replace_with"": ""new_table"", ""block_id"": ""b0"",'
+      ""code_id"": ""b0.c0""}
+     - Omit code_id to replace in all codes of a block
+     - Omit both block_id and code_id to replace everywhere
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only the operations you specify are applied
+- All other parts of the transformation remain unchanged
+- Each SQL script must be executable and follow the current SQL dialect:
+  - Use delimited identifiers for the current SQL dialect.
+  - Never mix delimiter styles within a single query.
+- Storage configuration is COMPLETE REPLACEMENT - include ALL mappings you want to keep
+- Leave updated_description empty to preserve the original description
+- SCHEMA CHANGES: Destructive schema changes (removing columns, changing types, renaming columns) require
+  manually deleting the output table before running the updated transformation to avoid schema mismatch errors.
+  Non-destructive changes (adding columns) typically do not require table deletion.
+
+WORKFLOW:
+1. Call get_configs to retrieve current transformation structure and identify block_id/code_id values
+2. Identify what needs to change (SQL code, storage, description)
+3. For SQL changes: Prepare parameter_updates list with targeted operations
+4. For storage changes: Build complete storage configuration (include all mappings)
+5. Call update_sql_transformation with change_description and only the fields to change
+
+EXAMPLE WORKFLOWS:
+
+Example 1 - Update SQL script in existing code block:
+Step 1: Get current config
+  result = get_configs(component_id=""keboola.snowflake-transformation"", configuration_id=""12345"")
+  # Note the block_id (e.g., ""b0"") and code_id (e.g., ""b0.c1"") from result
+
+Step 2: Update the SQL
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Updated WHERE clause to filter active customers only"",
+    parameter_updates=[
+      {
+        ""op"": ""set_code"",
+        ""block_id"": ""b0"",      # from step 1
+        ""code_id"": ""b0.c0"",    # from step 1
+        ""script"": ""SELECT * FROM customers WHERE status = 'active' AND region = 'US';""
+      }
+    ]
+  )
+
+Example 2 - Append a new code block to the second block of an existing transformation:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added aggregation step"",
+    parameter_updates=[
+      {
+        ""op"": ""add_code"",
+        ""block_id"": ""b1"",  # second block
+        ""code"": {
+          ""name"": ""Aggregate Sales"",
+          ""script"": ""SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id;""
+        },
+        ""position"": ""end""
+      }
+    ]
+  )
+
+Example 3 - Replace table name across all SQL scripts:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Renamed source table from old_customers to customers"",
+    parameter_updates=[
+      {
+        ""op"": ""str_replace"",
+        ""search_for"": ""old_customers"",
+        ""replace_with"": ""customers""
+        # No block_id or code_id = applies to all scripts
+      }
+    ]
+  )
+
+Example 4 - Update storage mappings:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added new input table"",
+    storage={
+      ""input"": {
+        ""tables"": [
+          {
+            ""source"": ""in.c-main.customers"",
+            ""destination"": ""customers""
+          },
+          {
+            ""source"": ""in.c-main.orders"",
+            ""destination"": ""orders""
+          }
+        ]
+      },
+      ""output"": {
+        ""tables"": [
+          {
+            ""source"": ""result"",
+            ""destination"": ""out.c-main.customer_summary""
+          }
+        ]
+      }
+    }
+  )",,delete; variables,,"['change_description', 'configuration_id']","['change_description', 'configuration_id']","{change_description: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, folder: any, variables: any, delete: any}","{change_description: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, folder: any}",BEHAVIORAL_DRIFT,"Delete field and capability fully removed, description explicitly confirms (delete=True line and WHEN TO USE bullet both gone) - genuine documented capability loss, real behavioral break. Also variables removed again here, second tool in this repo losing that field after E015, reinforcing repo-wide rollback pattern."
+E029,https://github.com/angiejones/mcp-selenium,get_alert_text,ae434a02,acf43f3e,2025-02-14T02:09:50-06:00,2026-02-21T11:14:57-06:00,desc_only,,"gets the text content of a browser alert, confirm, or prompt dialog",,,,[],[],(none),(none),COSMETIC,"Second instance of the no-before-line pattern first seen in E019, also a large date gap, likely a first appearance rather than genuine rewording, worth asking claude code to check how common this is across the dataset."
+E030,https://github.com/keboola/keboola-mcp-server,update_config_row,07afbc36,9212d1ad,2026-01-23T11:50:51+01:00,2026-01-28T21:37:49+01:00,schema_add_only,"Updates an existing component configuration row by modifying its parameters, storage mappings, name, or description.
+
+This tool allows PARTIAL parameter updates - you only need to provide the fields you want to change.
+All other fields will remain unchanged.
+Configuration rows are individual items within a configuration, often representing separate data sources,
+tables, or endpoints that share the same component type and parent configuration settings.
+
+WHEN TO USE:
+- Modifying row-specific parameters (table sources, filters, credentials, etc.)
+- Updating storage mappings for a specific row (input/output tables or files)
+- Changing row name or description
+- Any combination of the above
+
+PREREQUISITES:
+- The configuration row must already exist (use add_config_row for new rows)
+- You must know component_id, configuration_id, and configuration_row_id
+- For parameter updates: Review the component's row_configuration_schema using get_components
+- For storage updates: Ensure mappings are valid for row-level storage
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only specify fields you want to change
+- parameter_updates supports granular operations: set individual keys, replace strings, or remove keys
+- Parameters must conform to the component's row_configuration_schema (not root schema)
+- Validate schemas before calling: use get_components to retrieve row_configuration_schema
+- Each row operates independently - changes to one row don't affect others
+- Row-level storage is separate from root-level storage configuration
+
+WORKFLOW:
+1. Retrieve current configuration using get_config to see existing rows
+2. Identify the specific row to modify by its configuration_row_id
+3. Prepare parameter_updates list with targeted operations for this row
+4. Call update_config_row with only the fields to change","Updates an existing component configuration row by modifying its parameters, storage mappings, name, or description.
+
+This tool allows PARTIAL parameter updates - you only need to provide the fields you want to change.
+All other fields will remain unchanged.
+Configuration rows are individual items within a configuration, often representing separate data sources,
+tables, or endpoints that share the same component type and parent configuration settings.
+
+WHEN TO USE:
+- Modifying row-specific parameters (table sources, filters, credentials, etc.)
+- Updating storage mappings for a specific row (input/output tables or files)
+- Changing row name or description
+- Any combination of the above
+
+PREREQUISITES:
+- The configuration row must already exist (use add_config_row for new rows)
+- You must know component_id, configuration_id, and configuration_row_id
+- For parameter updates: Review the component's row_configuration_schema using get_components
+- For storage updates: Ensure mappings are valid for row-level storage
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only specify fields you want to change
+- parameter_updates supports granular operations: set individual keys, replace strings, or remove keys
+- Parameters must conform to the component's row_configuration_schema (not root schema)
+- Validate schemas before calling: use get_components to retrieve row_configuration_schema
+- Each row operates independently - changes to one row don't affect others
+- Row-level storage is separate from root-level storage configuration
+
+WORKFLOW:
+1. Retrieve current configuration using get_config to see existing rows
+2. Identify the specific row to modify by its configuration_row_id
+3. Prepare parameter_updates list with targeted operations for this row
+4. Call update_config_row with only the fields to change",is_disabled,,,"['change_description', 'component_id', 'configuration_id', 'configuration_row_id']","['change_description', 'component_id', 'configuration_id', 'configuration_row_id']","{change_description: any, component_id: any, configuration_id: any, configuration_row_id: any, name: any, description: any, parameter_updates: any, storage: any, processors_before: any, processors_after: any}","{change_description: any, component_id: any, configuration_id: any, configuration_row_id: any, name: any, description: any, parameter_updates: any, storage: any, processors_before: any, processors_after: any, is_disabled: any}",SCHEMA_EXPANSION,"is_disabled added here on update_config_row, mirrors its removal from update_config in E003 - field may be relocating between sibling tools in this repo rather than independently appearing/disappearing, same pattern as variables and folder fields seen earlier."
+E031,https://github.com/dailydaniel/logseq-mcp,edit_block,ec48ed70,a901fe63,2026-06-09T01:55:25+04:00,2026-06-13T23:22:15+04:00,schema_mixed,Enter editing mode for a specific block (UI side effect).,"Replace a block's content, confined to the agent namespace.
+
+Read the block first: you must pass its exact current content as `old_content`.
+The edit is rejected if it doesn't match (you didn't read it, or it changed) —
+this enforces read-before-write and guards a concurrent edit. The block must
+live under the agent namespace. To change a task's status use set_task_status.",new_content; old_content; uuid,pos; src_block,,['src_block'],"['uuid', 'old_content', 'new_content']","{src_block: any, pos: any}","{uuid: any, old_content: any, new_content: any}",BEHAVIORAL_DRIFT,"Complete interface redesign - old UI-editing-mode operation entirely replaced with read-before-write content replacement, all fields different, new required fields enforce concurrency safety check that did not exist before. Strong clean BEHAVIORAL_DRIFT example, also notable as a case where drift improved security rather than degrading it."
+E032,https://github.com/2b3pro/roam-research-mcp,roam_process_batch_actions,07d5bbc8,b0eccee7,2025-12-20T08:09:41-08:00,2025-12-20T08:45:06-08:00,desc_only,"**RATE LIMIT EFFICIENT:** This is the most API-efficient tool for multiple block operations. Combine all create/update/delete operations into a single call whenever possible. For intensive page updates or revisions, prefer this tool over multiple sequential calls.\n\nExecutes a sequence of low-level block actions (create, update, move, delete) in a single, non-transactional batch. Actions are executed in the provided order. For creating nested blocks, you can generate a temporary client-side UID for a parent block and reference it in child blocks within the same batch. **UID Format**: UIDs must be exactly 9 random alphanumeric characters from [a-zA-Z0-9-_], e.g., ""Xk7mN2pQ9"" or ""aB3-dE_fG"". Do NOT use human-readable UIDs like ""my-block"" or ""section-1"". For actions on existing blocks, a valid block UID is required. Note: Roam-flavored markdown, including block embedding with `((UID))` syntax, is supported within the `string` property for `create-block` and `update-block` actions. For actions on existing blocks or within a specific page context, it is often necessary to first obtain valid page or block UIDs. Tools like `roam_fetch_page_by_title` or other search tools can be used to retrieve these UIDs before executing batch actions. For simpler, sequential outlines, `roam_create_outline` is often more suitable.\nIMPORTANT: Before using this tool, ensure that you have loaded into context the \","**RATE LIMIT EFFICIENT:** This is the most API-efficient tool for multiple block operations. Combine all create/update/delete operations into a single call whenever possible. For intensive page updates or revisions, prefer this tool over multiple sequential calls.\n\nExecutes a sequence of low-level block actions (create, update, move, delete) in a single, non-transactional batch. Actions are executed in the provided order.\n\n**UID Placeholders for Nested Blocks:** Use `{{uid:name}}` syntax for parent-child references within the same batch. The server generates proper random UIDs and returns a `uid_map` showing placeholder→UID mappings. Example: `{ uid: ""{{uid:parent1}}"", string: ""Parent"" }` then `{ location: { ""parent-uid"": ""{{uid:parent1}}"" }, string: ""Child"" }`. Response includes `{ success: true, uid_map: { ""parent1"": ""Xk7mN2pQ9"" } }`.\n\nFor actions on existing blocks, a valid block UID is required. Note: Roam-flavored markdown, including block embedding with `((UID))` syntax, is supported within the `string` property for `create-block` and `update-block` actions. For actions on existing blocks or within a specific page context, it is often necessary to first obtain valid page or block UIDs. Tools like `roam_fetch_page_by_title` or other search tools can be used to retrieve these UIDs before executing batch actions. For simpler, sequential outlines, `roam_create_outline` is often more suitable.\nIMPORTANT: Before using this tool, ensure that you have loaded into context the \",,,,[],[],(none),(none),BEHAVIORAL_DRIFT,"UID generation responsibility moved from client to server, new placeholder syntax and uid_map response replace old manual-UID-generation workflow entirely. No top-level schema field changed since this is all inside a free-form parameter, second case after E013 showing schema diffs can miss real mechanism changes hidden inside any-typed fields."
+E033,https://github.com/aws-samples/sample-mcp-server-s3,ListBuckets,e0e0cd6e,b8ee88c3,2024-11-26T15:16:44-08:00,2024-11-26T16:59:31-08:00,schema_remove_only,"Returns a list of all buckets owned by the authenticated sender of the request. To grant IAM permission to use this operation, you must add the s3:ListAllMyBuckets policy action.","Returns a list of all buckets owned by the authenticated sender of the request. To grant IAM permission to use this operation, you must add the s3:ListAllMyBuckets policy action.",,BucketRegion; Prefix,,[],[],"{BucketRegion: string, ContinuationToken: string, MaxBuckets: integer, Prefix: string}","{ContinuationToken: string, MaxBuckets: integer}",SCHEMA_CONTRACTION,"Two optional filter params removed (BucketRegion, Prefix), core list-buckets operation and pagination params unaffected, modest convenience loss not full capability loss. This wraps real AWS S3 API, worth noting wrapper-level drift can diverge from underlying service rather than reflecting an intentional MCP design choice"
+E034,https://github.com/StarRocks/mcp-server-starrocks,write_query,f10cd3f9,d3225ffb,2025-05-19T22:02:10+08:00,2025-06-02T15:54:25+05:30,type_change,Execute a DDL/DML or other StarRocks command that do not have a ResultSet,Execute an DDL/DML or other StarRocks command that do not have a ResultSet,,,query: object→string,['query'],['query'],{query: any},{query: string},COSMETIC,"Type narrowed any to string for query field, opposite direction from E001/E011 widening but still COSMETIC since SQL queries were always strings in practice, schema just became more accurate not more restrictive. Also a minor grammar regression a to an in description, purely cosmetic."
+E035,https://github.com/ahujasid/blender-mcp,get_sketchfab_model_preview,4794edc4,465f203e,2026-01-05T21:11:17+09:00,2026-01-08T17:03:49+05:30,schema_add_only,"Get a preview thumbnail of a Sketchfab model by its UID.
+Use this to visually confirm a model before downloading.
+
+Parameters:
+- uid: The unique identifier of the Sketchfab model (obtained from search_sketchfab_models)
+
+Returns the model's thumbnail as an Image for visual confirmation.","Get a preview thumbnail of a Sketchfab model by its UID.
+Use this to visually confirm a model before downloading.
+
+Parameters:
+- uid: The unique identifier of the Sketchfab model (obtained from search_sketchfab_models)
+
+Returns the model's thumbnail as an Image for visual confirmation.",user_prompt,,,['uid'],['uid'],{uid: string},"{uid: string, user_prompt: string}",SCHEMA_EXPANSION,"New field user_prompt added but description completely unchanged, does not explain what this field is for, unlike most other clean expansions seen so far where docs explained the new field. Schema outpacing documentation is its own minor pattern worth flagging."
+E036,https://github.com/dvejsada/mcp-pptx-presentations-creator,create_email_draft,21e77670,e86410d9,2026-04-11T09:43:53+02:00,2026-05-12T12:45:15-04:00,schema_remove_only,Creates an email draft in EML format with HTML content using preset professional styling.,Creates an email draft in EML format with HTML content using preset professional styling.,,file_name,,"['content', 'subject', 'to', 'cc', 'bcc', 'priority', 'language']","['content', 'subject', 'to', 'cc', 'bcc', 'priority', 'language']","{content: any, subject: any, to: any, cc: any, bcc: any, priority: any, language: any, file_name: any}","{content: any, subject: any, to: any, cc: any, bcc: any, priority: any, language: any}",SCHEMA_CONTRACTION,"file_name removed here, opposite of E014 where it was added to create_excel_document in this same repo - third instance now of fields moving inconsistently across sibling tools in one repo rather than uniform growth, worth flagging as cross-repo pattern in writeup."
+E037,https://github.com/burningion/video-editing-mcp,generate-edit-from-videos,127161f8,09b71434,2025-08-24T22:17:52-04:00,2025-08-30T22:30:07-04:00,schema_add_only,"Generate an edit from videos, from within a specific project. Creates a new project to work within no existing project ID (UUID) is passed","Generate an edit from videos, from within a specific project. Creates a new project to work within no existing project ID (UUID) is passed",vertical_crop,,,"['edit', 'name', 'project_id']","['edit', 'name', 'project_id']","{project_id: string, name: string, open_editor: boolean, resolution: string, edit: array, audio_asset: object}","{project_id: string, name: string, open_editor: boolean, resolution: string, vertical_crop: string, edit: array, audio_asset: object}",SCHEMA_EXPANSION,
+E038,https://github.com/blazickjp/arxiv-mcp-server,download_paper,4b75d3b0,d5890176,2026-05-18T10:44:08-07:00,2026-05-18T11:00:09-07:00,desc_and_schema_add,Download a paper from arXiv and return its full text content. Tries the HTML version first for clean extraction; falls back to PDF conversion if HTML is unavailable. Returns the paper content directly so you can read it immediately.,Download a paper from arXiv and return its text content. Tries the HTML version first for clean extraction; falls back to PDF conversion if HTML is unavailable. Stores the paper locally and supports start/max_chars pagination for very large papers.,max_chars; start,,,['paper_id'],['paper_id'],{paper_id: string},"{paper_id: string, start: integer, max_chars: integer}",SCHEMA_EXPANSION,"New start/max_chars pagination fields added alongside a shift from direct-return to local-storage description, genuinely ambiguous whether old single-call full-content behavior survives for very large papers specifically, leaning expansion since fields are optional but flagging real uncertainty here similar to earlier borderline cases."
+E039,https://github.com/dvejsada/mcp-pptx-presentations-creator,create_powerpoint_presentation,21e77670,e86410d9,2026-04-11T09:43:53+02:00,2026-05-12T12:45:15-04:00,schema_remove_only,Creates PowerPoint presentations from structured slides.,Creates PowerPoint presentations from structured slides.,,file_name,,['slides'],['slides'],"{slides: any, format: any, file_name: any}","{slides: any, format: any}",SCHEMA_CONTRACTION,"Same exact dates as E036 (file_name removed from create_email_draft) - strongly suggests one repo-wide commit removed file_name from multiple tools simultaneously, not independent decisions. Combined with E014 add to create_excel_document, suggests a feature trialed then partially walked back across this tool family."
+E040,https://github.com/dvejsada/mcp-pptx-presentations-creator,create_powerpoint_presentation,522e4855,05568d00,2025-08-02T22:11:16+02:00,2025-08-04T20:14:10+02:00,type_change,Creates PowerPoint (.pptx) presentations with multiple slide types.,Creates PowerPoint presentations with professional templates using structured slide models.,,,slides: object→array,"['slides', 'format']","['slides', 'format']","{slides: any, format: any}","{slides: array, format: any}",CLARIFICATION,"Type narrowed object to array for slides alongside description shift to structured models language, genuinely ambiguous whether this is just schema catching up to reality or a real new strictness requirement, similar boundary case to keboola/unraid disagreements from the seed test."
+E041,https://github.com/hald/things-mcp,update_todo,e1d06df7,fa29f2aa,2026-06-04T18:21:12+02:00,2026-06-04T18:23:22+02:00,desc_and_schema_add,"Update an existing todo in Things
+
+Args:
+    id: ID of the todo to update
+    title: New title
+    notes: New notes
+    when: New schedule (today, tomorrow, evening, anytime, someday, or YYYY-MM-DD).
+        Use YYYY-MM-DD@HH:MM format to add a reminder (e.g., 2024-01-15@14:30)
+    deadline: New deadline (YYYY-MM-DD)
+    tags: New tags
+    completed: Mark as completed
+    canceled: Mark as canceled
+    list: The title of a project or area to move the to-do into
+    list_id: The ID of a project or area to move the to-do into (takes precedence over list)
+    heading: The heading title to move the to-do under
+    heading_id: The heading ID to move the to-do under (takes precedence over heading)","Update an existing todo in Things
+
+Args:
+    id: ID of the todo to update
+    title: New title
+    notes: New notes
+    when: New schedule (today, tomorrow, evening, anytime, someday, or YYYY-MM-DD).
+        Use YYYY-MM-DD@HH:MM format to add a reminder (e.g., 2024-01-15@14:30)
+    deadline: New deadline (YYYY-MM-DD)
+    tags: New tags
+    completed: Mark as completed
+    canceled: Mark as canceled
+    list: The title of a project or area to move the to-do into
+    list_id: The ID of a project or area to move the to-do into (takes precedence over list)
+    heading: The heading title to move the to-do under
+    heading_id: The heading ID to move the to-do under (takes precedence over heading)
+    checklist_items: Replace the entire checklist with these items
+    prepend_checklist_items: Add these items to the start of the existing checklist
+    append_checklist_items: Add these items to the end of the existing checklist",append_checklist_items; checklist_items; prepend_checklist_items,,,['id'],['id'],"{id: string, title: string, notes: string, when: string, deadline: string, tags: array, completed: boolean, canceled: boolean, list: string, list_id: string, heading: string, heading_id: string}","{id: string, title: string, notes: string, when: string, deadline: string, tags: array, completed: boolean, canceled: boolean, list: string, list_id: string, heading: string, heading_id: string, checklist_items: array, prepend_checklist_items: array, append_checklist_items: array}",SCHEMA_EXPANSION,
+E042,https://github.com/keboola/keboola-mcp-server,search,7f8631ca,e429c729,2025-11-21T14:22:03+01:00,2025-12-01T10:52:34+01:00,desc_only,"Searches for Keboola items (tables, buckets, configurations, transformations, flows, etc.) in the current project
+by matching patterns against item ID, name, display name, or description. Returns matching items grouped by type
+with their IDs and metadata.
+
+WHEN TO USE:
+- User asks to ""find"", ""locate"", or ""search for"" something by name
+- User mentions a partial name and you need to find the full item (e.g., ""find the customer table"")
+- User asks ""what tables/configs/flows do I have with X in the name?""
+- You need to discover items before performing operations on them
+- User asks to ""list all items with [name] in it""
+- DO NOT use for listing all items of a specific type. Use list_configs, list_tables, list_flows, etc instead.
+
+HOW IT WORKS:
+- Searches by regex pattern matching against id, name, displayName, and description fields
+- Case-insensitive search
+- Multiple patterns work as OR condition - matches items containing ANY of the patterns
+- Returns grouped results by item type (tables, buckets, configurations, flows, etc.)
+- Each result includes the item's ID, name, creation date, and relevant metadata
+
+IMPORTANT:
+- Always use this tool when the user mentions a name but you don't have the exact ID
+- The search returns IDs that you can use with other tools (e.g., get_table, get_config, get_flow)
+- Results are ordered by update time. The most recently updated items are returned first.
+- For exact ID lookups, use specific tools like get_table, get_config, get_flow instead
+- Use find_component_id and list_configs tools to find configurations related to a specific component
+
+USAGE EXAMPLES:
+- user_input: ""Find all tables with 'customer' in the name""
+  → patterns=[""customer""], item_types=[""table""]
+  → Returns all tables whose id, name, displayName, or description contains ""customer""
+
+- user_input: ""Search for the sales transformation""
+  → patterns=[""sales""], item_types=[""transformation""]
+  → Returns transformations with ""sales"" in any searchable field
+
+- user_input: ""Find items named 'daily report' or 'weekly summary'""
+  → patterns=[""daily.*report"", ""weekly.*summary""], item_types=[]
+  → Returns all items matching any of these patterns
+
+- user_input: ""Show me all configurations related to Google Analytics""
+  → patterns=[""google.*analytics""], item_types=[""configuration""]
+  → Returns configurations with matching patterns","Searches for Keboola items (tables, buckets, configurations, transformations, flows, etc.) in the current project
+by matching patterns against item ID, name, display name, or description. Returns matching items grouped by type
+with their IDs and metadata.
+
+WHEN TO USE:
+- User asks to ""find"", ""locate"", or ""search for"" something by name
+- User mentions a partial name and you need to find the full item (e.g., ""find the customer table"")
+- User asks ""what tables/configs/flows do I have with X in the name?""
+- You need to discover items before performing operations on them
+- User asks to ""list all items with [name] in it""
+- DO NOT use for listing all items of a specific type. Use get_configs, list_tables, get_flows, etc instead.
+
+HOW IT WORKS:
+- Searches by regex pattern matching against id, name, displayName, and description fields
+- Case-insensitive search
+- Multiple patterns work as OR condition - matches items containing ANY of the patterns
+- Returns grouped results by item type (tables, buckets, configurations, flows, etc.)
+- Each result includes the item's ID, name, creation date, and relevant metadata
+
+IMPORTANT:
+- Always use this tool when the user mentions a name but you don't have the exact ID
+- The search returns IDs that you can use with other tools (e.g., get_table, get_configs, get_flows)
+- Results are ordered by update time. The most recently updated items are returned first.
+- For exact ID lookups, use specific tools like get_table, get_configs, get_flows instead
+- Use find_component_id and get_configs tools to find configurations related to a specific component
+
+USAGE EXAMPLES:
+- user_input: ""Find all tables with 'customer' in the name""
+  → patterns=[""customer""], item_types=[""table""]
+  → Returns all tables whose id, name, displayName, or description contains ""customer""
+
+- user_input: ""Search for the sales transformation""
+  → patterns=[""sales""], item_types=[""transformation""]
+  → Returns transformations with ""sales"" in any searchable field
+
+- user_input: ""Find items named 'daily report' or 'weekly summary'""
+  → patterns=[""daily.*report"", ""weekly.*summary""], item_types=[]
+  → Returns all items matching any of these patterns
+
+- user_input: ""Show me all configurations related to Google Analytics""
+  → patterns=[""google.*analytics""], item_types=[""configuration""]
+  → Returns configurations with matching patterns",,,,['patterns'],['patterns'],"{patterns: any, item_types: any, limit: any, offset: any}","{patterns: any, item_types: any, limit: any, offset: any}",COSMETIC,"All changes are renaming references to other tool names (list_configs to get_configs etc), search itself unaffected, this is an earlier event than E022's major capability removal on same tool, good sequential data point showing quiet correction before bigger redesign."
+E043,https://github.com/playcanvas/mcp-editor,store_get,f8944e8c,c7d709f5,2026-01-07T16:49:21Z,2026-01-07T20:28:21Z,desc_only,Get an asset from the store,Get store asset,,,,[],[],(none),(none),COSMETIC,
+E044,https://github.com/KS-GEN-AI/jira-mcp-server,delete_ticket,65bfed5a,be4f193f,2025-02-05T15:42:21+01:00,2025-04-09T15:13:27+02:00,desc_only,Delete a ticket on Jira on the api /rest/api/3/issue/{issueIdOrKey},Delete a ticket on Jira on the api /rest/api/3/issue/{issueIdOrKey}. Do not use markdown in your query.,,,,[],[],(none),(none),CLARIFICATION,
+E045,https://github.com/mcpdotdirect/evm-mcp-server,read_contract,25ab4d9d,1e1d8799,2025-11-19T10:45:01-05:00,2025-11-19T11:24:35-05:00,desc_only,Read data from a smart contract by calling a view/pure function. This doesn't modify blockchain state.,Read data from a smart contract (read-only call). Can auto-fetch verified contract ABIs or use common function signatures.,,,,[],[],(none),(none),BEHAVIORAL_DRIFT,"Description implies new auto-fetch-ABI capability, not just rewording of existing behavior - likely a hidden mechanism change inside an any-typed parameter, same blind spot pattern as E013 and E032. Leaning drift since calls that previously failed without an ABI may now succeed."
+E046,https://github.com/ahujasid/blender-mcp,set_texture,4794edc4,465f203e,2026-01-05T21:11:17+09:00,2026-01-08T17:03:49+05:30,schema_add_only,"Apply a previously downloaded Polyhaven texture to an object.
+
+Parameters:
+- object_name: Name of the object to apply the texture to
+- texture_id: ID of the Polyhaven texture to apply (must be downloaded first)
+
+Returns a message indicating success or failure.","Apply a previously downloaded Polyhaven texture to an object.
+
+Parameters:
+- object_name: Name of the object to apply the texture to
+- texture_id: ID of the Polyhaven texture to apply (must be downloaded first)
+
+Returns a message indicating success or failure.",user_prompt,,,"['object_name', 'texture_id']","['object_name', 'texture_id']","{object_name: string, texture_id: string}","{object_name: string, texture_id: string, user_prompt: string}",SCHEMA_EXPANSION,"Same user_prompt field, same unexplained-by-docs gap, same exact dates as E035 on a different tool in this repo - confirms a repo-wide commit added this field across multiple Blender tools at once, likely for cross-cutting purpose like logging, not texture-specific."
+E047,https://github.com/buryhuang/mcp-hubspot,hubspot_search_data,32274a41,2dd0fb6a,2025-04-20T23:32:57-07:00,2025-04-26T11:11:39+02:00,schema_remove_only,Search for similar data in stored HubSpot API responses,Search for similar data in stored HubSpot API responses,,limit; query,,['query'],[],"{query: string, limit: integer}",(none),BEHAVIORAL_DRIFT,"Same zero-parameters pattern as E026 - query and limit both removed leaving nothing, description still says search for similar data with no way to specify what. Third instance of this stub-tool pattern, worth naming as a distinct sub-category in writeup alongside the rug-pull-style cases."
+E048,https://github.com/keboola/keboola-mcp-server,modify_data_app,987d406e,68fa8d23,2025-10-30T17:13:13+01:00,2025-10-31T10:49:16+01:00,schema_mixed,"Creates or updates a Streamlit data app.
+
+Considerations:
+- The `source_code` parameter must be a complete and runnable Streamlit app. It must include a placeholder
+`{QUERY_DATA_FUNCTION}` where a `query_data` function will be injected. This function queries the workspace to get
+data, it accepts a string of SQL query following current sql dialect and returns a pandas DataFrame with the results
+from the workspace.
+- Write SQL queries so they are compatible with the current workspace backend, you can ensure this by using the
+`query_data` tool to inspect the data in the workspace before using it in the data app.
+- If you're updating an existing data app, provide the `configuration_id` parameter and the `change_description`
+parameter.
+- If the data app is updated while running, it must be redeployed for the changes to take effect.
+- The Data App requires basic authorization by default for security reasons, unless explicitly specified otherwise
+by the user.","Creates or updates a Streamlit data app.
+
+Considerations:
+- The `source_code` parameter must be a complete and runnable Streamlit app. It must include a placeholder
+`{QUERY_DATA_FUNCTION}` where a `query_data` function will be injected. This function queries the workspace to get
+data, it accepts a string of SQL query following current sql dialect and returns a pandas DataFrame with the results
+from the workspace.
+- Write SQL queries so they are compatible with the current workspace backend, you can ensure this by using the
+`query_data` tool to inspect the data in the workspace before using it in the data app.
+- If you're updating an existing data app, provide the `configuration_id` parameter and the `change_description`
+parameter. To keep existing data app values during an update, leave them as empty strings, lists, or None
+appropriately based on the parameter type.
+- If the data app is updated while running, it must be redeployed for the changes to take effect.
+- New apps use basic authentication by default for security unless explicitly specified otherwise; when updating,
+set `authentication_type` to `default` to keep the existing authentication type configuration (including OIDC
+setups) unless explicitly specified otherwise.",authentication_type,authorization_required,,"['name', 'description', 'source_code', 'packages']","['name', 'description', 'source_code', 'packages']","{name: any, description: any, source_code: any, packages: any, authorization_required: any, configuration_id: any, change_description: any}","{name: any, description: any, source_code: any, packages: any, authentication_type: any, configuration_id: any, change_description: any}",BEHAVIORAL_DRIFT,"authorization_required boolean replaced by authentication_type with OIDC support, real access control mechanism change not just rename. Description explicitly warns caller must set to default to preserve existing auth config during updates - risk of accidentally weakening security posture if caller doesnt know to do this. Strong security-relevant finding for writeup."
+E049,https://github.com/playcanvas/mcp-editor,script_parse,f8944e8c,c7d709f5,2026-01-07T16:49:21Z,2026-01-07T20:28:21Z,desc_only,Parse the script after modification,Parse script,,,,[],[],(none),(none),COSMETIC,
+E050,https://github.com/aliyun/alibabacloud-hologres-mcp-server,execute_hg_select_sql_with_serverless,4db951bf,5c54497a,2025-04-18T16:33:07+08:00,2026-03-13T17:21:08+08:00,type_change,"Use Serverless Computing resources to execute SELECT SQL to query data in Hologres database. When the error like ""Total memory used by all existing queries exceeded memory limitation"" occurs during execute_hg_select_sql execution, you can re-execute the SQL with the tool execute_hg_select_sql_with_serverless.","Use Serverless Computing resources to execute SELECT SQL to query data in Hologres database. When the error like 'Total memory used by all existing queries exceeded memory limitation' occurs during execute_hg_select_sql execution, you can re-execute the SQL with this tool.",,,query: string→object,['query'],['query'],{query: string},{query: any},COSMETIC,
+E051,https://github.com/keboola/keboola-mcp-server,update_sql_transformation,d32e21a7,340f257e,2026-04-24T11:08:07+02:00,2026-04-28T11:25:02+02:00,desc_and_schema_remove,"Updates an existing SQL transformation configuration by modifying its SQL code, storage mappings,
+name or description.
+
+This tool allows PARTIAL parameter updates for transformation SQL blocks and code - you only need to provide
+the operations you want to perform. All other fields will remain unchanged.
+Use this for modifying SQL transformations created with create_sql_transformation.
+
+WHEN TO USE:
+- Modifying SQL queries in transformation (add/edit/remove SQL statements)
+- Updating transformation block or code block names
+- Changing input/output table mappings for the transformation
+- Updating the transformation name or description
+- Any combination of the above
+- ONLY for SQL transformations: keboola.snowflake-transformation (Snowflake) or
+  keboola.google-bigquery-transformation (BigQuery). Do NOT call this for Python
+  (keboola.python-transformation-v2) or R (keboola.r-transformation-v2) transformations —
+  those must be updated with update_config using their respective component_id.
+
+PREREQUISITES:
+- Transformation must already exist (use create_sql_transformation for new transformations)
+- You must know the configuration_id of the transformation
+- Confirm the config's component_id is a SQL transformation before calling; use get_configs to check
+- SQL dialect is determined automatically from the workspace
+- CRITICAL: Use get_configs first to see the current transformation structure and get block_id/code_id values
+
+TRANSFORMATION STRUCTURE:
+A transformation has this hierarchy:
+  transformation
+  └─ blocks[] - List of transformation blocks (each has a unique block_id)
+     └─ block.name - Descriptive name for the block
+     └─ block.codes[] - List of code blocks within the block (each has a unique code_id)
+        └─ code.name - Descriptive name for the code block
+        └─ code.script - SQL script (string with SQL statements)
+
+Example structure from get_configs:
+{
+  ""blocks"": [
+    {
+      ""id"": ""b0"",  ← block_id needed for operations (format: b{index})
+      ""name"": ""Data Preparation"",
+      ""codes"": [
+        {
+          ""id"": ""b0.c0"",  ← code_id needed for operations (format: b{block_index}.c{code_index})
+          ""name"": ""Load customers"",
+          ""script"": ""SELECT * FROM customers WHERE status = 'active';""
+        }
+      ]
+    }
+  ]
+}
+
+PARAMETER UPDATE OPERATIONS:
+All operations use block_id and code_id to identify elements (get these from get_configs first).
+
+ID Format:
+- block_id: ""b0"", ""b1"", ""b2"", etc. (format: b{index})
+- code_id: ""b0.c0"", ""b0.c1"", ""b1.c0"", etc. (format: b{block_index}.c{code_index})
+
+1. BLOCK OPERATIONS:
+   - add_block: Create a new block in the transformation
+     {""op"": ""add_block"", ""block"": {""name"": ""New Block"", ""codes"": []}, ""position"": ""end""}
+
+   - remove_block: Delete an entire block
+     {""op"": ""remove_block"", ""block_id"": ""b0""}
+
+   - rename_block: Change a block's name
+     {""op"": ""rename_block"", ""block_id"": ""b2"", ""block_name"": ""Updated Name""}
+
+2. CODE BLOCK OPERATIONS:
+   - add_code: Create a new code block within an existing block
+     {""op"": ""add_code"", ""block_id"": ""b1"", ""code"": {""name"": ""New Code"", ""script"": ""SELECT 1;""}, ""position"": ""end""}
+
+   - remove_code: Delete a code block
+     {""op"": ""remove_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0""}
+
+   - rename_code: Change a code block's name
+     {""op"": ""rename_code"", ""block_id"": ""b1"", ""code_id"": ""b1.c2"", ""code_name"": ""Updated Name""}
+
+3. SQL SCRIPT OPERATIONS:
+   - set_code: Replace the entire SQL script (overwrites existing)
+     {""op"": ""set_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0"", ""script"": ""SELECT * FROM new_table;""}
+
+   - add_script: Append or prepend SQL to existing script (preserves existing)
+     {""op"": ""add_script"", ""block_id"": ""b2"", ""code_id"": ""b2.c1"", ""script"": ""WHERE date > '2024-01-01'"",
+      ""position"": ""end""}
+
+   - str_replace: Find and replace text in SQL scripts
+     {""op"": ""str_replace"", ""search_for"": ""old_table"", ""replace_with"": ""new_table"", ""block_id"": ""b0"",'
+      ""code_id"": ""b0.c0""}
+     - Omit code_id to replace in all codes of a block
+     - Omit both block_id and code_id to replace everywhere
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only the operations you specify are applied
+- All other parts of the transformation remain unchanged
+- Each SQL script must be executable and follow the current SQL dialect:
+  - Use delimited identifiers for the current SQL dialect.
+  - Never mix delimiter styles within a single query.
+- Storage configuration is COMPLETE REPLACEMENT - include ALL mappings you want to keep
+- Leave updated_description empty to preserve the original description
+- SCHEMA CHANGES: Destructive schema changes (removing columns, changing types, renaming columns) require
+  manually deleting the output table before running the updated transformation to avoid schema mismatch errors.
+  Non-destructive changes (adding columns) typically do not require table deletion.
+
+WORKFLOW:
+1. Call get_configs to retrieve current transformation structure and identify block_id/code_id values
+2. Identify what needs to change (SQL code, storage, description)
+3. For SQL changes: Prepare parameter_updates list with targeted operations
+4. For storage changes: Build complete storage configuration (include all mappings)
+5. Call update_sql_transformation with change_description and only the fields to change
+
+EXAMPLE WORKFLOWS:
+
+Example 1 - Update SQL script in existing code block:
+Step 1: Get current config
+  result = get_configs(component_id=""keboola.snowflake-transformation"", configuration_id=""12345"")
+  # Note the block_id (e.g., ""b0"") and code_id (e.g., ""b0.c1"") from result
+
+Step 2: Update the SQL
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Updated WHERE clause to filter active customers only"",
+    parameter_updates=[
+      {
+        ""op"": ""set_code"",
+        ""block_id"": ""b0"",      # from step 1
+        ""code_id"": ""b0.c0"",    # from step 1
+        ""script"": ""SELECT * FROM customers WHERE status = 'active' AND region = 'US';""
+      }
+    ]
+  )
+
+Example 2 - Append a new code block to the second block of an existing transformation:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added aggregation step"",
+    parameter_updates=[
+      {
+        ""op"": ""add_code"",
+        ""block_id"": ""b1"",  # second block
+        ""code"": {
+          ""name"": ""Aggregate Sales"",
+          ""script"": ""SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id;""
+        },
+        ""position"": ""end""
+      }
+    ]
+  )
+
+Example 3 - Replace table name across all SQL scripts:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Renamed source table from old_customers to customers"",
+    parameter_updates=[
+      {
+        ""op"": ""str_replace"",
+        ""search_for"": ""old_customers"",
+        ""replace_with"": ""customers""
+        # No block_id or code_id = applies to all scripts
+      }
+    ]
+  )
+
+Example 4 - Update storage mappings:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added new input table"",
+    storage={
+      ""input"": {
+        ""tables"": [
+          {
+            ""source"": ""in.c-main.customers"",
+            ""destination"": ""customers""
+          },
+          {
+            ""source"": ""in.c-main.orders"",
+            ""destination"": ""orders""
+          }
+        ]
+      },
+      ""output"": {
+        ""tables"": [
+          {
+            ""source"": ""result"",
+            ""destination"": ""out.c-main.customer_summary""
+          }
+        ]
+      }
+    }
+  )","Updates an existing SQL transformation configuration by modifying its SQL code, storage mappings,
+name or description.
+
+This tool allows PARTIAL parameter updates for transformation SQL blocks and code - you only need to provide
+the operations you want to perform. All other fields will remain unchanged.
+Use this for modifying SQL transformations created with create_sql_transformation.
+
+WHEN TO USE:
+- Modifying SQL queries in transformation (add/edit/remove SQL statements)
+- Updating transformation block or code block names
+- Changing input/output table mappings for the transformation
+- Updating the transformation name or description
+- Any combination of the above
+
+PREREQUISITES:
+- Transformation must already exist (use create_sql_transformation for new transformations)
+- You must know the configuration_id of the transformation
+- SQL dialect is determined automatically from the workspace
+- CRITICAL: Use get_configs first to see the current transformation structure and get block_id/code_id values
+
+TRANSFORMATION STRUCTURE:
+A transformation has this hierarchy:
+  transformation
+  └─ blocks[] - List of transformation blocks (each has a unique block_id)
+     └─ block.name - Descriptive name for the block
+     └─ block.codes[] - List of code blocks within the block (each has a unique code_id)
+        └─ code.name - Descriptive name for the code block
+        └─ code.script - SQL script (string with SQL statements)
+
+Example structure from get_configs:
+{
+  ""blocks"": [
+    {
+      ""id"": ""b0"",  ← block_id needed for operations (format: b{index})
+      ""name"": ""Data Preparation"",
+      ""codes"": [
+        {
+          ""id"": ""b0.c0"",  ← code_id needed for operations (format: b{block_index}.c{code_index})
+          ""name"": ""Load customers"",
+          ""script"": ""SELECT * FROM customers WHERE status = 'active';""
+        }
+      ]
+    }
+  ]
+}
+
+PARAMETER UPDATE OPERATIONS:
+All operations use block_id and code_id to identify elements (get these from get_configs first).
+
+ID Format:
+- block_id: ""b0"", ""b1"", ""b2"", etc. (format: b{index})
+- code_id: ""b0.c0"", ""b0.c1"", ""b1.c0"", etc. (format: b{block_index}.c{code_index})
+
+1. BLOCK OPERATIONS:
+   - add_block: Create a new block in the transformation
+     {""op"": ""add_block"", ""block"": {""name"": ""New Block"", ""codes"": []}, ""position"": ""end""}
+
+   - remove_block: Delete an entire block
+     {""op"": ""remove_block"", ""block_id"": ""b0""}
+
+   - rename_block: Change a block's name
+     {""op"": ""rename_block"", ""block_id"": ""b2"", ""block_name"": ""Updated Name""}
+
+2. CODE BLOCK OPERATIONS:
+   - add_code: Create a new code block within an existing block
+     {""op"": ""add_code"", ""block_id"": ""b1"", ""code"": {""name"": ""New Code"", ""script"": ""SELECT 1;""}, ""position"": ""end""}
+
+   - remove_code: Delete a code block
+     {""op"": ""remove_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0""}
+
+   - rename_code: Change a code block's name
+     {""op"": ""rename_code"", ""block_id"": ""b1"", ""code_id"": ""b1.c2"", ""code_name"": ""Updated Name""}
+
+3. SQL SCRIPT OPERATIONS:
+   - set_code: Replace the entire SQL script (overwrites existing)
+     {""op"": ""set_code"", ""block_id"": ""b0"", ""code_id"": ""b0.c0"", ""script"": ""SELECT * FROM new_table;""}
+
+   - add_script: Append or prepend SQL to existing script (preserves existing)
+     {""op"": ""add_script"", ""block_id"": ""b2"", ""code_id"": ""b2.c1"", ""script"": ""WHERE date > '2024-01-01'"",
+      ""position"": ""end""}
+
+   - str_replace: Find and replace text in SQL scripts
+     {""op"": ""str_replace"", ""search_for"": ""old_table"", ""replace_with"": ""new_table"", ""block_id"": ""b0"",'
+      ""code_id"": ""b0.c0""}
+     - Omit code_id to replace in all codes of a block
+     - Omit both block_id and code_id to replace everywhere
+
+IMPORTANT CONSIDERATIONS:
+- Parameter updates are PARTIAL - only the operations you specify are applied
+- All other parts of the transformation remain unchanged
+- Each SQL script must be executable and follow the current SQL dialect:
+  - Use delimited identifiers for the current SQL dialect.
+  - Never mix delimiter styles within a single query.
+- Storage configuration is COMPLETE REPLACEMENT - include ALL mappings you want to keep
+- Leave updated_description empty to preserve the original description
+- SCHEMA CHANGES: Destructive schema changes (removing columns, changing types, renaming columns) require
+  manually deleting the output table before running the updated transformation to avoid schema mismatch errors.
+  Non-destructive changes (adding columns) typically do not require table deletion.
+
+WORKFLOW:
+1. Call get_configs to retrieve current transformation structure and identify block_id/code_id values
+2. Identify what needs to change (SQL code, storage, description)
+3. For SQL changes: Prepare parameter_updates list with targeted operations
+4. For storage changes: Build complete storage configuration (include all mappings)
+5. Call update_sql_transformation with change_description and only the fields to change
+
+EXAMPLE WORKFLOWS:
+
+Example 1 - Update SQL script in existing code block:
+Step 1: Get current config
+  result = get_configs(component_id=""keboola.snowflake-transformation"", configuration_id=""12345"")
+  # Note the block_id (e.g., ""b0"") and code_id (e.g., ""b0.c1"") from result
+
+Step 2: Update the SQL
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Updated WHERE clause to filter active customers only"",
+    parameter_updates=[
+      {
+        ""op"": ""set_code"",
+        ""block_id"": ""b0"",      # from step 1
+        ""code_id"": ""b0.c0"",    # from step 1
+        ""script"": ""SELECT * FROM customers WHERE status = 'active' AND region = 'US';""
+      }
+    ]
+  )
+
+Example 2 - Append a new code block to the second block of an existing transformation:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added aggregation step"",
+    parameter_updates=[
+      {
+        ""op"": ""add_code"",
+        ""block_id"": ""b1"",  # second block
+        ""code"": {
+          ""name"": ""Aggregate Sales"",
+          ""script"": ""SELECT customer_id, SUM(amount) as total FROM orders GROUP BY customer_id;""
+        },
+        ""position"": ""end""
+      }
+    ]
+  )
+
+Example 3 - Replace table name across all SQL scripts:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Renamed source table from old_customers to customers"",
+    parameter_updates=[
+      {
+        ""op"": ""str_replace"",
+        ""search_for"": ""old_customers"",
+        ""replace_with"": ""customers""
+        # No block_id or code_id = applies to all scripts
+      }
+    ]
+  )
+
+Example 4 - Update storage mappings:
+  update_sql_transformation(
+    configuration_id=""12345"",
+    change_description=""Added new input table"",
+    storage={
+      ""input"": {
+        ""tables"": [
+          {
+            ""source"": ""in.c-main.customers"",
+            ""destination"": ""customers""
+          },
+          {
+            ""source"": ""in.c-main.orders"",
+            ""destination"": ""orders""
+          }
+        ]
+      },
+      ""output"": {
+        ""tables"": [
+          {
+            ""source"": ""result"",
+            ""destination"": ""out.c-main.customer_summary""
+          }
+        ]
+      }
+    }
+  )",,variables,,"['change_description', 'configuration_id']","['change_description', 'configuration_id']","{change_description: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, folder: any, variables: any}","{change_description: any, configuration_id: any, name: any, description: any, parameter_updates: any, storage: any, folder: any}",SCHEMA_CONTRACTION,"Confirmed via full history check: variables removed here (E051), then"
+E052,https://github.com/sooperset/mcp-atlassian,search,eda4ef41,498df988,2026-01-21T02:19:09+11:00,2026-02-17T04:08:54-06:00,schema_mixed,"Search Confluence content using simple terms or CQL.
+
+Args:
+    ctx: The FastMCP context.
+    query: Search query - can be simple text or a CQL query string.
+    limit: Maximum number of results (1-50).
+    spaces_filter: Comma-separated list of space keys to filter by.
+
+Returns:
+    JSON string representing a list of simplified Confluence page objects.","Search Jira issues using JQL (Jira Query Language).
+
+Args:
+    ctx: The FastMCP context.
+    jql: JQL query string.
+    fields: Comma-separated fields to return.
+    limit: Maximum number of results.
+    start_at: Starting index for pagination.
+    projects_filter: Comma-separated list of project keys to filter by.
+    expand: Optional fields to expand.
+
+Returns:
+    JSON string representing the search results including pagination info.",expand; fields; jql; projects_filter; start_at,query; spaces_filter,,['query'],['jql'],"{query: any, limit: any, spaces_filter: any}","{jql: any, fields: any, limit: any, start_at: any, projects_filter: any, expand: any}",SCHEMA_EXPANSION,"Confirmed via full history check: variables removed here (E051), then"
+E053,https://github.com/pab1it0/prometheus-mcp-server,list_metrics,6f9c4bea,de7090ad,2025-08-25T22:26:43+03:00,2025-08-26T11:19:22+03:00,schema_remove_only,List all available metrics in Prometheus,List all available metrics in Prometheus,,limit,,[],[],{limit: any},(none),BEHAVIORAL_DRIFT,"Fourth instance of zero parameters remaining pattern after E026 and E047 - limit field entirely removed, no way to control result size, description unchanged."
+E054,https://github.com/neka-nat/freecad-mcp,get_view,015d1264,cd2b8041,2026-01-05T11:16:13-08:00,2026-01-05T11:16:13-08:00,desc_and_schema_add,"Get a screenshot of the active view.
+
+Args:
+    view_name: The name of the view to get the screenshot of.
+    The following views are available:
+    - ""Isometric""
+    - ""Front""
+    - ""Top""
+    - ""Right""
+    - ""Back""
+    - ""Left""
+    - ""Bottom""
+    - ""Dimetric""
+    - ""Trimetric""
+    width: The width of the screenshot in pixels. If not specified, uses the viewport width.
+    height: The height of the screenshot in pixels. If not specified, uses the viewport height.
+
+Returns:
+    A screenshot of the active view.","Get a screenshot of the active view.
+
+Args:
+    view_name: The name of the view to get the screenshot of.
+    The following views are available:
+    - ""Isometric""
+    - ""Front""
+    - ""Top""
+    - ""Right""
+    - ""Back""
+    - ""Left""
+    - ""Bottom""
+    - ""Dimetric""
+    - ""Trimetric""
+    width: The width of the screenshot in pixels. If not specified, uses the viewport width.
+    height: The height of the screenshot in pixels. If not specified, uses the viewport height.
+    focus_object: The name of the object to focus on. If not specified, fits all objects in the view.
+
+Returns:
+    A screenshot of the active view.",focus_object,,,['view_name'],['view_name'],"{view_name: any, width: any, height: any}","{view_name: any, width: any, height: any, focus_object: any}",SCHEMA_EXPANSION,
+E055,https://github.com/mendableai/firecrawl-mcp-server,firecrawl_parse,ccdadac5,88d4de6a,2026-06-22T16:26:04+02:00,2026-06-23T15:35:52+05:30,desc_only,"Parse a file from the local filesystem using a self-hosted Firecrawl API's /v2/parse endpoint.
+This is the fastest and most reliable way to extract content from a document on disk — if the file lives locally and the MCP is pointed at a self-hosted Firecrawl instance, you should always prefer this tool over uploading the file elsewhere and then scraping it.
+
+**Best for:** Extracting content from a local document (PDF, Word, Excel, HTML, etc.) when you don't want to host it on the public web first; pulling structured data out of a file with JSON format; converting binary documents into markdown for downstream reasoning.
+**Not recommended for:** Remote URLs (use firecrawl_scrape); multiple files at once (call parse multiple times); documents that require interactive actions, screenshots, or change tracking — those aren't supported by the parse endpoint.
+**Common mistakes:** Passing a URL instead of a local file path; requesting an unsupported format (screenshot, branding, changeTracking); setting waitFor, location, mobile, or a non-basic/auto proxy — parse uploads reject all of those.
+
+**Supported file types:** .html, .htm, .xhtml, .pdf, .docx, .doc, .odt, .rtf, .xlsx, .xls
+**Unsupported options:** actions, screenshot/branding/changeTracking formats, waitFor > 0, location, mobile, proxy values other than ""auto"" or ""basic"".
+**Privacy:** Set \","Parse a file using Firecrawl's /v2/parse endpoint.
+
+In local/non-cloud MCP mode, this tool reads filePath from the MCP server filesystem and posts multipart data to the configured self-hosted FIRECRAWL_API_URL, preserving the existing direct-read behavior.
+
+In hosted CLOUD_SERVICE mode, this tool is a two-call flow because hosted MCP cannot read your local filesystem:
+1. Call with filePath, contentType, parse options, and optional declaredSizeBytes. The hosted server mints a short-lived upload URL and returns a safe local curl PUT command plus nextToolCall.
+2. Run the returned curl command locally, then call firecrawl_parse again with uploadRef and the desired parse options. The hosted server calls /v2/parse server-side with your session credential.
+
+**Best for:** Extracting content from a local document (PDF, Word, Excel, HTML, etc.); pulling structured data out of a file with JSON format; converting binary documents into markdown for downstream reasoning.
+**Not recommended for:** Remote URLs (use firecrawl_scrape); multiple files at once (call parse multiple times); documents that require interactive actions, screenshots, or change tracking — those aren't supported by the parse endpoint.
+**Common mistakes:** In hosted mode, do not pass both filePath and uploadRef. Phase 1 uses filePath only to generate upload instructions; phase 2 uses uploadRef only to parse server-side.
+
+**Supported file types:** .html, .htm, .xhtml, .pdf, .docx, .doc, .odt, .rtf, .xlsx, .xls
+**Unsupported options:** actions, screenshot/branding/changeTracking formats, waitFor > 0, location, mobile, proxy values other than ""auto"" or ""basic"".
+**Privacy:** Set \",,,,[],[],(none),(none),BEHAVIORAL_DRIFT,"Hosted mode now requires a genuinely different two-call protocol with uploadRef replacing filePath for the actual parse step, local mode behavior explicitly preserved but hosted mode flow is fundamentally different. Fourth instance (after E013, E032, E045) of desc_only event hiding what must be a real schema change, strong evidence for the schema-blind-spot limitation in writeup."
+E056,https://github.com/cyberchitta/llm-context.py,lc_get_files,fdc4ba35,d1d3357c,2025-09-13T22:08:20+05:30,2025-09-13T22:17:54+05:30,desc_only,"Retrieves complete contents of specified files from the project.
+
+DO NOT request files that have already been provided. Requires the context
+generation timestamp to check against existing file selections. Files already
+included with full content will return a message instead of duplicate content.
+
+Args:
+    root_path: Root directory path (e.g. '/home/user/projects/myproject')
+    paths: File paths relative to root_path, starting with forward slash and
+           including root directory name (e.g. '/myproject/src/main.py')
+    timestamp: Context generation timestamp to check against existing selections","Retrieves complete contents of specified files from the project.
+
+DO NOT request files that have already been provided. Requires the context 
+generation timestamp to check against existing file selections. Files already 
+included with full content will return a message instead of duplicate content.
+
+Args:
+    root_path: Root directory path (e.g. '/home/user/projects/myproject')
+    paths: File paths relative to root_path, starting with forward slash and 
+           including root directory name (e.g. '/myproject/src/main.py')
+    timestamp: Context generation timestamp to check against existing selections",,,,"['root_path', 'paths', 'timestamp']","['root_path', 'paths', 'timestamp']","{root_path: string, paths: array, timestamp: number}","{root_path: string, paths: array, timestamp: number}",COSMETIC,
+E057,https://github.com/KS-GEN-AI/jira-mcp-server,get_only_ticket_name_and_description,65bfed5a,be4f193f,2025-02-05T15:42:21+01:00,2025-04-09T15:13:27+02:00,desc_only,Get the name and description of the requested tickets on the api /rest/api/3/search,Get the name and description of the requested tickets on the api /rest/api/3/search. Do not use markdown in your query.,,,,[],[],(none),(none),CLARIFICATION,"Same exact sentence and same dates as E044 in this repo - confirms a single repo-wide commit added this markdown warning across multiple tools at once, not independent additions."
+E058,https://github.com/topoteretes/cognee,search,a70e0bf9,e285fcb8,2026-03-29T15:04:27-07:00,2026-04-04T19:52:12-07:00,schema_add_only,"Search and query the knowledge graph for insights, information, and connections.
+
+This is the final step in the Cognee workflow that retrieves information from the
+processed knowledge graph. It supports multiple search modes optimized for different
+use cases - from simple fact retrieval to complex reasoning and code analysis.
+
+Search Prerequisites:
+    - **LLM_API_KEY**: Required for GRAPH_COMPLETION and RAG_COMPLETION search types
+    - **Data Added**: Must have data previously added via `cognee.add()`
+    - **Knowledge Graph Built**: Must have processed data via `cognee.cognify()`
+    - **Vector Database**: Must be accessible for semantic search functionality
+
+Search Types & Use Cases:
+
+    **GRAPH_COMPLETION** (Recommended):
+        Natural language Q&A using full graph context and LLM reasoning.
+        Best for: Complex questions, analysis, summaries, insights.
+        Returns: Conversational AI responses with graph-backed context.
+
+    **RAG_COMPLETION**:
+        Traditional RAG using document chunks without graph structure.
+        Best for: Direct document retrieval, specific fact-finding.
+        Returns: LLM responses based on relevant text chunks.
+
+    **CHUNKS**:
+        Raw text segments that match the query semantically.
+        Best for: Finding specific passages, citations, exact content.
+        Returns: Ranked list of relevant text chunks with metadata.
+
+    **SUMMARIES**:
+        Pre-generated hierarchical summaries of content.
+        Best for: Quick overviews, document abstracts, topic summaries.
+        Returns: Multi-level summaries from detailed to high-level.
+
+    **CODE**:
+        Code-specific search with syntax and semantic understanding.
+        Best for: Finding functions, classes, implementation patterns.
+        Returns: Structured code information with context and relationships.
+
+    **CYPHER**:
+        Direct graph database queries using Cypher syntax.
+        Best for: Advanced users, specific graph traversals, debugging.
+        Returns: Raw graph query results.
+
+    **FEELING_LUCKY**:
+        Intelligently selects and runs the most appropriate search type.
+        Best for: General-purpose queries or when you're unsure which search type is best.
+        Returns: The results from the automatically selected search type.
+
+Parameters
+----------
+search_query : str
+    Your question or search query in natural language.
+    Examples:
+    - ""What are the main themes in this research?""
+    - ""How do these concepts relate to each other?""
+    - ""Find information about machine learning algorithms""
+    - ""What functions handle user authentication?""
+
+search_type : str
+    The type of search to perform. Valid options include:
+    - ""GRAPH_COMPLETION"": Returns an LLM response based on the search query and Cognee's memory
+    - ""RAG_COMPLETION"": Returns an LLM response based on the search query and standard RAG data
+    - ""CODE"": Returns code-related knowledge in JSON format
+    - ""CHUNKS"": Returns raw text chunks from the knowledge graph
+    - ""SUMMARIES"": Returns pre-generated hierarchical summaries
+    - ""CYPHER"": Direct graph database queries
+    - ""FEELING_LUCKY"": Automatically selects best search type
+
+    The search_type is case-insensitive and will be converted to uppercase.
+
+top_k : int, optional
+    Maximum number of results to return (default: 10).
+    Controls the amount of context retrieved from the knowledge graph.
+    - Lower values (3-5): Faster, more focused results
+    - Higher values (10-20): More comprehensive, but slower and more context-heavy
+    Helps manage response size and context window usage in MCP clients.
+
+Returns
+-------
+list
+    A list containing a single TextContent object with the search results.
+    The format of the result depends on the search_type:
+    - **GRAPH_COMPLETION/RAG_COMPLETION**: Conversational AI response strings
+    - **CHUNKS**: Relevant text passages with source metadata
+    - **SUMMARIES**: Hierarchical summaries from general to specific
+    - **CODE**: Structured code information with context
+    - **FEELING_LUCKY**: Results in format of automatically selected search type
+    - **CYPHER**: Raw graph query results
+
+Performance & Optimization:
+    - **GRAPH_COMPLETION**: Slower but most intelligent, uses LLM + graph context
+    - **RAG_COMPLETION**: Medium speed, uses LLM + document chunks (no graph traversal)
+    - **CHUNKS**: Fastest, pure vector similarity search without LLM
+    - **SUMMARIES**: Fast, returns pre-computed summaries
+    - **CODE**: Medium speed, specialized for code understanding
+    - **FEELING_LUCKY**: Variable speed, uses LLM + search type selection intelligently
+
+Environment Variables:
+    Required for LLM-based search types (GRAPH_COMPLETION, RAG_COMPLETION):
+    - LLM_API_KEY: API key for your LLM provider
+
+    Optional:
+    - LLM_PROVIDER, LLM_MODEL: Configure LLM for search responses
+    - VECTOR_DB_PROVIDER: Must match what was used during cognify
+    - GRAPH_DATABASE_PROVIDER: Must match what was used during cognify
+
+Notes
+-----
+- Different search types produce different output formats
+- The function handles the conversion between Cognee's internal result format and MCP's output format","Search and query the knowledge graph for insights, information, and connections.
+
+This is the final step in the Cognee workflow that retrieves information from the
+processed knowledge graph. It supports multiple search modes optimized for different
+use cases - from simple fact retrieval to complex reasoning and code analysis.
+
+Search Prerequisites:
+    - **LLM_API_KEY**: Required for GRAPH_COMPLETION and RAG_COMPLETION search types
+    - **Data Added**: Must have data previously added via `cognee.add()`
+    - **Knowledge Graph Built**: Must have processed data via `cognee.cognify()`
+    - **Vector Database**: Must be accessible for semantic search functionality
+
+Search Types & Use Cases:
+
+    **GRAPH_COMPLETION** (Recommended):
+        Natural language Q&A using full graph context and LLM reasoning.
+        Best for: Complex questions, analysis, summaries, insights.
+        Returns: Conversational AI responses with graph-backed context.
+
+    **RAG_COMPLETION**:
+        Traditional RAG using document chunks without graph structure.
+        Best for: Direct document retrieval, specific fact-finding.
+        Returns: LLM responses based on relevant text chunks.
+
+    **CHUNKS**:
+        Raw text segments that match the query semantically.
+        Best for: Finding specific passages, citations, exact content.
+        Returns: Ranked list of relevant text chunks with metadata.
+
+    **SUMMARIES**:
+        Pre-generated hierarchical summaries of content.
+        Best for: Quick overviews, document abstracts, topic summaries.
+        Returns: Multi-level summaries from detailed to high-level.
+
+    **CODE**:
+        Code-specific search with syntax and semantic understanding.
+        Best for: Finding functions, classes, implementation patterns.
+        Returns: Structured code information with context and relationships.
+
+    **CYPHER**:
+        Direct graph database queries using Cypher syntax.
+        Best for: Advanced users, specific graph traversals, debugging.
+        Returns: Raw graph query results.
+
+    **FEELING_LUCKY**:
+        Intelligently selects and runs the most appropriate search type.
+        Best for: General-purpose queries or when you're unsure which search type is best.
+        Returns: The results from the automatically selected search type.
+
+Parameters
+----------
+search_query : str
+    Your question or search query in natural language.
+    Examples:
+    - ""What are the main themes in this research?""
+    - ""How do these concepts relate to each other?""
+    - ""Find information about machine learning algorithms""
+    - ""What functions handle user authentication?""
+
+search_type : str
+    The type of search to perform. Valid options include:
+    - ""GRAPH_COMPLETION"": Returns an LLM response based on the search query and Cognee's memory
+    - ""RAG_COMPLETION"": Returns an LLM response based on the search query and standard RAG data
+    - ""CODE"": Returns code-related knowledge in JSON format
+    - ""CHUNKS"": Returns raw text chunks from the knowledge graph
+    - ""SUMMARIES"": Returns pre-generated hierarchical summaries
+    - ""CYPHER"": Direct graph database queries
+    - ""FEELING_LUCKY"": Automatically selects best search type
+
+    The search_type is case-insensitive and will be converted to uppercase.
+
+top_k : int, optional
+    Maximum number of results to return (default: 10).
+    Controls the amount of context retrieved from the knowledge graph.
+    - Lower values (3-5): Faster, more focused results
+    - Higher values (10-20): More comprehensive, but slower and more context-heavy
+    Helps manage response size and context window usage in MCP clients.
+
+Returns
+-------
+list
+    A list containing a single TextContent object with the search results.
+    The format of the result depends on the search_type:
+    - **GRAPH_COMPLETION/RAG_COMPLETION**: Conversational AI response strings
+    - **CHUNKS**: Relevant text passages with source metadata
+    - **SUMMARIES**: Hierarchical summaries from general to specific
+    - **CODE**: Structured code information with context
+    - **FEELING_LUCKY**: Results in format of automatically selected search type
+    - **CYPHER**: Raw graph query results
+
+Performance & Optimization:
+    - **GRAPH_COMPLETION**: Slower but most intelligent, uses LLM + graph context
+    - **RAG_COMPLETION**: Medium speed, uses LLM + document chunks (no graph traversal)
+    - **CHUNKS**: Fastest, pure vector similarity search without LLM
+    - **SUMMARIES**: Fast, returns pre-computed summaries
+    - **CODE**: Medium speed, specialized for code understanding
+    - **FEELING_LUCKY**: Variable speed, uses LLM + search type selection intelligently
+
+Environment Variables:
+    Required for LLM-based search types (GRAPH_COMPLETION, RAG_COMPLETION):
+    - LLM_API_KEY: API key for your LLM provider
+
+    Optional:
+    - LLM_PROVIDER, LLM_MODEL: Configure LLM for search responses
+    - VECTOR_DB_PROVIDER: Must match what was used during cognify
+    - GRAPH_DATABASE_PROVIDER: Must match what was used during cognify
+
+Notes
+-----
+- Different search types produce different output formats
+- The function handles the conversion between Cognee's internal result format and MCP's output format",datasets,,,"['search_query', 'search_type']","['search_query', 'search_type']","{search_query: string, search_type: string, top_k: integer}","{search_query: string, search_type: string, top_k: integer, datasets: string}",SCHEMA_EXPANSION,"New datasets field added but not mentioned anywhere in the long unchanged description, same schema-outpaces-documentation gap as E035/E046, otherwise clean expansion."
+E059,https://github.com/ahujasid/blender-mcp,execute_blender_code,4794edc4,465f203e,2026-01-05T21:11:17+09:00,2026-01-08T17:03:49+05:30,desc_and_schema_add,"Execute arbitrary Python code in Blender. Make sure to do it step-by-step by breaking it into smaller chunks.
+
+Parameters:
+- code: The Python code to execute","Execute arbitrary Python code in Blender. Make sure to do it step-by-step by breaking it into smaller chunks.
+
+Parameters:
+- code: The Python code to execute
+- user_prompt: The original user prompt that led to this tool call (for telemetry)",user_prompt,,,['code'],['code'],{code: string},"{code: string, user_prompt: string}",SCHEMA_EXPANSION,"Confirms the E035/E046 speculation - user_prompt is explicitly documented here as a telemetry field (original user prompt for logging), not functional. Same repo, same rollout pattern, mystery now resolved with an actual explanation."
+E060,https://github.com/topoteretes/cognee,load_skill,2cbff053,766e72a9,2026-04-23T12:34:47-07:00,2026-04-24T23:04:57-07:00,desc_and_schema_remove,Load full details for a skill by its skill_id.,Load the full procedure body of a named skill. Use this when the skill description suggests the skill applies to the current task.,,skill_id,,['skill_id'],[],{skill_id: string},(none),BEHAVIORAL_DRIFT,"Fifth instance of zero-parameters pattern (after E026, E047, E053) but this one has explanatory cover - description now says named skill and references skill description, suggesting skill identification moved elsewhere in the system rather than simply disappearing, more coherent than the other zero-param cases."
+E061,https://github.com/kfastov/telegram-mcp-server,listChannels,840d5bfd,6e088e78,2026-02-01T15:21:50+07:00,2026-02-20T00:20:52+04:00,desc_only,Lists available Telegram dialogs for the authenticated account.,"Lists available Telegram dialogs for the authenticated account, including unread message counts.",,,,[],[],(none),(none),CLARIFICATION,"Genuinely borderline - output gains unread message counts but no input schema change and same fundamental list-dialogs outcome, leaning clarification since this is enriched existing output not new capability, but flagging as output-side schema blind spot similar to input-side ones already noted."
+E062,https://github.com/smn2gnt/MCP-Salesforce,get_record,011391e8,fbfa4974,2026-01-26T20:43:15-08:00,2026-02-05T16:25:05+11:00,desc_and_schema_remove,Retrieves a specific record by ID. Returns all fields - prefer SOQL with specific fields for token efficiency.,Retrieves a specific record by ID,,format,,"['object_name', 'record_id']","['object_name', 'record_id']","{object_name: string, record_id: string, format: string}","{object_name: string, record_id: string}",SCHEMA_CONTRACTION,"format field removed along with its explanatory sentence about token efficiency tradeoffs - consistent removal, core get-record-by-id operation unaffected, same modest-convenience-loss shape as E033 rather than full capability loss."
+E063,https://github.com/wonderwhy-er/ClaudeDesktopCommander,read_output,cb5bb08e,7efa7d35,2025-04-30T10:08:31+01:00,2025-05-07T16:16:23+03:00,desc_only,Read new output from a running terminal session.,Read new output from a running terminal session. ${CMD_PREFIX_DESCRIPTION},,,,[],[],(none),(none),COSMETIC,"Same CMD_PREFIX_DESCRIPTION placeholder seen at the end of E013s diff in this same repo, looks like shared template boilerplate being wired in rather than new functional content, though the actual substituted text is unknown to us from this diff alone."
+E064,https://github.com/garc33/bitbucket-server-mcp-server,search,619cd7b7,968ce34d,2025-07-22T07:31:45+02:00,2025-07-22T08:03:55+02:00,desc_only,"Search for code or files across repositories. Use this to find specific code patterns, file names, or content within projects and repositories. Supports filtering by project, repository, and search type.","Search for code or files across repositories. Use this to find specific code patterns, file names, or content within projects and repositories. Searches both file contents and filenames. Supports filtering by project, repository, and query optimization.",,,,[],[],(none),(none),CLARIFICATION,"Mostly clarifying existing search scope but search type to query optimization is a real conceptual swap not just rewording, no schema field changed either way so cannot verify if this reflects an actual behavior change, genuine but minor ambiguity."
+E065,https://github.com/hald/things-mcp,get_headings,92a54d27,929763a9,2026-06-04T18:46:53-07:00,2026-06-04T19:05:12-07:00,desc_and_schema_add,"Get headings from Things
+
+Args:
+    project_uuid: Optional UUID of a specific project to get headings from","Get headings from Things
+
+Args:
+    project_uuid: Optional UUID of a specific project to get headings from
+    limit: Maximum number of items to return (default: all)
+    offset: Number of items to skip from the start (default: 0)",limit; offset,,,[],[],{project_uuid: string},"{project_uuid: string, limit: integer, offset: integer}",SCHEMA_EXPANSION,"Third things-mcp tool getting limit/offset pagination after get_inbox and get_anytime E016, same defaults preserving old behavior, consistently well documented backward compatible rollout, good positive-evolution example for contrast with the security relevant findings elsewhere in this sample."
+E066,https://github.com/codingthefuturewithai/rag-retriever,fetch_url,09116d1e,fb989cc7,2025-02-22T16:35:42-05:00,2025-02-22T19:56:21-05:00,schema_add_only,"Fetch and process web content, recursively crawling linked pages and storing everything in the vector store for future semantic search","Fetch and process web content, recursively crawling linked pages and storing everything in the vector store for future semantic search",collection_name,,,[],[],"{url: string, max_depth: integer}","{url: string, max_depth: integer, collection_name: string}",SCHEMA_EXPANSION,
+E067,https://github.com/keboola/keboola-mcp-server,search,efd7e184,03657fad,2026-04-17T18:10:25+02:00,2026-06-11T12:05:55+02:00,desc_only,"Searches for Keboola items (tables, buckets, components, configurations, transformations, flows, data-apps, etc.)
+in the current project and returns matching ID + metadata.
+
+This tool supports two complementary search types:
+
+1) textual
+- Searches item metadata fields by matching patterns against id, name, displayName, and description.
+- For tables, also searches column names and column descriptions.
+
+2) config-based
+- Searches item configurations (JSON objects) by matching patterns against the configuration values ​​converted
+to a string, optionally narrowed by JSON path `scopes`.
+- Returns also `match_scopes` with JSON paths and matched patterns per scope.
+
+THIS IS THE PRIMARY DISCOVERY TOOL. Always use it BEFORE any get_* tool when you need to find items
+by name or specific configuration content. Do NOT enumerate items with get_buckets, get_tables, get_configs,
+get_flows, or get_data_apps just to locate a specific item — use this tool instead.
+
+WHEN TO USE:
+- User asks to ""find"", ""locate"", or ""search for"" something by name, keyword, text pattern, configuration content or
+value
+- User mentions a partial name and you need to find the full item (e.g., ""find the customer table"")
+- User asks ""what tables/configs/flows do I have with X in the name?""
+- You need to discover items before performing operations on them
+- User asks to ""list all items with [name] or [configuration value/part] in it""
+- User asks where a value, table, component, specific configuration ID, or specific settings is used in components,
+data-apps, flows, or transformations
+- You need to trace lineage by searching for IDs referenced in configurations, or to find flows using a
+  specific component, or find usage of a bucket/table in transformations or components, or to find items with
+  specific parameters.
+- User asks to ""what is the genesis of this item?"" or ""explain me business logic of this item?""
+
+HOW IT WORKS:
+- Supports two types:
+  - search_type=""textual"": matches against id, name, displayName, and description, for tables also column names
+  and column descriptions
+  - search_type=""config-based"": matches inside configuration JSON objects, optionally narrowed by JSON path `scopes`
+- case-insensitive search
+- mode for pattern search: `literal` (default) or `regex`
+- Multiple patterns work as OR condition - matches items containing ANY of the patterns
+- Each result includes the item's ID, name, creation date, and relevant metadata
+- scopes (config-based) narrow matching to specific JSONPath areas within configurations; matching is performed
+against the stringified JSON node content in those areas.
+- config-based always returns all matched paths per item in `match_scopes` (including matched patterns)
+
+IMPORTANT:
+- Always use this tool when the user mentions a name but you don't have the exact ID
+- The search returns IDs that you can use with other tools (e.g., get_tables, get_configs, get_flows)
+- Results are ordered by update time. The most recently updated items are returned first.
+- Fill `item_types` to make the search more efficient when you know the item type; scanning buckets and tables can
+be expensive
+- For exact ID lookups, use specific tools like get_tables, get_configs, get_flows instead
+- Use specific `scopes` only when you know the config structure (schema or real example); otherwise run config-based
+search without scopes.
+- Use find_component_id and get_configs tools to find configurations related to a specific component
+- If results are too numerous or empty, ask the user to refine their query rather than enumerating all items.
+
+USAGE EXAMPLES:
+1) textual search examples:
+- user_input: ""Find all tables with 'customer' in the name""
+    → patterns=[""customer""], item_types=[""table""]
+    → Returns all tables whose id, name, displayName, or description contains ""customer""
+
+- user_input: ""Find tables with 'email' column""
+    → patterns=[""email""], item_types=[""table""]
+    → Returns all tables that have a column named ""email"" or with ""email"" in column description
+
+- user_input: ""Search for the sales transformation""
+    → patterns=[""sales""], item_types=[""transformation""]
+    → Returns transformations with ""sales"" in any searchable field
+
+- user_input: ""Find items named 'daily report' or 'weekly summary'""
+    → patterns=[""daily.*report"", ""weekly.*summary""], item_types=[], mode=""regex""
+    → Returns all items matching any of these patterns
+
+- user_input: ""Show me all configurations related to Google Analytics""
+    → patterns=[""google.*analytics""], item_types=[""configuration""], mode=""regex""
+    → Returns configurations with matching patterns
+
+2) config-based search examples:
+- user_input: ""Find transformations/configs/components referencing table in.c-prod.customers""
+    -> patterns=[""in.c-prod.customers""], item_types=[""transformation"", ""configuration""],
+    search_type=""config-based""
+    -> No scopes = search whole stringified config; result includes `match_scopes` with exact paths + patterns
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id anywhere""
+    -> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id in parameters""
+-> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+scopes=[""parameters""]
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id in storage""
+-> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+scopes=[""storage""]
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id in authorization""
+    -> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+    scopes=[""parameters.authorization"", ""authorization""]
+
+- user_input: ""Find components/transformations using my_bucket in input or output mappings""
+    -> patterns=[""my_bucket""], item_types=[""configuration"", ""transformation""], search_type=""config-based"",
+    scopes=[""storage.input"", ""storage.output""]
+    -> Returns matches with paths like `storage.input.tables[0].source`, `storage.input.files[0].source`,
+    or `storage.output.tables[0].destination`
+
+- user_input: ""Find flows using configuration ID 01k9cz233cvd1rga3zzx40g8qj""
+    -> patterns=[""01k9cz233cvd1rga3zzx40g8qj""], item_types=[""flow""], search_type=""config-based"",
+    scopes=[""tasks"", ""phases""]
+
+- user_input: ""Find transformations using this table / column / specific code in its script""
+    -> patterns=[""element""], item_types=[""transformation""], search_type=""config-based"",
+    scopes=[""parameters"", ""storage""]
+
+- user_input: ""Find data apps using something in its config / python code / setting""
+    -> patterns=[""something""], item_types=[""data-app""], search_type=""config-based""
+    -> Returns data apps where script/config sections contain the keyword and includes `match_scopes`","Searches for Keboola items (tables, buckets, components, configurations, transformations, flows, data-apps, etc.)
+in the current project and returns matching ID + metadata.
+
+This tool supports two complementary search types:
+
+1) textual
+- Searches items by name, server-side (fast, independent of project size).
+- Prefers the current branch context; when nothing is found there, automatically widens the search to all
+branches of the project — such hits carry `branch_id`/`branch_name` so you can tell where they live.
+
+2) config-based
+- Searches item configurations (JSON objects) by matching patterns against the configuration values ​​converted
+to a string, optionally narrowed by JSON path `scopes`.
+- Returns also `match_scopes` with JSON paths and matched patterns per scope.
+
+THIS IS THE PRIMARY DISCOVERY TOOL. Always use it BEFORE any get_* tool when you need to find items
+by name or specific configuration content. Do NOT enumerate items with get_buckets, get_tables, get_configs,
+get_flows, or get_data_apps just to locate a specific item — use this tool instead.
+
+WHEN TO USE:
+- User asks to ""find"", ""locate"", or ""search for"" something by name, keyword, text pattern, configuration content or
+value
+- User mentions a partial name and you need to find the full item (e.g., ""find the customer table"")
+- User asks ""what tables/configs/flows do I have with X in the name?""
+- You need to discover items before performing operations on them
+- User asks to ""list all items with [name] or [configuration value/part] in it""
+- User asks where a value, table, component, specific configuration ID, or specific settings is used in components,
+data-apps, flows, or transformations
+- You need to trace lineage by searching for IDs referenced in configurations, or to find flows using a
+  specific component, or find usage of a bucket/table in transformations or components, or to find items with
+  specific parameters.
+- User asks to ""what is the genesis of this item?"" or ""explain me business logic of this item?""
+
+HOW IT WORKS:
+- Supports two types:
+  - search_type=""textual"": searches item names server-side; names only — descriptions, column names and
+  configuration contents are NOT searched (use config-based search for configuration contents)
+  - search_type=""config-based"": matches inside configuration JSON objects, optionally narrowed by JSON path `scopes`
+- case-insensitive search
+- mode for pattern search: `literal` (default); `regex` is supported for config-based search only
+- Multiple patterns work as OR condition - matches items containing ANY of the patterns
+- Each result includes the item's ID, name, creation date, and relevant metadata; the response also carries
+`total` and `by_type` counts and the `branch_scope` the hits come from
+- textual search prefers the current branch; on zero hits it automatically retries across all branches of the
+project and marks the response with branch_scope=""all-branches""
+- scopes (config-based) narrow matching to specific JSONPath areas within configurations; matching is performed
+against the stringified JSON node content in those areas.
+- config-based always returns all matched paths per item in `match_scopes` (including matched patterns)
+
+IMPORTANT:
+- Always use this tool when the user mentions a name but you don't have the exact ID
+- The search returns IDs that you can use with other tools (e.g., get_tables, get_configs, get_flows)
+- Results are ordered by the `updated` field, most recent first. `updated` is the item's last update time
+when available, or its creation time otherwise (textual/global-search hits expose only the creation time).
+- Textual search matches names only, with fuzzy full-text matching (typo/similarity tolerant; no regex). To find
+items by description or by table column, use get_tables or config-based search; to find items by configuration
+content, use config-based search.
+- For exact ID lookups, use specific tools like get_tables, get_configs, get_flows instead
+- Use specific `scopes` only when you know the config structure (schema or real example); otherwise run config-based
+search without scopes.
+- Use find_component_id and get_configs tools to find configurations related to a specific component
+- If results are too numerous or empty, ask the user to refine their query rather than enumerating all items.
+
+USAGE EXAMPLES:
+1) textual search examples:
+- user_input: ""Find all tables with 'customer' in the name""
+    → patterns=[""customer""], item_types=[""table""]
+    → Returns all tables whose name matches ""customer""
+
+- user_input: ""Search for the sales transformation""
+    → patterns=[""sales""], item_types=[""transformation""]
+    → Returns transformations with ""sales"" in the name
+
+- user_input: ""Find items named 'daily report' or 'weekly summary'""
+    → patterns=[""daily report"", ""weekly summary""], item_types=[]
+    → Returns all items matching any of these patterns
+
+- user_input: ""Show me all configurations related to Google Analytics""
+    → patterns=[""google analytics""], item_types=[""configuration""]
+    → Returns configurations with matching names
+
+2) config-based search examples:
+- user_input: ""Find transformations/configs/components referencing table in.c-prod.customers""
+    -> patterns=[""in.c-prod.customers""], item_types=[""transformation"", ""configuration""],
+    search_type=""config-based""
+    -> No scopes = search whole stringified config; result includes `match_scopes` with exact paths + patterns
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id anywhere""
+    -> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id in parameters""
+-> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+scopes=[""parameters""]
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id in storage""
+-> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+scopes=[""storage""]
+
+- user_input: ""Find configurations/transformations (etc.) using specific setting / id in authorization""
+    -> patterns=[""setting"", ""id""], item_types=[""configuration"", ""transformations""], search_type=""config-based"",
+    scopes=[""parameters.authorization"", ""authorization""]
+
+- user_input: ""Find components/transformations using my_bucket in input or output mappings""
+    -> patterns=[""my_bucket""], item_types=[""configuration"", ""transformation""], search_type=""config-based"",
+    scopes=[""storage.input"", ""storage.output""]
+    -> Returns matches with paths like `storage.input.tables[0].source`, `storage.input.files[0].source`,
+    or `storage.output.tables[0].destination`
+
+- user_input: ""Find flows using configuration ID 01k9cz233cvd1rga3zzx40g8qj""
+    -> patterns=[""01k9cz233cvd1rga3zzx40g8qj""], item_types=[""flow""], search_type=""config-based"",
+    scopes=[""tasks"", ""phases""]
+
+- user_input: ""Find transformations using this table / column / specific code in its script""
+    -> patterns=[""element""], item_types=[""transformation""], search_type=""config-based"",
+    scopes=[""parameters"", ""storage""]
+
+- user_input: ""Find data apps using something in its config / python code / setting""
+    -> patterns=[""something""], item_types=[""data-app""], search_type=""config-based""
+    -> Returns data apps where script/config sections contain the keyword and includes `match_scopes`",,,,['patterns'],['patterns'],"{patterns: any, item_types: any, search_type: any, scopes: any, mode: any, limit: any, offset: any}","{patterns: any, item_types: any, search_type: any, scopes: any, mode: any, limit: any, offset: any}",BEHAVIORAL_DRIFT,"Third data point on search tool evolution in this repo after E042 cosmetic fixes and E022 major removal - textual search narrowed to names-only, column and description matching explicitly removed with worked examples confirming the email-column use case no longer works, redirected to get_tables instead. Strong capstone example of repeated multi-stage tool drift over 7 months."
+E068,https://github.com/topoteretes/cognee,cognify_status,cdce0d8e,a70e0bf9,2026-03-23T10:23:48+02:00,2026-03-29T15:04:27-07:00,schema_remove_only,"Get the current status of the cognify pipeline.
+
+This function retrieves information about current and recently completed cognify operations
+in the main_dataset. It provides details on progress, success/failure status, and statistics
+about the processed data.
+
+Returns
+-------
+list
+    A list containing a single TextContent object with the status information as a string.
+    The status includes information about active and completed jobs for the cognify_pipeline.
+
+Notes
+-----
+- The function retrieves pipeline status specifically for the ""cognify_pipeline"" on the ""main_dataset""
+- Status information includes job progress, execution time, and completion status
+- The status is returned in string format for easy reading
+- This operation is not available in API mode","Get the current status of the cognify pipeline.
+
+This function retrieves information about current and recently completed cognify operations
+in the main_dataset. It provides details on progress, success/failure status, and statistics
+about the processed data.
+
+Returns
+-------
+list
+    A list containing a single TextContent object with the status information as a string.
+    The status includes information about active and completed jobs for the cognify_pipeline.
+
+Notes
+-----
+- The function retrieves pipeline status specifically for the ""cognify_pipeline"" on the ""main_dataset""
+- Status information includes job progress, execution time, and completion status
+- The status is returned in string format for easy reading
+- This operation is not available in API mode",,dataset_name,,[],[],{dataset_name: string},(none),CLARIFICATION,"Sixth zero-parameters-remaining case but distinct from E026/E047/E053/E060 - unchanged description already described fixed single-dataset main_dataset behavior on both sides, suggesting dataset_name was likely vestigial/non-functional already, not a real capability loss, revising away from the default drift call for this pattern."
+E069,https://github.com/54rt1n/container-mcp,kb_add_reference,53b7c1cd,8b279374,2025-03-24T08:48:33-05:00,2025-03-24T14:04:11-05:00,schema_mixed,"Add a reference to another document.
+
+Args:
+    namespace: Source document namespace
+    collection: Source document collection
+    name: Source document name
+    ref_namespace: Referenced document namespace
+    ref_collection: Referenced document collection
+    ref_name: Referenced document name
+    relation: Relation predicate connecting the documents
+    
+Returns:
+    Dictionary with status and updated reference count
+    
+Raises:
+    ValueError: If any parameter is an empty string","Add a reference to another document.
+
+Args:
+    path: Source document path
+    ref_path: Referenced document path
+    relation: Relation predicate connecting the documents
+    
+Returns:
+    Dictionary with status and updated reference count",path; ref_path,collection; name; namespace; ref_collection; ref_name; ref_namespace,,"['namespace', 'collection', 'name', 'ref_namespace', 'ref_collection', 'ref_name', 'relation']","['path', 'ref_path', 'relation']","{namespace: string, collection: string, name: string, ref_namespace: string, ref_collection: string, ref_name: string, relation: string}","{path: string, ref_path: string, relation: string}",BEHAVIORAL_DRIFT,"Six-field hierarchical addressing (namespace/collection/name x2) collapsed into two path strings - old calls with separate fields would fail entirely, real breaking change to calling contract even though underlying intent (reference two documents) is preserved. Error-handling note about empty strings also removed, suggesting validation logic changed too."
+E070,https://github.com/topoteretes/cognee,execute_skill_tool,50802ec0,5bac3c3a,2026-03-11T16:03:22+01:00,2026-03-11T16:13:10+01:00,schema_add_only,"Execute a skill against a task. Loads the skill, sends instructions + task to the LLM, and returns the result. Automatically records the run for learning.","Execute a skill against a task. Loads the skill, sends instructions + task to the LLM, and returns the result. Automatically records the run for learning.",auto_evaluate,,,"['skill_id', 'task_text']","['skill_id', 'task_text']","{skill_id: string, task_text: string, auto_observe: boolean}","{skill_id: string, task_text: string, auto_observe: boolean, auto_evaluate: boolean}",SCHEMA_EXPANSION,
+E071,https://github.com/kagisearch/kagimcp,kagi_search_fetch,b5a08d1d,572df247,2026-05-07T15:03:27-04:00,2026-05-14T23:37:20-04:00,schema_add_only,Fetch web results for a query using the Kagi Search API. Use for general search and when the user explicitly tells you to 'fetch' results/information. Results are numbered so that a user may refer to a result by a specific number.,Fetch web results for a query using the Kagi Search API. Use for general search and when the user explicitly tells you to 'fetch' results/information. Results are numbered so that a user may refer to a result by a specific number.,lens_id,,,[],[],"{query: string, workflow: any, extract_count: integer, limit: integer, include_domains: any, exclude_domains: any, time_relative: any, after: any, before: any, file_type: any}","{query: string, workflow: any, extract_count: integer, limit: integer, include_domains: any, exclude_domains: any, time_relative: any, after: any, before: any, file_type: any, lens_id: any}",SCHEMA_EXPANSION,
+E072,https://github.com/cline/cline,read_files,6ae37eba,2430d554,2026-04-06T13:19:46-07:00,2026-04-14T19:26:16-07:00,desc_only,"Read the full content of text files at the provided absolute paths, or return only an inclusive one-based line range when start_line/end_line are provided.","Read the full content of text or image files at the provided absolute paths, or return only an inclusive one-based line range when start_line/end_line are provided.",,,,[],[],(none),(none),BEHAVIORAL_DRIFT,"Tiny two-word addition but genuine new capability claim - image file support added to a text-only tool, real new outcome becomes possible even though diff is minimal. Good small clean counterexample showing drift size does not correlate with diff length."
+E073,https://github.com/smn2gnt/MCP-Salesforce,run_soql_query,3855823a,e047e638,2024-12-17T15:59:40+11:00,2024-12-17T22:23:27+11:00,schema_add_only,Executes a SOQL query against Salesforce,Executes a SOQL query against Salesforce,query,,,[],['query'],(none),{query: string},SCHEMA_EXPANSION,"Before shows zero parameters for a tool that fundamentally requires a query to function - likely a first-appearance artifact like E019/E029 rather than a genuine zero-to-one-parameter transition, treating as expansion consistent with those earlier similar cases."
+E074,https://github.com/makafeli/n8n-workflow-builder,deactivate_workflow,5bd020cc,9555fa27,2025-07-29T11:07:18+02:00,2025-07-29T11:41:06+02:00,desc_only,Deactivate a workflow by ID,Deactivate a workflow by ID,,,,[],[],(none),(none),,
+E075,https://github.com/langflow-ai/langflow,search_component_types,9543d7d3,a2d3c185,2026-03-31T15:22:25-03:00,2026-04-02T11:18:13-03:00,desc_and_schema_add,"Search available component types.
+
+Args:
+    query: Search term to filter by name or category (case-insensitive).
+    category: Filter by category name (case-insensitive).
+
+Returns:
+    List of matching component types with type, category, display_name, description.","Find component types by name, category, or output type. Call with no args to list all.
+
+Args:
+    query: Search term to filter by name or category (case-insensitive).
+    category: Filter by category name, case-insensitive (e.g. ""models"", ""inputs"", ""outputs"").
+    output_type: Filter by what the component produces (e.g. ""LanguageModel"", ""Message"", ""Tool"").",output_type,,,[],[],"{query: any, category: any}","{query: any, category: any, output_type: any}",SCHEMA_EXPANSION,"New output_type filter added with clear examples, existing query/category fields preserved with slightly clarified docs, Returns section removed as documentation trim not functional change. Final event, clean expansion to close out the batch."
