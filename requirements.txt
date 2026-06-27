@@ -19,3 +19,6 @@ tqdm>=4.66.0
 
 # Data validation and typed models
 pydantic>=2.7.0
+
+# Inter-rater reliability (Cohen's / Fleiss' kappa) — required for script 11 --compute-kappa
+scikit-learn>=1.4.0
