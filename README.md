@@ -8,6 +8,31 @@ This project fills a gap identified in the literature: while "rug pull" attacks
 (arXiv:2506.01333), no published study has measured how often this actually
 happens in real, deployed MCP servers.
 
+## Quick Start
+
+The fastest way to see every result — **no API key required**:
+
+1. Clone the repo.
+2. `pip install -r requirements.txt`
+3. `streamlit run app.py` — no API key needed, view all results immediately.
+
+The dashboard is read-only over the committed result files in `data/processed/`;
+it makes no live API calls and recomputes nothing. To instead **re-run the actual
+research pipeline** (which does require `GITHUB_TOKEN` / `ANTHROPIC_API_KEY`), see
+[Setup](#setup) and [Running the pipeline](#running-the-pipeline) below.
+
+## Headline Results
+
+| Result | Finding |
+|---|---|
+| **Tool-level change rate** | **84.1%** of tracked tools (4,023 / 4,784) changed at least once over their observable git history |
+| **Valid temporal change events** | **2,481** valid events after filtering |
+| **BEHAVIORAL_DRIFT** | **309 – 474 events (12.5 – 19.1%)** of valid change events — 309 conservative (both classifier passes agree) to 474 best estimate (Pass 2) |
+| **Agentic validation** | **14 / 15** purposively selected BEHAVIORAL_DRIFT cases produced a measurable, reproducible behavioral difference in a live agent at temperature 0 |
+
+Full methodology and per-finding detail: [`docs/phase4_summary.md`](docs/phase4_summary.md),
+[`docs/phase5_summary.md`](docs/phase5_summary.md), [`docs/phase6_summary.md`](docs/phase6_summary.md).
+
 ## Research design
 
 1. **Git-history mining** — reconstruct per-tool definition changes from the
@@ -90,7 +115,7 @@ stage without re-running earlier steps.
 
 | Script | What it does | Key inputs → outputs |
 |---|---|---|
-| `01_load_seed_data.py` | Downloads the MCPCrawler and MCP-at-First-Glance seed server lists from their replication packages | network → `data/raw/seed_servers.csv` |
+| `01_load_seed_data.py` | Downloads the MCPCrawler and MCP-at-First-Glance seed server lists from their replication packages | network → `data/processed/seed_servers.csv` |
 | `02_enrich_github_metadata.py` | Fetches star count, language, pushed-at date, and archived status for each seed repo via the GitHub API | `seed_servers.csv` → `data/raw/github_repo_metadata.jsonl` |
 | `03_sample_repos.py` | Stratified sample (star tier × language) of 380 primary repos + a backup pool; fixes random seed 42 | `github_repo_metadata.jsonl` → `data/processed/sample_primary_380.csv`, `sample_backup_pool.csv` |
 | `04_test_batch.py` | Dry-run tool-locator on a small subset to validate extractors before the full batch | `sample_primary_380.csv` → console report |

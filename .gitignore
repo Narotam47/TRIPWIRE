@@ -10,6 +10,13 @@ data/
 !data/snapshots/
 !data/**/.gitkeep
 
+# Debug / test / regenerable scratch artifacts — never publish these
+data/processed/batch_locate_results.pre_testfix.jsonl
+data/processed/tool_history_test10.jsonl
+data/processed/tool_history_test20.jsonl
+data/processed/slot02_poc_result.json
+data/processed/human_validation_merged.csv
+
 # Environment
 .env
 *.env

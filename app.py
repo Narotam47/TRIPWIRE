@@ -12,27 +12,43 @@ Run:  streamlit run app.py
 from __future__ import annotations
 
 import json
-import re
+from html import escape
 from pathlib import Path
 
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 import streamlit as st
 
 # --------------------------------------------------------------------------- #
-# Paths & constants
+# Paths
 # --------------------------------------------------------------------------- #
 ROOT = Path(__file__).resolve().parent
 PROC = ROOT / "data" / "processed"
 
-# Professional, muted palette
-C_PRIMARY = "#2563eb"   # blue 600
-C_ACCENT = "#0f766e"    # teal 700
-C_WARN = "#b45309"      # amber 700
-C_DANGER = "#b91c1c"    # red 700
-C_MUTED = "#94a3b8"     # slate 400
-PLOTLY_TEMPLATE = "plotly_white"
+# --------------------------------------------------------------------------- #
+# Design system — ONE palette, used the same way in every section
+# --------------------------------------------------------------------------- #
+# Semantic roles (held constant across all charts):
+#   BLUE  → first / baseline / "Pass 1" / "planned" / "before" / conservative
+#   TEAL  → final / walked / achieved / "Pass 2" / "after" / best estimate
+#   RED   → BEHAVIORAL_DRIFT, danger, the key finding
+#   AMBER → caution / middle tier
+#   SLATE → neutral / muted / non-highlighted
+C_BLUE = "#2563eb"
+C_TEAL = "#0d9488"
+C_RED = "#dc2626"
+C_AMBER = "#d97706"
+C_SLATE = "#64748b"
+
+FONT_FAMILY = (
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, '
+    'Helvetica, Arial, sans-serif'
+)
+
+# Single Plotly interaction config for EVERY chart: no toolbar, no logo.
+PLOTLY_CONFIG = {"displayModeBar": False, "displaylogo": False, "responsive": True}
 
 LABEL_ORDER = [
     "COSMETIC",
@@ -41,14 +57,6 @@ LABEL_ORDER = [
     "SCHEMA_CONTRACTION",
     "BEHAVIORAL_DRIFT",
 ]
-LABEL_COLORS = {
-    "COSMETIC": "#94a3b8",
-    "CLARIFICATION": "#38bdf8",
-    "SCHEMA_EXPANSION": "#22c55e",
-    "SCHEMA_CONTRACTION": "#f59e0b",
-    "BEHAVIORAL_DRIFT": "#dc2626",
-    "API_ERROR": "#cbd5e1",
-}
 
 st.set_page_config(
     page_title="MCP Drift Study — Results Dashboard",
@@ -56,6 +64,119 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+
+# --------------------------------------------------------------------------- #
+# Theme awareness (dark / light) — drives every chart + card color
+# --------------------------------------------------------------------------- #
+def theme_colors() -> dict:
+    """Resolve the active Streamlit theme into a concrete color set.
+
+    Plotly text/grid must be concrete colors (it cannot read CSS variables),
+    so we detect the theme and supply readable colors for it.
+    """
+    kind = "light"
+    try:
+        kind = (st.context.theme.type or "light").lower()
+    except Exception:
+        kind = "light"
+
+    if kind == "dark":
+        return {
+            "type": "dark",
+            "ink": "#f1f5f9",          # strongest text
+            "font": "#cbd5e1",         # body text
+            "muted": "#94a3b8",        # labels / captions
+            "axis": "#94a3b8",
+            "grid": "rgba(148,163,184,0.16)",
+            "card_bg": "rgba(148,163,184,0.07)",
+            "card_border": "rgba(148,163,184,0.22)",
+            "hover_bg": "#1e293b",
+            "tint": lambda hexc, a=0.16: _rgba(hexc, a),
+        }
+    return {
+        "type": "light",
+        "ink": "#0f172a",
+        "font": "#334155",
+        "muted": "#64748b",
+        "axis": "#64748b",
+        "grid": "rgba(100,116,139,0.16)",
+        "card_bg": "#ffffff",
+        "card_border": "#e2e8f0",
+        "hover_bg": "#ffffff",
+        "tint": lambda hexc, a=0.08: _rgba(hexc, a),
+    }
+
+
+def _rgba(hexc: str, alpha: float) -> str:
+    h = hexc.lstrip("#")
+    r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
+    return f"rgba({r},{g},{b},{alpha})"
+
+
+def register_template(tc: dict) -> None:
+    """Register a single custom Plotly template applied to every figure."""
+    t = go.layout.Template()
+    L = t.layout
+    L.font = dict(family=FONT_FAMILY, size=13, color=tc["font"])
+    L.paper_bgcolor = "rgba(0,0,0,0)"
+    L.plot_bgcolor = "rgba(0,0,0,0)"
+    L.colorway = [C_BLUE, C_TEAL, C_RED, C_AMBER, C_SLATE]
+    L.hoverlabel = dict(
+        bgcolor=tc["hover_bg"],
+        bordercolor=tc["card_border"],
+        font=dict(family=FONT_FAMILY, size=12.5, color=tc["ink"]),
+    )
+    L.legend = dict(
+        orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1.0,
+        title_text="", font=dict(size=12, color=tc["muted"]),
+    )
+    L.xaxis = dict(
+        showgrid=False, zeroline=False, linecolor=tc["grid"], ticks="",
+        tickfont=dict(color=tc["axis"], size=12),
+        title_font=dict(color=tc["muted"], size=12.5),
+    )
+    L.yaxis = dict(
+        showgrid=True, gridcolor=tc["grid"], zeroline=False,
+        linecolor="rgba(0,0,0,0)",
+        tickfont=dict(color=tc["axis"], size=12),
+        title_font=dict(color=tc["muted"], size=12.5),
+    )
+    L.margin = dict(l=8, r=14, t=34, b=8)
+    L.bargap = 0.30
+    L.bargroupgap = 0.12
+    pio.templates["mcp"] = t
+    pio.templates.default = "mcp"
+
+
+def finalize(fig, *, height=380, ymax=None, ytitle=None, legend=True):
+    fig.update_layout(height=height, template="mcp")
+    fig.update_layout(showlegend=legend)
+    if ytitle is not None:
+        fig.update_yaxes(title_text=ytitle)
+    if ymax is not None:
+        fig.update_yaxes(range=[0, ymax])
+    return fig
+
+
+def label_bars(fig, tc, *, fmt="%{y}"):
+    """Consistent outside value labels that never clip.
+
+    Labels read each bar's own ``y`` (via texttemplate) rather than a manual
+    text array, so they stay correct even when a chart is split into one trace
+    per color category.
+    """
+    fig.update_traces(
+        textposition="outside",
+        cliponaxis=False,
+        textfont=dict(family=FONT_FAMILY, size=12, color=tc["ink"]),
+        texttemplate=fmt,
+    )
+    return fig
+
+
+def show(fig, container=None):
+    (container or st).plotly_chart(fig, width="stretch", config=PLOTLY_CONFIG)
 
 
 # --------------------------------------------------------------------------- #
@@ -114,21 +235,17 @@ def load_agentic() -> list[dict]:
 def load_readme_intro() -> str:
     """Intro paragraphs between the H1 and the first H2 in README.md."""
     text = (ROOT / "README.md").read_text(encoding="utf-8")
-    # drop the H1 line, then take everything up to the first '## '
     after_h1 = text.split("\n", 1)[1] if "\n" in text else text
-    intro = after_h1.split("\n## ", 1)[0]
-    return intro.strip()
+    return after_h1.split("\n## ", 1)[0].strip()
 
 
 # --------------------------------------------------------------------------- #
 # Derivations (pure functions over committed fields — no pipeline rerun)
 # --------------------------------------------------------------------------- #
 def structural_type(r) -> str:
-    """Replicates the study's structural taxonomy (type_change has priority).
+    """Study's structural taxonomy (type_change has priority).
 
-    Reproduces the exact pool sizes published in docs/phase5_summary.md §3
-    (desc_only 1770, desc_and_schema_add 182, schema_mixed 166, schema_add_only
-    135, type_change 102, schema_remove_only 65, desc_and_schema_remove 61).
+    Reproduces the pool sizes published in docs/phase5_summary.md §3.
     """
     desc = bool(r.get("description_changed"))
     add = bool(r.get("schema_fields_added"))
@@ -163,9 +280,9 @@ FUNNEL = [
 # By source type — published P2 / conservative BD rates (phase5_summary.md §4)
 SOURCE_TYPE = pd.DataFrame(
     [
-        ("community", 623, 19.1, 23.8),
-        ("mined", 1246, 11.0, 19.2),
         ("official", 612, 8.7, 14.2),
+        ("mined", 1246, 11.0, 19.2),
+        ("community", 623, 19.1, 23.8),
     ],
     columns=["source", "events", "bd_both_pct", "bd_p2_pct"],
 )
@@ -213,61 +330,190 @@ LIMITATIONS = [
 
 
 # --------------------------------------------------------------------------- #
-# Small UI helpers
+# Global CSS — fonts, entrance animation, KPI cards, callouts, chart titles
+# --------------------------------------------------------------------------- #
+def inject_css(tc: dict) -> None:
+    st.markdown(
+        f"""
+<style>
+:root {{ --mcp-blue:{C_BLUE}; --mcp-teal:{C_TEAL}; --mcp-red:{C_RED}; }}
+
+/* one consistent font family for app text (matches the Plotly template) */
+section[data-testid="stMain"], section[data-testid="stMain"] p,
+section[data-testid="stMain"] li, [data-testid="stSidebar"] {{
+    font-family: {FONT_FAMILY};
+}}
+
+/* hide default Streamlit chrome for a cleaner demo surface */
+#MainMenu {{ visibility: hidden; }}
+footer {{ visibility: hidden; }}
+[data-testid="stDecoration"] {{ display: none; }}
+[data-testid="stToolbar"] {{ display: none; }}
+[data-testid="stAppDeployButton"] {{ display: none; }}
+.stDeployButton {{ display: none; }}
+
+/* ---- subtle, fast entrance animation on every visual block ---- */
+@keyframes mcpFadeUp {{
+    from {{ opacity: 0; transform: translateY(10px); }}
+    to   {{ opacity: 1; transform: translateY(0); }}
+}}
+[data-testid="stPlotlyChart"],
+[data-testid="stDataFrame"],
+.mcp-kpi, .mcp-callout, .mcp-card, .mcp-defcard {{
+    animation: mcpFadeUp .42s cubic-bezier(.22,1,.36,1) both;
+}}
+/* gentle left-to-right stagger across a KPI / card row */
+[data-testid="stHorizontalBlock"] [data-testid="column"]:nth-child(1) .mcp-kpi {{ animation-delay: .00s; }}
+[data-testid="stHorizontalBlock"] [data-testid="column"]:nth-child(2) .mcp-kpi {{ animation-delay: .07s; }}
+[data-testid="stHorizontalBlock"] [data-testid="column"]:nth-child(3) .mcp-kpi {{ animation-delay: .14s; }}
+
+/* ---- KPI card (one component, identical everywhere) ---- */
+.mcp-kpi {{
+    background: {tc['card_bg']};
+    border: 1px solid {tc['card_border']};
+    border-top: 3px solid var(--mcp-blue);
+    border-radius: 12px;
+    padding: 15px 18px 16px;
+    height: 100%;
+    box-shadow: 0 1px 2px rgba(15,23,42,.04);
+}}
+.mcp-kpi .v {{ font-size: 1.95rem; font-weight: 700; color: {tc['ink']};
+              line-height: 1.05; letter-spacing: -.01em; }}
+.mcp-kpi .l {{ font-size: .80rem; font-weight: 600; color: {tc['muted']};
+              margin-top: 6px; text-transform: uppercase; letter-spacing: .04em; }}
+.mcp-kpi .s {{ font-size: .74rem; color: {tc['muted']}; opacity: .85; margin-top: 3px; }}
+
+/* ---- per-chart title block (consistent rhythm) ---- */
+.mcp-ctitle {{ font-size: 1.06rem; font-weight: 650; color: {tc['ink']};
+              margin: 2px 0 1px; }}
+.mcp-csub {{ font-size: .85rem; color: {tc['muted']}; margin: 0 0 8px; }}
+
+/* ---- key-finding callout (theme-aware) ---- */
+.mcp-callout {{
+    border-left: 5px solid var(--mcp-red);
+    background: {tc['tint'](C_RED)};
+    padding: 16px 20px; border-radius: 8px; margin: 4px 0 18px;
+}}
+.mcp-callout .eyebrow {{ font-size: .76rem; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--mcp-red); }}
+.mcp-callout .quote {{ font-size: 1.3rem; font-weight: 600; color: {tc['ink']};
+    margin: 10px 0 12px; line-height: 1.45; }}
+.mcp-callout .body {{ color: {tc['font']}; font-size: .97rem; line-height: 1.55; }}
+.mcp-callout code {{ background: {tc['tint'](C_SLATE, .18)}; padding: 1px 5px;
+    border-radius: 4px; font-size: .85em; }}
+
+/* ---- limitation card ---- */
+.mcp-card {{
+    background: {tc['card_bg']}; border: 1px solid {tc['card_border']};
+    border-radius: 10px; padding: 13px 17px; margin-bottom: 10px;
+}}
+.mcp-card .badge {{ display: inline-block; background: var(--mcp-blue); color: #fff;
+    font-weight: 700; border-radius: 5px; padding: 1px 9px; font-size: .78rem; }}
+.mcp-card .head {{ font-weight: 600; color: {tc['ink']}; margin-left: 8px; }}
+.mcp-card .aff {{ color: {tc['muted']}; margin-top: 7px; font-size: .92rem;
+    line-height: 1.5; }}
+
+/* ---- before / after definition card (agentic section) ---- */
+.mcp-defcard {{ background: {tc['card_bg']}; border: 1px solid {tc['card_border']};
+    border-radius: 10px; padding: 13px 15px; height: 100%; }}
+.mcp-defcard .h {{ font-size: .76rem; font-weight: 700; letter-spacing: .06em;
+    text-transform: uppercase; margin-bottom: 7px; }}
+.mcp-defcard .d {{ color: {tc['font']}; font-size: .9rem; line-height: 1.5;
+    white-space: pre-wrap; }}
+.mcp-defcard .p {{ margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }}
+.mcp-chip {{ font-size: .76rem; border-radius: 20px; padding: 2px 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }}
+</style>
+""",
+        unsafe_allow_html=True,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Reusable UI components
 # --------------------------------------------------------------------------- #
 def section_header(title: str, subtitle: str = "") -> None:
     st.markdown(f"## {title}")
     if subtitle:
         st.caption(subtitle)
+    st.write("")
 
 
-def render_tool_definition(defn: dict) -> str:
-    """Render a tool definition (description + schema) as markdown."""
-    if not defn:
-        return "_definition not available_"
-    desc = (defn.get("description") or "").strip() or "_(no description)_"
+def chart_title(title: str, sub: str = "") -> None:
+    st.markdown(f'<div class="mcp-ctitle">{title}</div>', unsafe_allow_html=True)
+    if sub:
+        st.markdown(f'<div class="mcp-csub">{sub}</div>', unsafe_allow_html=True)
+
+
+def kpi(col, value: str, label: str, sub: str = "", accent: str = C_BLUE) -> None:
+    sub_html = f'<div class="s">{escape(sub)}</div>' if sub else ""
+    col.markdown(
+        f'<div class="mcp-kpi" style="border-top-color:{accent}">'
+        f'<div class="v">{escape(value)}</div>'
+        f'<div class="l">{escape(label)}</div>{sub_html}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def definition_card(container, label, defn, accent, tc) -> None:
+    desc = (defn.get("description") or "").strip() or "(no description)"
+    desc = escape(desc)
     schema = defn.get("input_schema") or {}
     props = list((schema.get("properties") or {}).keys())
     required = set(schema.get("required") or [])
-    lines = [desc, ""]
     if props:
-        lines.append("**Parameters:**")
+        chips = []
         for p in props:
-            mark = " · _required_" if p in required else ""
-            lines.append(f"- `{p}`{mark}")
+            if p in required:
+                style = f"background:{accent};color:#fff;"
+            else:
+                style = (f"background:{tc['tint'](accent,.14)};color:{tc['font']};"
+                         f"border:1px solid {tc['card_border']};")
+            chips.append(f'<span class="mcp-chip" style="{style}">{escape(p)}</span>')
+        chips_html = "".join(chips)
     else:
-        lines.append("**Parameters:** _(none)_")
-    return "\n".join(lines)
+        chips_html = (f'<span class="mcp-chip" style="color:{tc["muted"]};'
+                      f'border:1px dashed {tc["card_border"]}">no parameters</span>')
+    container.markdown(
+        f'<div class="mcp-defcard" style="border-top:3px solid {accent}">'
+        f'<div class="h" style="color:{accent}">{label}</div>'
+        f'<div class="d">{desc}</div>'
+        f'<div class="p">{chips_html}</div></div>',
+        unsafe_allow_html=True,
+    )
 
 
 # --------------------------------------------------------------------------- #
 # SECTION 1 — OVERVIEW
 # --------------------------------------------------------------------------- #
-def page_overview() -> None:
+def page_overview(tc: dict) -> None:
     section_header(
         "Overview",
         "Headline results from the MCP tool-definition drift study.",
     )
 
-    row1 = st.columns(3)
-    row1[0].metric("Repos sampled → walked", "380 → 276")
-    row1[1].metric("Unique tools tracked", "4,784")
-    row1[2].metric("Tools changed ≥ once", "84.1%", help="4,023 / 4,784")
+    r1 = st.columns(3)
+    kpi(r1[0], "380 → 276", "Repos sampled → walked",
+        "98.6% walk success", accent=C_TEAL)
+    kpi(r1[1], "4,784", "Unique tools tracked", "across 276 repos", accent=C_BLUE)
+    kpi(r1[2], "84.1%", "Tools changed ≥ once", "4,023 / 4,784", accent=C_TEAL)
 
-    row2 = st.columns(3)
-    row2[0].metric("Valid temporal change events", "2,481")
-    row2[1].metric("BEHAVIORAL_DRIFT (range)", "309 – 474",
-                   help="Conservative (both passes agree) → P2 best estimate")
-    row2[2].metric("BEHAVIORAL_DRIFT rate", "12.5 – 19.1%")
+    st.write("")
+    r2 = st.columns(3)
+    kpi(r2[0], "2,481", "Valid temporal change events",
+        "after filtering", accent=C_BLUE)
+    kpi(r2[1], "309 – 474", "BEHAVIORAL_DRIFT events",
+        "conservative → best estimate", accent=C_RED)
+    kpi(r2[2], "12.5 – 19.1%", "BEHAVIORAL_DRIFT rate",
+        "of valid change events", accent=C_RED)
 
     st.divider()
-    st.markdown("### Research question & gap")
+    chart_title("Research question & gap")
     st.markdown(load_readme_intro())
 
     st.info(
         "This dashboard is **read-only** over committed results. Every number "
-        "above is loaded from `data/processed/` — no live API calls and no "
-        "pipeline recomputation.",
+        "is loaded from `data/processed/` — no live API calls, no recomputation.",
         icon="🔒",
     )
 
@@ -275,74 +521,79 @@ def page_overview() -> None:
 # --------------------------------------------------------------------------- #
 # SECTION 2 — SAMPLE & METHODOLOGY
 # --------------------------------------------------------------------------- #
-def page_sample() -> None:
+def page_sample(tc: dict) -> None:
     section_header(
         "Sample & methodology",
         "How the 380-repo stratified sample was built and walked.",
     )
 
-    st.markdown("### Sampling funnel")
-    labels = [f"{name}" for name, _ in FUNNEL]
+    chart_title("Sampling funnel",
+                "From the deduplicated seed list down to repos successfully walked.")
+    labels = [name for name, _ in FUNNEL]
     values = [v for _, v in FUNNEL]
+    # blue → teal gradient so the final "walked" stage lands on teal
+    funnel_colors = ["#2563eb", "#2a6fcf", "#2483a8", "#1b9488", C_TEAL]
     fig = go.Figure(
         go.Funnel(
-            y=labels,
-            x=values,
-            textposition="inside",
-            textinfo="value+percent initial",
-            marker={"color": [C_PRIMARY, "#3b82f6", "#60a5fa", C_ACCENT, "#0d9488"]},
-            connector={"line": {"color": C_MUTED}},
+            y=labels, x=values,
+            textposition="inside", textinfo="value+percent initial",
+            textfont=dict(family=FONT_FAMILY, size=13, color="#ffffff"),
+            marker=dict(color=funnel_colors,
+                        line=dict(width=0)),
+            connector=dict(line=dict(color=tc["grid"], width=1)),
+            hovertemplate="<b>%{y}</b><br>%{x:,} repos<extra></extra>",
         )
     )
-    fig.update_layout(template=PLOTLY_TEMPLATE, height=380,
-                      margin=dict(l=10, r=10, t=10, b=10))
-    st.plotly_chart(fig, width="stretch")
+    finalize(fig, height=360, legend=False)
+    show(fig)
 
     st.divider()
-    st.markdown("### Planned vs. achieved sample")
-    st.caption(
-        "From `stratification_planned_vs_achieved.csv`. Stratified by language "
-        "× star tier; backups filled unfilled strata where a pool existed."
-    )
-
+    chart_title("Planned vs. achieved sample",
+                "Stratified by language × star tier; backups filled unfilled strata "
+                "where a pool existed. Source: stratification_planned_vs_achieved.csv")
     strat = load_stratification()
 
     by_lang = (
         strat.groupby("lang")[["planned", "achieved"]].sum().reset_index()
         .sort_values("planned", ascending=False)
     )
-    by_lang = by_lang[by_lang["planned"] >= 2]  # keep readable; drop singleton langs
+    by_lang = by_lang[by_lang["planned"] >= 2]
     fig_lang = px.bar(
         by_lang.melt(id_vars="lang", value_vars=["planned", "achieved"],
                      var_name="kind", value_name="repos"),
         x="lang", y="repos", color="kind", barmode="group",
-        color_discrete_map={"planned": C_MUTED, "achieved": C_PRIMARY},
-        labels={"lang": "Primary language", "repos": "Repos", "kind": ""},
+        color_discrete_map={"planned": C_BLUE, "achieved": C_TEAL},
+        labels={"lang": "", "repos": "Repos", "kind": ""},
     )
-    fig_lang.update_layout(template=PLOTLY_TEMPLATE, height=380,
-                           legend_title_text="", margin=dict(t=10))
+    fig_lang.update_traces(
+        hovertemplate="%{fullData.name} · %{x}<br><b>%{y}</b> repos<extra></extra>")
+    finalize(fig_lang, height=370, ytitle="Repos")
 
     tier_order = ["10-49", "50-199", "200-999", "1000+"]
-    by_tier = (
-        strat.groupby("bucket")[["planned", "achieved"]].sum().reset_index()
-    )
+    by_tier = strat.groupby("bucket")[["planned", "achieved"]].sum().reset_index()
     by_tier["bucket"] = pd.Categorical(by_tier["bucket"], tier_order, ordered=True)
     by_tier = by_tier.sort_values("bucket")
     fig_tier = px.bar(
         by_tier.melt(id_vars="bucket", value_vars=["planned", "achieved"],
                      var_name="kind", value_name="repos"),
         x="bucket", y="repos", color="kind", barmode="group",
-        color_discrete_map={"planned": C_MUTED, "achieved": C_PRIMARY},
-        labels={"bucket": "Star tier", "repos": "Repos", "kind": ""},
+        color_discrete_map={"planned": C_BLUE, "achieved": C_TEAL},
+        labels={"bucket": "", "repos": "Repos", "kind": ""},
     )
-    fig_tier.update_layout(template=PLOTLY_TEMPLATE, height=380,
-                           legend_title_text="", margin=dict(t=10))
+    fig_tier.update_traces(
+        hovertemplate="%{fullData.name} · %{x}★<br><b>%{y}</b> repos<extra></extra>")
+    finalize(fig_tier, height=370, ytitle="Repos")
 
     c1, c2 = st.columns(2)
-    c1.markdown("**By language** (planned ≥ 2)")
-    c1.plotly_chart(fig_lang, width="stretch")
-    c2.markdown("**By star tier**")
-    c2.plotly_chart(fig_tier, width="stretch")
+    with c1:
+        chart_title("By primary language", "languages with ≥ 2 planned slots")
+        show(fig_lang)
+    with c2:
+        chart_title("By star tier", "GitHub star buckets")
+        show(fig_tier)
+
+    st.caption("Blue = planned target · Teal = achieved (same encoding used in every "
+               "chart). Hover any bar for exact counts.")
 
     with st.expander("Show full stratification table"):
         st.dataframe(strat, width="stretch", hide_index=True)
@@ -351,7 +602,7 @@ def page_sample() -> None:
 # --------------------------------------------------------------------------- #
 # SECTION 3 — DRIFT FINDINGS
 # --------------------------------------------------------------------------- #
-def page_drift() -> None:
+def page_drift(tc: dict) -> None:
     section_header(
         "Drift findings",
         "Classifier output over the 2,481 valid temporal change events.",
@@ -359,29 +610,29 @@ def page_drift() -> None:
     df = load_classifications()
 
     # --- (a) P1 vs P2 category distribution ---------------------------------
-    st.markdown("### Classification distribution (Pass 1 vs Pass 2)")
+    chart_title("Classification distribution",
+                "Two independent passes (Pass 1 vs Pass 2) over the same events.")
     p1 = df["pass1_label"].value_counts()
     p2 = df["pass2_label"].value_counts()
     cats = [c for c in LABEL_ORDER if c in set(p1.index) | set(p2.index)]
-    dist = pd.DataFrame(
-        {
-            "category": cats * 2,
-            "pass": ["Pass 1"] * len(cats) + ["Pass 2"] * len(cats),
-            "events": [int(p1.get(c, 0)) for c in cats]
-            + [int(p2.get(c, 0)) for c in cats],
-        }
-    )
+    dist = pd.DataFrame({
+        "category": cats * 2,
+        "pass": ["Pass 1"] * len(cats) + ["Pass 2"] * len(cats),
+        "events": [int(p1.get(c, 0)) for c in cats] + [int(p2.get(c, 0)) for c in cats],
+    })
     fig_dist = px.bar(
         dist, x="category", y="events", color="pass", barmode="group",
-        color_discrete_map={"Pass 1": C_MUTED, "Pass 2": C_PRIMARY},
+        color_discrete_map={"Pass 1": C_BLUE, "Pass 2": C_TEAL},
         labels={"category": "", "events": "Events", "pass": ""},
         category_orders={"category": cats},
     )
-    fig_dist.update_layout(template=PLOTLY_TEMPLATE, height=400, legend_title_text="",
-                           margin=dict(t=10))
-    st.plotly_chart(fig_dist, width="stretch")
+    fig_dist.update_traces(
+        hovertemplate="%{fullData.name} · %{x}<br><b>%{y}</b> events<extra></extra>")
+    finalize(fig_dist, height=400, ytitle="Events")
+    fig_dist.update_xaxes(tickangle=-12)
+    show(fig_dist)
     st.caption(
-        f"Pass-to-pass agreement: {int((df['agreed']).sum()):,} / {len(df):,} "
+        f"Pass-to-pass agreement: {int(df['agreed'].sum()):,} / {len(df):,} "
         f"({100 * df['agreed'].mean():.1f}%). "
         "BEHAVIORAL_DRIFT: 309 conservative (both agree) → 474 (P2 best estimate)."
     )
@@ -389,10 +640,11 @@ def page_drift() -> None:
     st.divider()
 
     # --- (b) BD rate by structural change type ------------------------------
-    st.markdown("### BEHAVIORAL_DRIFT rate by structural change type")
+    chart_title("BEHAVIORAL_DRIFT rate by structural change type",
+                "Conservative (both-passes-agree) rate on the study's structural "
+                "buckets — matches phase5_summary.md §4 exactly.")
     df["bd_both"] = (df["pass1_label"] == "BEHAVIORAL_DRIFT") & (
-        df["pass2_label"] == "BEHAVIORAL_DRIFT"
-    )
+        df["pass2_label"] == "BEHAVIORAL_DRIFT")
     grp = (
         df.groupby("structural_type")
         .agg(events=("bd_both", "size"), bd=("bd_both", "sum"))
@@ -402,75 +654,70 @@ def page_drift() -> None:
     grp = grp.sort_values("bd_pct", ascending=False)
     fig_bd = px.bar(
         grp, x="structural_type", y="bd_pct",
-        text=grp["bd_pct"].map(lambda v: f"{v:.1f}%"),
+        custom_data=["bd", "events"],
+        color_discrete_sequence=[C_RED],
         labels={"structural_type": "", "bd_pct": "BEHAVIORAL_DRIFT rate (%)"},
-        color_discrete_sequence=[C_DANGER],
     )
-    fig_bd.update_traces(textposition="outside")
-    fig_bd.update_layout(template=PLOTLY_TEMPLATE, height=400, margin=dict(t=10),
-                         yaxis_range=[0, 100])
-    st.plotly_chart(fig_bd, width="stretch")
+    fig_bd.update_traces(
+        hovertemplate="<b>%{x}</b><br>%{customdata[0]} / %{customdata[1]} events"
+                      "<br>%{y:.1f}% BEHAVIORAL_DRIFT<extra></extra>",
+    )
+    label_bars(fig_bd, tc, fmt="%{y:.1f}%")
+    finalize(fig_bd, height=400, ymax=100, ytitle="Drift rate (%)")
+    fig_bd.update_xaxes(tickangle=-18)
+    show(fig_bd)
     st.caption(
-        "Conservative (both-passes-agree) rate, computed over the committed "
-        "classifications on the study's structural buckets. Schema-removing and "
-        "schema-mixed changes carry by far the highest drift rate; pure "
-        "field additions essentially never read as behavioral drift."
+        "`schema_mixed` (simultaneous add + remove) drifts most (82.5%); pure "
+        "additive changes essentially never read as behavioral drift. The 309 "
+        "drift events sum to the 12.5% conservative headline."
     )
 
     st.divider()
 
     # --- (c) BD rate by source type -----------------------------------------
-    st.markdown("### BEHAVIORAL_DRIFT rate by source type")
-    src = SOURCE_TYPE.copy()
-    melted = src.melt(
-        id_vars=["source", "events"],
-        value_vars=["bd_both_pct", "bd_p2_pct"],
+    chart_title("BEHAVIORAL_DRIFT rate by source type",
+                "How the repo was discovered. Published figures, phase5_summary.md §4.")
+    melted = SOURCE_TYPE.melt(
+        id_vars=["source", "events"], value_vars=["bd_both_pct", "bd_p2_pct"],
         var_name="estimate", value_name="pct",
     )
     melted["estimate"] = melted["estimate"].map(
-        {"bd_both_pct": "Conservative (both)", "bd_p2_pct": "Best estimate (P2)"}
-    )
+        {"bd_both_pct": "Conservative (both)", "bd_p2_pct": "Best estimate (P2)"})
     fig_src = px.bar(
         melted, x="source", y="pct", color="estimate", barmode="group",
-        text=melted["pct"].map(lambda v: f"{v:.1f}%"),
-        color_discrete_map={"Conservative (both)": C_MUTED,
-                            "Best estimate (P2)": C_ACCENT},
+        color_discrete_map={"Conservative (both)": C_BLUE,
+                            "Best estimate (P2)": C_TEAL},
         labels={"source": "", "pct": "BEHAVIORAL_DRIFT rate (%)", "estimate": ""},
         category_orders={"source": ["official", "mined", "community"]},
     )
-    fig_src.update_traces(textposition="outside")
-    fig_src.update_layout(template=PLOTLY_TEMPLATE, height=400, legend_title_text="",
-                          margin=dict(t=10), yaxis_range=[0, 30])
-    st.plotly_chart(fig_src, width="stretch")
+    fig_src.update_traces(
+        hovertemplate="%{fullData.name}<br><b>%{y:.1f}%</b> on %{x}<extra></extra>")
+    label_bars(fig_src, tc, fmt="%{y:.1f}%")
+    finalize(fig_src, height=400, ymax=30, ytitle="Drift rate (%)")
+    show(fig_src)
     st.caption(
-        "Cleanest gradient in the data: vendor-maintained **official** repos are "
-        "the most stable (14.2% P2); third-party **community** repos drift most "
-        "(23.8% P2). Published figures from phase5_summary.md §4."
+        "Cleanest gradient in the data: vendor-maintained **official** repos are the "
+        "most stable (14.2% P2); third-party **community** repos drift most (23.8% P2)."
     )
 
     st.divider()
 
     # --- (d) Searchable event table -----------------------------------------
-    st.markdown("### Event explorer")
-    st.caption(
-        "The 2,481 valid temporal change events with their classifications "
-        "(`tool_diffs.jsonl` fields joined with `tool_classifications.jsonl` labels)."
-    )
-
-    f1, f2, f3 = st.columns([2, 2, 2])
+    chart_title("Event explorer",
+                "All 2,481 valid events with their classifications "
+                "(tool_diffs.jsonl fields joined with tool_classifications.jsonl labels).")
+    f1, f2, f3 = st.columns(3)
     query = f1.text_input("Search tool or repo", "")
-    types = f2.multiselect("Structural type",
-                           sorted(df["structural_type"].unique()))
-    labels_sel = f3.multiselect("Final label (Pass 2)",
-                                [c for c in LABEL_ORDER if c in df["pass2_label"].unique()])
+    types = f2.multiselect("Structural type", sorted(df["structural_type"].unique()))
+    labels_sel = f3.multiselect(
+        "Final label (Pass 2)",
+        [c for c in LABEL_ORDER if c in df["pass2_label"].unique()])
 
     view = df.copy()
     if query:
         q = query.lower()
-        view = view[
-            view["tool_name"].str.lower().str.contains(q, na=False)
-            | view["repo_short"].str.lower().str.contains(q, na=False)
-        ]
+        view = view[view["tool_name"].str.lower().str.contains(q, na=False)
+                    | view["repo_short"].str.lower().str.contains(q, na=False)]
     if types:
         view = view[view["structural_type"].isin(types)]
     if labels_sel:
@@ -479,19 +726,11 @@ def page_drift() -> None:
     table = view.assign(
         added=view["schema_fields_added"].map(lambda x: ", ".join(x) if x else ""),
         removed=view["schema_fields_removed"].map(lambda x: ", ".join(x) if x else ""),
-    )[
-        ["repo_short", "tool_name", "structural_type", "description_changed",
-         "added", "removed", "pass1_label", "pass2_label", "agreed"]
-    ].rename(
-        columns={
-            "repo_short": "repo",
-            "structural_type": "type",
-            "description_changed": "desc_changed",
-            "pass1_label": "P1",
-            "pass2_label": "P2 (final)",
-            "agreed": "P1=P2",
-        }
-    )
+    )[["repo_short", "tool_name", "structural_type", "description_changed",
+       "added", "removed", "pass1_label", "pass2_label", "agreed"]].rename(
+        columns={"repo_short": "repo", "structural_type": "type",
+                 "description_changed": "desc_changed", "pass1_label": "P1",
+                 "pass2_label": "P2 (final)", "agreed": "P1=P2"})
     st.caption(f"Showing {len(table):,} of {len(df):,} events.")
     st.dataframe(table, width="stretch", hide_index=True, height=420)
 
@@ -499,7 +738,7 @@ def page_drift() -> None:
 # --------------------------------------------------------------------------- #
 # SECTION 4 — AGENTIC VALIDATION
 # --------------------------------------------------------------------------- #
-def page_agentic() -> None:
+def page_agentic(tc: dict) -> None:
     section_header(
         "Agentic behavioral validation",
         "Do drifted definitions actually change how a live agent behaves? "
@@ -510,49 +749,40 @@ def page_agentic() -> None:
     n_diff = sum(1 for s in slots if s["behavioral_difference"])
 
     k = st.columns(3)
-    k[0].metric("Cases with behavioral difference", f"{n_diff} / {len(slots)}")
-    k[1].metric("Unstable across replications", "0 / 15")
-    k[2].metric("Scope", "Illustrative", help="Purposive sample — no prevalence claim")
+    kpi(k[0], f"{n_diff} / 15", "Showed a behavioral difference",
+        "before vs after definition", accent=C_RED)
+    kpi(k[1], "0 / 15", "Unstable across replications",
+        "all stable at temperature=0", accent=C_TEAL)
+    kpi(k[2], "Illustrative", "Sample type",
+        "purposive — no prevalence claim", accent=C_SLATE)
 
     # --- Key-finding callout: slot 07 ---------------------------------------
     slot7 = next(s for s in slots if s["slot"] == 7)
-    quote = slot7["after_runs"][0].get("response_text", "")
+    quote = escape(slot7["after_runs"][0].get("response_text", ""))
     after_input = slot7["after_runs"][0].get("tool_input", {})
-    st.markdown("### ")
+    st.write("")
     st.markdown(
         f"""
-<div style="border-left:6px solid {C_DANGER};background:#fef2f2;
-            padding:18px 22px;border-radius:6px;margin:6px 0 18px 0;">
-  <div style="font-size:0.8rem;font-weight:700;letter-spacing:.06em;
-              text-transform:uppercase;color:{C_DANGER};">
-    Key finding · Slot 07 · update_instance_name (neo4j-contrib/mcp-neo4j)
-  </div>
-  <div style="font-size:1.35rem;font-weight:600;color:#111827;
-              margin:10px 0 12px 0;line-height:1.45;">
-    &ldquo;{quote}&rdquo;
-  </div>
-  <div style="color:#374151;font-size:0.97rem;line-height:1.55;">
+<div class="mcp-callout">
+  <div class="eyebrow">Key finding · Slot 07 · update_instance_name · neo4j-contrib/mcp-neo4j</div>
+  <div class="quote">&ldquo;{quote}&rdquo;</div>
+  <div class="body">
     The AFTER definition narrowed <code>instance_ids</code> (array) to
-    <code>instance_id</code> (scalar). Asked to rename <b>two</b> instances in
-    one operation, the agent confirmed success for &ldquo;both&rdquo; — but the
-    actual tool call sent only
-    <code>instance_id="{after_input.get('instance_id', '')}"</code>.
-    <code>inst-001</code> was silently dropped, with no caveat, identically
-    across all 3 temperature=0 runs. A confident, reproducible,
-    <b>factually false success claim</b> caused purely by a tool-definition change.
+    <code>instance_id</code> (scalar). Asked to rename <b>two</b> instances in one
+    operation, the agent confirmed success for &ldquo;both&rdquo; — but the actual
+    tool call sent only <code>instance_id="{escape(str(after_input.get('instance_id', '')))}"</code>.
+    <code>inst-001</code> was silently dropped, with no caveat, identically across all
+    3 temperature=0 runs. A confident, reproducible, <b>factually false success
+    claim</b> caused purely by a tool-definition change.
   </div>
 </div>
 """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("### All 15 cases")
-    st.caption(
-        "Each card shows the before/after definition and the behavioral "
-        "difference observed (`agentic_validation_results.json` + "
-        "`agentic_test_candidates.json`)."
-    )
-
+    chart_title("All 15 cases",
+                "Each card shows the before/after definition and the behavioral "
+                "difference observed. Blue = before · Teal = after.")
     only_diff = st.toggle("Show only cases with a behavioral difference", value=False)
 
     for s in slots:
@@ -560,18 +790,20 @@ def page_agentic() -> None:
             continue
         diff = s["behavioral_difference"]
         badge = "🔴 behavioral difference" if diff else "⚪ no difference"
-        title = (f"Slot {s['slot']:02d} · `{s['tool_name']}` · "
-                 f"{short_repo(s['repo_url'])} — {badge}")
+        title = (f"Slot {s['slot']:02d} · {s['tool_name']} · "
+                 f"{short_repo(s['repo_url'])}  —  {badge}")
         with st.expander(title, expanded=(s["slot"] == 7)):
             st.caption(f"Structural type: `{s['structural_type']}`  ·  "
-                       f"runs/side: {s['n_runs']}  ·  stable: "
-                       f"{s['before_stable'] and s['after_stable']}")
+                       f"runs/side: {s['n_runs']}  ·  "
+                       f"stable: {s['before_stable'] and s['after_stable']}")
             st.markdown(f"**User request:** {s['user_request']}")
+            st.write("")
             cols = st.columns(2)
-            cols[0].markdown("**BEFORE definition**")
-            cols[0].markdown(render_tool_definition(s["before_definition"]))
-            cols[1].markdown("**AFTER definition**")
-            cols[1].markdown(render_tool_definition(s["after_definition"]))
+            definition_card(cols[0], "Before definition", s["before_definition"],
+                            C_BLUE, tc)
+            definition_card(cols[1], "After definition", s["after_definition"],
+                            C_TEAL, tc)
+            st.write("")
             if diff:
                 st.success(f"**Behavioral difference:** {s['diff_description']}",
                            icon="🔬")
@@ -581,8 +813,8 @@ def page_agentic() -> None:
 
     st.warning(
         "**Scope caveat:** these 15 events were selected purposively from the "
-        "309-event conservative BEHAVIORAL_DRIFT set to illustrate *what kinds* "
-        "of behavioral change drift can produce — not *how often*. No rate or "
+        "309-event conservative BEHAVIORAL_DRIFT set to illustrate *what kinds* of "
+        "behavioral change drift can produce — not *how often*. No rate or "
         "prevalence claim can be derived from this sample.",
         icon="⚠️",
     )
@@ -591,7 +823,7 @@ def page_agentic() -> None:
 # --------------------------------------------------------------------------- #
 # SECTION 5 — SUPPLEMENTARY FINDINGS
 # --------------------------------------------------------------------------- #
-def page_supplementary() -> None:
+def page_supplementary(tc: dict) -> None:
     section_header(
         "Supplementary findings",
         "Tool naming-convention evolution — distinct from the primary drift counts.",
@@ -599,17 +831,17 @@ def page_supplementary() -> None:
     ren = load_renames()
 
     k = st.columns(3)
-    k[0].metric("Rename candidates", f"{len(ren):,}")
-    k[1].metric("Repos affected", "71 / 276", help="25.7% of walked repos")
-    k[2].metric("Schema fully preserved", "619", help="High-confidence cases")
+    kpi(k[0], f"{len(ren):,}", "Total rename candidates",
+        "file-level scan, lower bound", accent=C_BLUE)
+    kpi(k[1], "71 / 276", "Repos with ≥ 1 candidate",
+        "25.7% of walked repos", accent=C_BLUE)
+    kpi(k[2], "619", "High-confidence (Perfect + High)",
+        "schema fully preserved", accent=C_TEAL)
 
-    st.markdown("### Confidence-tier breakdown")
-    tier_counts = (
-        ren["confidence_tier"].value_counts()
-        if "confidence_tier" in ren.columns
-        else pd.Series(dtype=int)
-    )
-    # Published canonical ordering/criteria from rename_candidates_summary.md
+    st.divider()
+    chart_title("Confidence-tier breakdown",
+                "Similarity of the old vs new tool across each rename "
+                "(schema & description Jaccard).")
     tiers = pd.DataFrame(
         [
             ("Perfect", "schema = 1.0 AND desc = 1.0", 326),
@@ -619,25 +851,28 @@ def page_supplementary() -> None:
         columns=["Tier", "Criterion", "Candidates"],
     )
     c1, c2 = st.columns([3, 2])
-    fig = px.bar(
-        tiers, x="Tier", y="Candidates", text="Candidates",
-        color="Tier",
-        color_discrete_map={"Perfect": C_ACCENT, "High": C_PRIMARY, "Medium": C_MUTED},
-        category_orders={"Tier": ["Perfect", "High", "Medium"]},
+    tier_color = {"Perfect": C_TEAL, "High": C_BLUE, "Medium": C_SLATE}
+    fig = go.Figure(
+        go.Bar(
+            x=tiers["Tier"], y=tiers["Candidates"],
+            marker_color=[tier_color[t] for t in tiers["Tier"]],
+            customdata=tiers[["Criterion"]],
+            hovertemplate="<b>%{x}</b><br>%{y} candidates<br>%{customdata[0]}<extra></extra>",
+        )
     )
-    fig.update_traces(textposition="outside")
-    fig.update_layout(template=PLOTLY_TEMPLATE, height=360, showlegend=False,
-                      margin=dict(t=10))
-    c1.plotly_chart(fig, width="stretch")
-    c2.dataframe(tiers, width="stretch", hide_index=True)
+    label_bars(fig, tc, fmt="%{y}")
+    finalize(fig, height=360, ymax=326 * 1.20, ytitle="Candidates", legend=False)
+    with c1:
+        show(fig)
+    with c2:
+        st.write("")
+        st.dataframe(tiers, width="stretch", hide_index=True)
 
-    st.markdown(
+    st.caption(
         "These represent naming-convention evolution — namespacing "
-        "(`dialogs → tg_dialogs`), simplification "
-        "(`roam_create_output_with_nested_structure → roam_create_outline`), and "
-        "restructuring. They are **a lower bound** and are **not** included in the "
-        "primary drift event counts (the differ groups by `tool_name`, so a rename "
-        "appears as one tool ending and another beginning)."
+        "(`dialogs → tg_dialogs`), simplification, restructuring. They are a **lower "
+        "bound** and are **not** in the primary drift counts (the differ groups by "
+        "`tool_name`, so a rename appears as one tool ending and another beginning)."
     )
 
     with st.expander("Browse rename candidates"):
@@ -645,32 +880,23 @@ def page_supplementary() -> None:
                      ["repo_url", "old_tool_name", "new_tool_name", "schema_jaccard",
                       "desc_jaccard", "confidence_tier", "date_from", "date_to"]
                      if c in ren.columns]
-        st.dataframe(ren[show_cols], width="stretch", hide_index=True,
-                     height=380)
+        st.dataframe(ren[show_cols], width="stretch", hide_index=True, height=380)
 
 
 # --------------------------------------------------------------------------- #
 # SECTION 6 — LIMITATIONS
 # --------------------------------------------------------------------------- #
-def page_limitations() -> None:
+def page_limitations(tc: dict) -> None:
     section_header(
         "Limitations & threats to validity",
         "All 11 documented limitations (L1–L11) from the phase summaries.",
     )
     for code, what, impact in LIMITATIONS:
         st.markdown(
-            f"""
-<div style="border:1px solid #e2e8f0;border-radius:8px;padding:14px 18px;
-            margin-bottom:10px;background:#ffffff;">
-  <span style="display:inline-block;background:{C_PRIMARY};color:#fff;
-               font-weight:700;border-radius:4px;padding:1px 9px;font-size:0.8rem;">
-    {code}</span>
-  <span style="font-weight:600;color:#0f172a;margin-left:8px;">{what}</span>
-  <div style="color:#475569;margin-top:7px;font-size:0.95rem;line-height:1.5;">
-    <b>Affected:</b> {impact}
-  </div>
-</div>
-""",
+            f'<div class="mcp-card">'
+            f'<span class="badge">{code}</span>'
+            f'<span class="head">{escape(what)}</span>'
+            f'<div class="aff"><b>Affected:</b> {escape(impact)}</div></div>',
             unsafe_allow_html=True,
         )
     st.caption(
@@ -693,12 +919,17 @@ PAGES = {
 
 
 def main() -> None:
+    tc = theme_colors()
+    register_template(tc)
+    inject_css(tc)
+
     st.sidebar.title("MCP Drift Study")
     st.sidebar.caption(
         "Empirical measurement of how MCP tool definitions change over time, "
         "and whether those changes alter AI-agent behavior."
     )
-    choice = st.sidebar.radio("Section", list(PAGES.keys()), label_visibility="collapsed")
+    choice = st.sidebar.radio("Section", list(PAGES.keys()),
+                              label_visibility="collapsed")
     st.sidebar.divider()
     st.sidebar.markdown(
         "**Read-only dashboard.** All figures load from committed files in "
@@ -709,7 +940,7 @@ def main() -> None:
         st.error(f"Data directory not found: `{PROC}`. Run from the project root.")
         return
 
-    PAGES[choice]()
+    PAGES[choice](tc)
 
 
 if __name__ == "__main__":

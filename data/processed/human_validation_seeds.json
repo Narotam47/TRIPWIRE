@@ -1,0 +1,452 @@
+[
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "create_issue_link",
+    "from_sha": "b434c1da",
+    "to_sha": "db5e7de2"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "create_issue_link",
+    "from_sha": "77323df2",
+    "to_sha": "d57b7fd6"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "update_config",
+    "from_sha": "5caf708b",
+    "to_sha": "3b34a5b0"
+  },
+  {
+    "repo_url": "https://github.com/translated/lara-mcp",
+    "tool_name": "check_import_status",
+    "from_sha": "b71a0459",
+    "to_sha": "ec86716b"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "create_config",
+    "from_sha": "0ca9f593",
+    "to_sha": "d32e21a7"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "search",
+    "from_sha": "1d1cbb97",
+    "to_sha": "36ed652f"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "add_comment",
+    "from_sha": "835080fe",
+    "to_sha": "c1a7059d"
+  },
+  {
+    "repo_url": "https://github.com/neka-nat/freecad-mcp",
+    "tool_name": "create_object",
+    "from_sha": "1f6d26e3",
+    "to_sha": "ad59f553"
+  },
+  {
+    "repo_url": "https://github.com/chroma-core/chroma-mcp",
+    "tool_name": "query_documents",
+    "from_sha": "28159309",
+    "to_sha": "b11e6db8"
+  },
+  {
+    "repo_url": "https://github.com/neo4j-contrib/mcp-neo4j",
+    "tool_name": "validate_relationship",
+    "from_sha": "078830c3",
+    "to_sha": "d896accd"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "get_sprints_from_board",
+    "from_sha": "b434c1da",
+    "to_sha": "db5e7de2"
+  },
+  {
+    "repo_url": "https://github.com/delorenj/mcp-server-trello",
+    "tool_name": "attach_image_to_card",
+    "from_sha": "db3812f3",
+    "to_sha": "5dd2543d"
+  },
+  {
+    "repo_url": "https://github.com/wonderwhy-er/ClaudeDesktopCommander",
+    "tool_name": "read_process_output",
+    "from_sha": "bdaab6e8",
+    "to_sha": "e28b6f95"
+  },
+  {
+    "repo_url": "https://github.com/dvejsada/mcp-pptx-presentations-creator",
+    "tool_name": "create_excel_document",
+    "from_sha": "d0c937dc",
+    "to_sha": "4aac88f6"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "create_sql_transformation",
+    "from_sha": "d32e21a7",
+    "to_sha": "340f257e"
+  },
+  {
+    "repo_url": "https://github.com/hald/things-mcp",
+    "tool_name": "get_anytime",
+    "from_sha": "92a54d27",
+    "to_sha": "929763a9"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "add_comment",
+    "from_sha": "5960ab47",
+    "to_sha": "207d267f"
+  },
+  {
+    "repo_url": "https://github.com/makafeli/n8n-workflow-builder",
+    "tool_name": "list_workflows",
+    "from_sha": "8ec769fd",
+    "to_sha": "e50a8cc7"
+  },
+  {
+    "repo_url": "https://github.com/cloudflare/ai",
+    "tool_name": "add",
+    "from_sha": "bec6e7b3",
+    "to_sha": "099ce9eb"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "update_sql_transformation",
+    "from_sha": "052d9703",
+    "to_sha": "30f4179a"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "update_issue",
+    "from_sha": "8c68b566",
+    "to_sha": "315982dc"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "search",
+    "from_sha": "e421ed80",
+    "to_sha": "5caf708b"
+  },
+  {
+    "repo_url": "https://github.com/2b3pro/roam-research-mcp",
+    "tool_name": "roam_create_outline",
+    "from_sha": "e6d40f69",
+    "to_sha": "f023b03e"
+  },
+  {
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "tool_name": "cognify",
+    "from_sha": "bc67eb96",
+    "to_sha": "c686e396"
+  },
+  {
+    "repo_url": "https://github.com/voska/hass-mcp",
+    "tool_name": "restart_ha",
+    "from_sha": "436516e8",
+    "to_sha": "40a33fc7"
+  },
+  {
+    "repo_url": "https://github.com/AppThreat/vulnerability-db",
+    "tool_name": "search_by_any",
+    "from_sha": "d5097ca8",
+    "to_sha": "314b54c9"
+  },
+  {
+    "repo_url": "https://github.com/rahulretnan/mcp-ragdocs",
+    "tool_name": "search_documentation",
+    "from_sha": "c72bb3f7",
+    "to_sha": "f2847dab"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "update_sql_transformation",
+    "from_sha": "24192d8d",
+    "to_sha": "d2f79545"
+  },
+  {
+    "repo_url": "https://github.com/angiejones/mcp-selenium",
+    "tool_name": "get_alert_text",
+    "from_sha": "ae434a02",
+    "to_sha": "acf43f3e"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "update_config_row",
+    "from_sha": "07afbc36",
+    "to_sha": "9212d1ad"
+  },
+  {
+    "repo_url": "https://github.com/dailydaniel/logseq-mcp",
+    "tool_name": "edit_block",
+    "from_sha": "ec48ed70",
+    "to_sha": "a901fe63"
+  },
+  {
+    "repo_url": "https://github.com/2b3pro/roam-research-mcp",
+    "tool_name": "roam_process_batch_actions",
+    "from_sha": "07d5bbc8",
+    "to_sha": "b0eccee7"
+  },
+  {
+    "repo_url": "https://github.com/aws-samples/sample-mcp-server-s3",
+    "tool_name": "ListBuckets",
+    "from_sha": "e0e0cd6e",
+    "to_sha": "b8ee88c3"
+  },
+  {
+    "repo_url": "https://github.com/StarRocks/mcp-server-starrocks",
+    "tool_name": "write_query",
+    "from_sha": "f10cd3f9",
+    "to_sha": "d3225ffb"
+  },
+  {
+    "repo_url": "https://github.com/ahujasid/blender-mcp",
+    "tool_name": "get_sketchfab_model_preview",
+    "from_sha": "4794edc4",
+    "to_sha": "465f203e"
+  },
+  {
+    "repo_url": "https://github.com/dvejsada/mcp-pptx-presentations-creator",
+    "tool_name": "create_email_draft",
+    "from_sha": "21e77670",
+    "to_sha": "e86410d9"
+  },
+  {
+    "repo_url": "https://github.com/burningion/video-editing-mcp",
+    "tool_name": "generate-edit-from-videos",
+    "from_sha": "127161f8",
+    "to_sha": "09b71434"
+  },
+  {
+    "repo_url": "https://github.com/blazickjp/arxiv-mcp-server",
+    "tool_name": "download_paper",
+    "from_sha": "4b75d3b0",
+    "to_sha": "d5890176"
+  },
+  {
+    "repo_url": "https://github.com/dvejsada/mcp-pptx-presentations-creator",
+    "tool_name": "create_powerpoint_presentation",
+    "from_sha": "21e77670",
+    "to_sha": "e86410d9"
+  },
+  {
+    "repo_url": "https://github.com/dvejsada/mcp-pptx-presentations-creator",
+    "tool_name": "create_powerpoint_presentation",
+    "from_sha": "522e4855",
+    "to_sha": "05568d00"
+  },
+  {
+    "repo_url": "https://github.com/hald/things-mcp",
+    "tool_name": "update_todo",
+    "from_sha": "e1d06df7",
+    "to_sha": "fa29f2aa"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "search",
+    "from_sha": "7f8631ca",
+    "to_sha": "e429c729"
+  },
+  {
+    "repo_url": "https://github.com/playcanvas/mcp-editor",
+    "tool_name": "store_get",
+    "from_sha": "f8944e8c",
+    "to_sha": "c7d709f5"
+  },
+  {
+    "repo_url": "https://github.com/KS-GEN-AI/jira-mcp-server",
+    "tool_name": "delete_ticket",
+    "from_sha": "65bfed5a",
+    "to_sha": "be4f193f"
+  },
+  {
+    "repo_url": "https://github.com/mcpdotdirect/evm-mcp-server",
+    "tool_name": "read_contract",
+    "from_sha": "25ab4d9d",
+    "to_sha": "1e1d8799"
+  },
+  {
+    "repo_url": "https://github.com/ahujasid/blender-mcp",
+    "tool_name": "set_texture",
+    "from_sha": "4794edc4",
+    "to_sha": "465f203e"
+  },
+  {
+    "repo_url": "https://github.com/buryhuang/mcp-hubspot",
+    "tool_name": "hubspot_search_data",
+    "from_sha": "32274a41",
+    "to_sha": "2dd0fb6a"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "modify_data_app",
+    "from_sha": "987d406e",
+    "to_sha": "68fa8d23"
+  },
+  {
+    "repo_url": "https://github.com/playcanvas/mcp-editor",
+    "tool_name": "script_parse",
+    "from_sha": "f8944e8c",
+    "to_sha": "c7d709f5"
+  },
+  {
+    "repo_url": "https://github.com/aliyun/alibabacloud-hologres-mcp-server",
+    "tool_name": "execute_hg_select_sql_with_serverless",
+    "from_sha": "4db951bf",
+    "to_sha": "5c54497a"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "update_sql_transformation",
+    "from_sha": "d32e21a7",
+    "to_sha": "340f257e"
+  },
+  {
+    "repo_url": "https://github.com/sooperset/mcp-atlassian",
+    "tool_name": "search",
+    "from_sha": "eda4ef41",
+    "to_sha": "498df988"
+  },
+  {
+    "repo_url": "https://github.com/pab1it0/prometheus-mcp-server",
+    "tool_name": "list_metrics",
+    "from_sha": "6f9c4bea",
+    "to_sha": "de7090ad"
+  },
+  {
+    "repo_url": "https://github.com/neka-nat/freecad-mcp",
+    "tool_name": "get_view",
+    "from_sha": "015d1264",
+    "to_sha": "cd2b8041"
+  },
+  {
+    "repo_url": "https://github.com/mendableai/firecrawl-mcp-server",
+    "tool_name": "firecrawl_parse",
+    "from_sha": "ccdadac5",
+    "to_sha": "88d4de6a"
+  },
+  {
+    "repo_url": "https://github.com/cyberchitta/llm-context.py",
+    "tool_name": "lc_get_files",
+    "from_sha": "fdc4ba35",
+    "to_sha": "d1d3357c"
+  },
+  {
+    "repo_url": "https://github.com/KS-GEN-AI/jira-mcp-server",
+    "tool_name": "get_only_ticket_name_and_description",
+    "from_sha": "65bfed5a",
+    "to_sha": "be4f193f"
+  },
+  {
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "tool_name": "search",
+    "from_sha": "a70e0bf9",
+    "to_sha": "e285fcb8"
+  },
+  {
+    "repo_url": "https://github.com/ahujasid/blender-mcp",
+    "tool_name": "execute_blender_code",
+    "from_sha": "4794edc4",
+    "to_sha": "465f203e"
+  },
+  {
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "tool_name": "load_skill",
+    "from_sha": "2cbff053",
+    "to_sha": "766e72a9"
+  },
+  {
+    "repo_url": "https://github.com/kfastov/telegram-mcp-server",
+    "tool_name": "listChannels",
+    "from_sha": "840d5bfd",
+    "to_sha": "6e088e78"
+  },
+  {
+    "repo_url": "https://github.com/smn2gnt/MCP-Salesforce",
+    "tool_name": "get_record",
+    "from_sha": "011391e8",
+    "to_sha": "fbfa4974"
+  },
+  {
+    "repo_url": "https://github.com/wonderwhy-er/ClaudeDesktopCommander",
+    "tool_name": "read_output",
+    "from_sha": "cb5bb08e",
+    "to_sha": "7efa7d35"
+  },
+  {
+    "repo_url": "https://github.com/garc33/bitbucket-server-mcp-server",
+    "tool_name": "search",
+    "from_sha": "619cd7b7",
+    "to_sha": "968ce34d"
+  },
+  {
+    "repo_url": "https://github.com/hald/things-mcp",
+    "tool_name": "get_headings",
+    "from_sha": "92a54d27",
+    "to_sha": "929763a9"
+  },
+  {
+    "repo_url": "https://github.com/codingthefuturewithai/rag-retriever",
+    "tool_name": "fetch_url",
+    "from_sha": "09116d1e",
+    "to_sha": "fb989cc7"
+  },
+  {
+    "repo_url": "https://github.com/keboola/keboola-mcp-server",
+    "tool_name": "search",
+    "from_sha": "efd7e184",
+    "to_sha": "03657fad"
+  },
+  {
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "tool_name": "cognify_status",
+    "from_sha": "cdce0d8e",
+    "to_sha": "a70e0bf9"
+  },
+  {
+    "repo_url": "https://github.com/54rt1n/container-mcp",
+    "tool_name": "kb_add_reference",
+    "from_sha": "53b7c1cd",
+    "to_sha": "8b279374"
+  },
+  {
+    "repo_url": "https://github.com/topoteretes/cognee",
+    "tool_name": "execute_skill_tool",
+    "from_sha": "50802ec0",
+    "to_sha": "5bac3c3a"
+  },
+  {
+    "repo_url": "https://github.com/kagisearch/kagimcp",
+    "tool_name": "kagi_search_fetch",
+    "from_sha": "b5a08d1d",
+    "to_sha": "572df247"
+  },
+  {
+    "repo_url": "https://github.com/cline/cline",
+    "tool_name": "read_files",
+    "from_sha": "6ae37eba",
+    "to_sha": "2430d554"
+  },
+  {
+    "repo_url": "https://github.com/smn2gnt/MCP-Salesforce",
+    "tool_name": "run_soql_query",
+    "from_sha": "3855823a",
+    "to_sha": "e047e638"
+  },
+  {
+    "repo_url": "https://github.com/makafeli/n8n-workflow-builder",
+    "tool_name": "deactivate_workflow",
+    "from_sha": "5bd020cc",
+    "to_sha": "9555fa27"
+  },
+  {
+    "repo_url": "https://github.com/langflow-ai/langflow",
+    "tool_name": "search_component_types",
+    "from_sha": "9543d7d3",
+    "to_sha": "a2d3c185"
+  }
+]
