@@ -10,9 +10,11 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
     STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
 
-# Install dependencies first so this layer is cached across app/data changes
-COPY requirements.txt ./
-RUN pip install --upgrade pip && pip install -r requirements.txt
+# Install only the dashboard's dependencies (streamlit, plotly, pandas) so the
+# image stays small — the full requirements.txt (anthropic, scikit-learn, etc.)
+# is only needed to re-run the research pipeline, not the read-only dashboard.
+COPY requirements-dashboard.txt ./
+RUN pip install --upgrade pip && pip install -r requirements-dashboard.txt
 
 # Copy only what the read-only dashboard actually needs at runtime:
 #   app.py            — the dashboard

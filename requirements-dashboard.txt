@@ -1,0 +1,8 @@
+# Minimal dependencies for the read-only Streamlit dashboard (app.py) only.
+# app.py imports exactly these three third-party packages (everything else it
+# uses — json, html, pathlib — is in the Python standard library).
+# Constraints mirror requirements.txt. For the full research pipeline use
+# requirements.txt instead.
+streamlit>=1.40.0
+plotly>=5.20.0
+pandas>=2.2.0
