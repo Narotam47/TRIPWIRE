@@ -22,3 +22,7 @@ pydantic>=2.7.0
 
 # Inter-rater reliability (Cohen's / Fleiss' kappa) — required for script 11 --compute-kappa
 scikit-learn>=1.4.0
+
+# Interactive results dashboard (app.py) — read-only over committed data
+streamlit>=1.40.0
+plotly>=5.20.0

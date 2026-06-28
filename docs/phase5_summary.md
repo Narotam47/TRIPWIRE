@@ -294,6 +294,31 @@ JavaScript's notably lower rate (12.7%) likely reflects that JavaScript MCP serv
 
 Official repos have the lowest drift rate (14.2% P2), community repos the highest (23.8%). The gradient is clean in both conservative and P2 estimates and represents the most structurally interpretable cross-tabulation finding: official repos, maintained by the tool's own vendor with more deliberate versioning processes, show markedly more stable MCP tool definitions than community-submitted repos.
 
+**By structural change type:**
+
+Computed from `tool_classifications.jsonl` under the conservative (both-passes-agree)
+BEHAVIORAL_DRIFT definition used throughout this section, bucketed by the same
+`structural_type` field the dashboard (`app.py`) uses (`type_change` takes priority;
+pool sizes match the §3 stratification table). BD count is the number of events both
+passes independently labeled BEHAVIORAL_DRIFT; rates are exactly what `app.py` displays.
+
+| Structural type | Events (pool) | BD (both) | BD% (both) |
+|---|---|---|---|
+| `schema_mixed` | 166 | 137 | **82.5%** |
+| `desc_and_schema_remove` | 61 | 33 | 54.1% |
+| `type_change` | 102 | 25 | 24.5% |
+| `desc_only` | 1,770 | 110 | 6.2% |
+| `desc_and_schema_add` | 182 | 4 | 2.2% |
+| `schema_add_only` | 135 | 0 | 0.0% |
+| `schema_remove_only` | 65 | 0 | **0.0%** |
+| **Total** | **2,481** | **309** | **12.5%** |
+
+`schema_mixed` (simultaneous field additions and removals) shows the highest drift
+rate by a wide margin; pure additive changes (`schema_add_only`, `desc_and_schema_add`)
+show the lowest, consistent with L9's earlier finding that `schema_remove_only` events
+show 0% BEHAVIORAL_DRIFT under the conservative definition. The 309 BD events sum
+exactly to the conservative headline (12.5% of 2,481).
+
 **Concentration:** The top 10 repos by BD(P2) count account for 55.9% of all 474 BD events (mcp-atlassian 84, keboola 36, tasty-agent 30, mcp-server-trello 22, container-mcp 18, docling-mcp 18, mcp-neo4j 16, kubernetes-mcp-server 16, cloudflare/ai 14, alibabacloud-hologres 11). BEHAVIORAL_DRIFT is concentrated in a subset of rapidly-evolving repos rather than distributed uniformly across the ecosystem.
 
 ---
