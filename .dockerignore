@@ -1,0 +1,48 @@
+# Keep the image small: only app.py, README.md, and data/processed/ are needed.
+
+# Version control / CI
+.git/
+.gitignore
+.github/
+
+# Pipeline code the read-only dashboard never runs
+scripts/
+src/
+tests/
+notebooks/
+docs/
+
+# Data the dashboard does not read
+data/raw/
+data/snapshots/
+
+# Debug / test / regenerable scratch artifacts (also in .gitignore)
+data/processed/batch_locate_results.pre_testfix.jsonl
+data/processed/tool_history_test10.jsonl
+data/processed/tool_history_test20.jsonl
+data/processed/slot02_poc_result.json
+data/processed/human_validation_merged.csv
+
+# Python caches / build / environments
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+
+# Secrets / env
+.env
+*.env
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Docker itself
+Dockerfile
+.dockerignore

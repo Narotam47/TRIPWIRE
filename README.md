@@ -23,6 +23,19 @@ it makes no live API calls and recomputes nothing. To instead **re-run the actua
 research pipeline** (which does require `GITHUB_TOKEN` / `ANTHROPIC_API_KEY`), see
 [Setup](#setup) and [Running the pipeline](#running-the-pipeline) below.
 
+### Run with Docker
+
+If you'd rather not install Python/pip locally, run the dashboard in a container:
+
+```bash
+docker build -t tripwire-dashboard .
+docker run -p 8501:8501 tripwire-dashboard
+```
+
+Then open <http://localhost:8501>. This requires **no API key and no network
+access** — exactly the same read-only dashboard as the plain Quick Start above;
+Docker is purely an alternative way to run it without a local Python environment.
+
 ## Headline Results
 
 | Result | Finding |
