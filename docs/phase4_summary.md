@@ -1,7 +1,7 @@
-# Phase 4 Complete: History Walk & Diff Engine
+# TRIPWIRE — Phase 4: History Walk & Diff Engine
 
 **Date completed:** 2026-06-26  
-**Working document for the Results section of the MCP drift paper.**
+**Working document for the Results section of the TRIPWIRE paper.**
 
 ---
 

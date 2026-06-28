@@ -1,8 +1,8 @@
-# Phase 6: Agentic Behavioral Validation
+# TRIPWIRE — Phase 6: Agentic Behavioral Validation
 
 **Date started:** 2026-06-27  
 **Date completed:** 2026-06-27  
-**Working document for the paper's Results and Discussion sections.**
+**Working document for the TRIPWIRE paper's Results and Discussion sections.**
 
 ---
 

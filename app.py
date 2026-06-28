@@ -1,5 +1,5 @@
 """
-MCP Drift Study — interactive results dashboard.
+TRIPWIRE — interactive results dashboard for the MCP tool-definition drift study.
 
 Read-only over already-committed artifacts in data/processed/. No live API
 calls, no pipeline recomputation: every figure is loaded from a committed
@@ -59,7 +59,7 @@ LABEL_ORDER = [
 ]
 
 st.set_page_config(
-    page_title="MCP Drift Study — Results Dashboard",
+    page_title="TRIPWIRE - MCP Tool Drift Study",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -488,8 +488,12 @@ def definition_card(container, label, defn, accent, tc) -> None:
 # --------------------------------------------------------------------------- #
 def page_overview(tc: dict) -> None:
     section_header(
-        "Overview",
-        "Headline results from the MCP tool-definition drift study.",
+        "TRIPWIRE — A Longitudinal Empirical Study of Tool Definition Drift "
+        "in the MCP Ecosystem",
+        "_Named for the classic file-integrity-monitoring paradigm (Kim & Spafford, "
+        "1994); adapted here retrospectively, through git-history archaeology rather "
+        "than live monitoring, to measure how often unauthorized-style change actually "
+        "occurs across a real-world AI agent tool ecosystem._",
     )
 
     r1 = st.columns(3)
@@ -923,7 +927,7 @@ def main() -> None:
     register_template(tc)
     inject_css(tc)
 
-    st.sidebar.title("MCP Drift Study")
+    st.sidebar.title("TRIPWIRE")
     st.sidebar.caption(
         "Empirical measurement of how MCP tool definitions change over time, "
         "and whether those changes alter AI-agent behavior."

@@ -1,9 +1,11 @@
-# MCP Drift Study
+# TRIPWIRE — A Longitudinal Empirical Study of Tool Definition Drift in the MCP Ecosystem
+
+_Named for the classic file-integrity-monitoring paradigm (Kim & Spafford, 1994); adapted here retrospectively, through git-history archaeology rather than live monitoring, to measure how often unauthorized-style change actually occurs across a real-world AI agent tool ecosystem._
 
 Empirical measurement of how MCP (Model Context Protocol) server tool definitions
 change over time, and whether those changes measurably alter AI agent behavior.
 
-This project fills a gap identified in the literature: while "rug pull" attacks
+TRIPWIRE fills a gap identified in the literature: while "rug pull" attacks
 (tools that change silently after user approval) have been named as a threat
 (arXiv:2506.01333), no published study has measured how often this actually
 happens in real, deployed MCP servers.

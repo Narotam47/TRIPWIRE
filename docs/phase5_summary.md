@@ -1,14 +1,14 @@
-# Phase 5: LLM Classifier — Design, Validation, and Full-Scale Run
+# TRIPWIRE — Phase 5: LLM Classifier — Design, Validation, and Full-Scale Run
 
 **Date started:** 2026-06-26  
 **Date completed:** 2026-06-27  
-**Working document for the paper's Methods and Limitations sections.**
+**Working document for the TRIPWIRE paper's Methods and Limitations sections.**
 
 ---
 
 ## Executive Summary
 
-This study tracked MCP (Model Context Protocol) tool definitions across their full git histories for a stratified sample of 380 GitHub repositories. Of the 380 sampled repos, 280 were targeted by the history walker after three rounds of test-directory contamination fixes (the remainder excluded due to language gaps, JSON-only sources, or zero-tool results); 276 were successfully mined (4 produced zero walk records due to unsupported source-file formats — see Phase 4 §5 L3). Across those 276 repos, **4,784 unique (repo, tool-name) pairs** were identified and tracked. **84.1% of tools changed at least once** over their observable git history; 96.4% of repos had at least one tool definition change.
+TRIPWIRE tracked MCP (Model Context Protocol) tool definitions across their full git histories for a stratified sample of 380 GitHub repositories. Of the 380 sampled repos, 280 were targeted by the history walker after three rounds of test-directory contamination fixes (the remainder excluded due to language gaps, JSON-only sources, or zero-tool results); 276 were successfully mined (4 produced zero walk records due to unsupported source-file formats — see Phase 4 §5 L3). Across those 276 repos, **4,784 unique (repo, tool-name) pairs** were identified and tracked. **84.1% of tools changed at least once** over their observable git history; 96.4% of repos had at least one tool definition change.
 
 The diff engine produced 42,969 consecutive-version diff records. Of these, 2,548 showed at least one detected change; 67 were excluded as degenerate same-SHA records (a tool defined in multiple source files within the same commit, producing a spatial comparison rather than a temporal one). The final analysis corpus is **2,481 valid temporal change events** across 276 repos.
 
